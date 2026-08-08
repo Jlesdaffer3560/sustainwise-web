@@ -1,0 +1,25 @@
+SustainWise — master the language of sustainability.
+
+If you've ever nodded along in a meeting while someone said "double materiality" or "Scope 3" and hoped nobody would ask you to explain it, this app is for you.
+
+SustainWise is a Duolingo-style learning app that turns ESG and sustainability jargon — CSRD, CSDDD, SFDR, the EU Taxonomy, GRI, and much more — into short daily lessons you can actually stick with.
+
+WHO IT'S FOR
+• Sustainability professionals who want the vocabulary to match their expertise
+• Compliance, finance and legal teams who keep running into ESG terms they half-know
+• Anyone who's ESG-curious and wants to actually understand the headlines
+
+HOW IT WORKS
+• Flashcards — flip a term to reveal its real definition, then rate yourself so the app knows what to reinforce
+• Quiz — multiple-choice questions built from real definitions, with an explanation every time, right or wrong
+• Confusable Pairs — a harder round for the acronyms and concepts people mix up most (CSRD vs. NFRD, GRI vs. ESRS, and more)
+• Streaks & XP — daily practice that actually builds a habit, with your progress saved on your device
+• A real learning path — modules unlock as you go, grouped into units from foundational ESG concepts through EU reporting law, sustainable finance, climate accounting, governance, and more
+
+WHAT'S INSIDE
+Real, curated content — not generic AI summaries — covering CSRD & ESRS, CSDDD, SFDR, the EU Taxonomy, GRI Standards, TCFD/TNFD/SASB/ISSB, sustainable and ethical investing, climate & carbon accounting, circular economy & biodiversity, human rights & social issues, governance & anti-corruption, greenwashing regulation, and the key institutions and milestones behind it all.
+
+COMPLETELY FREE
+No subscriptions, no paywalls, no ads. Every module is free to learn.
+
+Your streak, XP and progress are stored on your device — there's no account to create and nothing to sign up for.

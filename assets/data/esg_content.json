@@ -1,0 +1,1498 @@
+{
+ "units": [
+  {
+   "title": "Unit 1 · Foundations",
+   "description": "The core vocabulary every ESG conversation starts with.",
+   "tint": "amberSoft",
+   "icon": "eco_outlined",
+   "moduleIds": [
+    "esg-fundamentals",
+    "csr-ethics"
+   ]
+  },
+  {
+   "title": "Unit 2 · EU Reporting & Diligence",
+   "description": "The regulations behind every CSRD deadline you hear about.",
+   "tint": "accentSoft",
+   "icon": "gavel_outlined",
+   "moduleIds": [
+    "csrd-esrs",
+    "csddd"
+   ]
+  },
+  {
+   "title": "Unit 3 · Finance & Taxonomy",
+   "description": "How sustainability shows up on a balance sheet.",
+   "tint": "amberSoft",
+   "icon": "account_balance_outlined",
+   "moduleIds": [
+    "sfdr",
+    "eu-taxonomy"
+   ]
+  },
+  {
+   "title": "Unit 4 · Reporting Standards",
+   "description": "Beyond CSRD — the global alphabet soup of sustainability reporting.",
+   "tint": "accentSoft",
+   "icon": "description_outlined",
+   "moduleIds": [
+    "gri-standards",
+    "other-reporting-standards"
+   ]
+  },
+  {
+   "title": "Unit 5 · Climate & Sustainable Finance",
+   "description": "How money moves, and how carbon gets counted.",
+   "tint": "amberSoft",
+   "icon": "insights_outlined",
+   "moduleIds": [
+    "sustainable-finance-ethical-investing",
+    "climate-carbon-accounting"
+   ]
+  },
+  {
+   "title": "Unit 6 · People & Planet",
+   "description": "The 'S' in ESG — human rights, labour, and the natural world.",
+   "tint": "accentSoft",
+   "icon": "diversity_3_outlined",
+   "moduleIds": [
+    "circular-economy-biodiversity",
+    "social-issues-human-rights"
+   ]
+  },
+  {
+   "title": "Unit 7 · Governance & Accountability",
+   "description": "Who's watching the watchers — from board pay to greenwashing law.",
+   "tint": "amberSoft",
+   "icon": "policy_outlined",
+   "moduleIds": [
+    "governance-anti-corruption",
+    "greenwashing-empco-ucpd"
+   ]
+  },
+  {
+   "title": "Unit 8 · Context & History",
+   "description": "The institutions and the timeline behind everything else here.",
+   "tint": "accentSoft",
+   "icon": "history_edu_outlined",
+   "moduleIds": [
+    "key-players-institutions",
+    "timeline-milestones"
+   ]
+  }
+ ],
+ "modules": [
+  {
+   "id": "esg-fundamentals",
+   "title": "ESG Fundamentals",
+   "summary": "Materiality, stakeholders, the SDGs",
+   "termCount": 14,
+   "defaultStatus": "done"
+  },
+  {
+   "id": "csr-ethics",
+   "title": "CSR & Ethics",
+   "summary": "Carroll's pyramid, shared value",
+   "termCount": 10,
+   "defaultStatus": "done"
+  },
+  {
+   "id": "csrd-esrs",
+   "title": "CSRD & ESRS",
+   "summary": "Double materiality, ESRS sets, assurance",
+   "termCount": 24,
+   "defaultStatus": "current"
+  },
+  {
+   "id": "csddd",
+   "title": "CSDDD",
+   "summary": "Due diligence, value chain, liability",
+   "termCount": 14,
+   "defaultStatus": "available"
+  },
+  {
+   "id": "sfdr",
+   "title": "SFDR",
+   "summary": "Article 8/9, PAI, disclosures",
+   "termCount": 16,
+   "defaultStatus": "available"
+  },
+  {
+   "id": "eu-taxonomy",
+   "title": "EU Taxonomy",
+   "summary": "DNSH, substantial contribution",
+   "termCount": 14,
+   "defaultStatus": "available"
+  },
+  {
+   "id": "gri-standards",
+   "title": "GRI Standards",
+   "summary": "Universal Standards, content index",
+   "termCount": 14,
+   "defaultStatus": "available"
+  },
+  {
+   "id": "other-reporting-standards",
+   "title": "Other Reporting Standards",
+   "summary": "CDP, SASB, TCFD, ISSB",
+   "termCount": 20,
+   "defaultStatus": "available"
+  },
+  {
+   "id": "sustainable-finance-ethical-investing",
+   "title": "Sustainable & Ethical Investing",
+   "summary": "Screening, green bonds, impact",
+   "termCount": 18,
+   "defaultStatus": "available"
+  },
+  {
+   "id": "climate-carbon-accounting",
+   "title": "Climate & Carbon Accounting",
+   "summary": "GHG Protocol, Scopes 1-3, CO2e",
+   "termCount": 18,
+   "defaultStatus": "available"
+  },
+  {
+   "id": "circular-economy-biodiversity",
+   "title": "Circular Economy & Biodiversity",
+   "summary": "Natural capital, ecosystem services",
+   "termCount": 12,
+   "defaultStatus": "available"
+  },
+  {
+   "id": "social-issues-human-rights",
+   "title": "Social Issues & Human Rights",
+   "summary": "Modern slavery, DEI, due diligence",
+   "termCount": 14,
+   "defaultStatus": "available"
+  },
+  {
+   "id": "governance-anti-corruption",
+   "title": "Governance & Anti-Corruption",
+   "summary": "Board diversity, say-on-pay",
+   "termCount": 12,
+   "defaultStatus": "available"
+  },
+  {
+   "id": "greenwashing-empco-ucpd",
+   "title": "Greenwashing & EmpCo/UCPD",
+   "summary": "Generic claims, trigger words",
+   "termCount": 14,
+   "defaultStatus": "available"
+  },
+  {
+   "id": "key-players-institutions",
+   "title": "Key Players & Institutions",
+   "summary": "EFRAG, ESMA, ISSB, GRI",
+   "termCount": 20,
+   "defaultStatus": "available"
+  },
+  {
+   "id": "timeline-milestones",
+   "title": "Timeline & Milestones",
+   "summary": "From Brundtland to Paris",
+   "termCount": 22,
+   "defaultStatus": "available"
+  }
+ ],
+ "terms": {
+  "esg-fundamentals": [
+   {
+    "term": "ESG",
+    "definition": "Environmental, Social, Governance: a framework for assessing a company's non-financial performance."
+   },
+   {
+    "term": "Materiality",
+    "definition": "The degree to which a topic is relevant enough to include in reporting or decision-making."
+   },
+   {
+    "term": "Stakeholder",
+    "definition": "Any party affected by, or able to influence, an organisation's activities."
+   },
+   {
+    "term": "Triple bottom line",
+    "definition": "A performance framework measuring People, Planet, Profit."
+   },
+   {
+    "term": "Non-financial reporting",
+    "definition": "Reporting on ESG performance alongside financial results."
+   },
+   {
+    "term": "Sustainable Development Goals (SDGs)",
+    "definition": "17 UN development goals adopted in 2015, with a 2030 horizon."
+   },
+   {
+    "term": "Double materiality",
+    "definition": "Assessing both the company's impact on people/planet and the impact of ESG factors on the company's financial value."
+   },
+   {
+    "term": "Impact materiality",
+    "definition": "The 'inside-out' perspective of double materiality: the organisation's impact on people and the environment."
+   },
+   {
+    "term": "Financial materiality",
+    "definition": "The 'outside-in' perspective of double materiality: how ESG factors affect the organisation's financial value."
+   },
+   {
+    "term": "Shareholder primacy",
+    "definition": "The view that a company's primary purpose is to maximise shareholder value."
+   },
+   {
+    "term": "Stakeholder theory",
+    "definition": "Freeman's view that companies are accountable to all stakeholders, not just shareholders."
+   },
+   {
+    "term": "ESG integration",
+    "definition": "Systematically factoring ESG issues into investment or business decisions."
+   },
+   {
+    "term": "Social license to operate",
+    "definition": "A community's or stakeholders' implicit approval for a company to operate."
+   },
+   {
+    "term": "Just transition",
+    "definition": "A fair shift to a sustainable economy in which no group bears a disproportionate burden."
+   }
+  ],
+  "csr-ethics": [
+   {
+    "term": "CSR (Corporate Social Responsibility)",
+    "definition": "A company's voluntary responsibility for its impact on society and the environment."
+   },
+   {
+    "term": "Code of conduct",
+    "definition": "An internal document setting behavioural rules for employees and business partners."
+   },
+   {
+    "term": "Business ethics",
+    "definition": "The study of moral principles applied to business context and decision-making."
+   },
+   {
+    "term": "Corporate philanthropy",
+    "definition": "Voluntary, non-core contributions a company makes to social causes."
+   },
+   {
+    "term": "Reputational risk",
+    "definition": "The risk of damage to an organisation's standing from (perceived) unethical conduct."
+   },
+   {
+    "term": "Compliance",
+    "definition": "Adhering to laws, regulations and internal standards."
+   },
+   {
+    "term": "Whistleblower",
+    "definition": "A person who reports wrongdoing within an organisation, internally or externally."
+   },
+   {
+    "term": "Carroll's CSR pyramid",
+    "definition": "A four-layer model: economic, legal, ethical and philanthropic responsibility."
+   },
+   {
+    "term": "Shared value",
+    "definition": "Porter & Kramer's strategy of creating economic value in a way that also creates societal value."
+   },
+   {
+    "term": "Corporate citizenship",
+    "definition": "The idea that companies, as 'citizens', hold rights and duties within society."
+   }
+  ],
+  "csrd-esrs": [
+   {
+    "term": "NFRD",
+    "definition": "Non-Financial Reporting Directive: the CSRD's 2014 predecessor, with lighter, less standardised requirements."
+   },
+   {
+    "term": "CSRD",
+    "definition": "Corporate Sustainability Reporting Directive: the EU directive that mandates and standardises sustainability reporting."
+   },
+   {
+    "term": "ESRS",
+    "definition": "European Sustainability Reporting Standards: the mandatory reporting standards under the CSRD."
+   },
+   {
+    "term": "Double materiality assessment",
+    "definition": "The mandatory CSRD process of determining both impact and financial materiality for each ESG topic."
+   },
+   {
+    "term": "ESRS 1",
+    "definition": "General requirements: sets out reporting principles, structure and the double materiality process."
+   },
+   {
+    "term": "ESRS 2",
+    "definition": "General disclosures: mandatory baseline information on governance, strategy and risk management, regardless of materiality."
+   },
+   {
+    "term": "ESRS E1",
+    "definition": "Climate change: disclosures on greenhouse gas emissions, transition plans and climate risk."
+   },
+   {
+    "term": "ESRS S1",
+    "definition": "Own workforce: disclosures on working conditions, equal treatment and social dialogue."
+   },
+   {
+    "term": "ESRS S2",
+    "definition": "Workers in the value chain: disclosures on working conditions at suppliers."
+   },
+   {
+    "term": "ESRS G1",
+    "definition": "Business conduct: disclosures on anti-corruption, lobbying activities and supplier payment practices."
+   },
+   {
+    "term": "CSRD phase-in (wave 1-4)",
+    "definition": "The staggered rollout: large listed companies first, then large unlisted companies, then listed SMEs."
+   },
+   {
+    "term": "Reporting boundary",
+    "definition": "Determines which entities (own organisation, subsidiaries, value chain) are included in reporting."
+   },
+   {
+    "term": "Value chain reporting",
+    "definition": "The requirement to also report upstream (suppliers) and downstream (customers/use) ESG impacts."
+   },
+   {
+    "term": "Climate transition plan",
+    "definition": "A mandatory ESRS E1 element: a concrete action plan aligning the business model with a 1.5 degree pathway."
+   },
+   {
+    "term": "EFRAG",
+    "definition": "European Financial Reporting Advisory Group: develops the ESRS on behalf of the European Commission."
+   },
+   {
+    "term": "Phase-in provisions",
+    "definition": "Temporary reliefs (e.g. no Scope 3 in year one) easing companies into the reporting burden."
+   },
+   {
+    "term": "ESRS E4",
+    "definition": "Biodiversity and ecosystems: disclosures on impacts on, and dependencies on, natural capital."
+   },
+   {
+    "term": "IRO (Impacts, Risks, Opportunities)",
+    "definition": "The three categories structuring the materiality assessment under ESRS."
+   },
+   {
+    "term": "Digital tagging (XBRL/ESEF)",
+    "definition": "The requirement to tag CSRD disclosures in machine-readable form using a digital taxonomy."
+   },
+   {
+    "term": "Limited assurance",
+    "definition": "The current, lighter level of assurance auditors must provide on CSRD reporting."
+   },
+   {
+    "term": "Omnibus simplification",
+    "definition": "An EU proposal to reduce the scope and administrative burden of CSRD/CSDDD after business-sector pushback."
+   },
+   {
+    "term": "Sector-specific ESRS",
+    "definition": "Additional, still-in-development standards per sector (e.g. oil & gas, agriculture)."
+   },
+   {
+    "term": "Listed SME standard (LSME)",
+    "definition": "A simplified, voluntary standard for listed small and medium-sized enterprises."
+   },
+   {
+    "term": "Consolidation level",
+    "definition": "The level (group vs. individual entity) at which CSRD reporting must be prepared."
+   }
+  ],
+  "csddd": [
+   {
+    "term": "Tier-1 / tier-2 suppliers",
+    "definition": "Direct suppliers (tier-1) versus suppliers of suppliers (tier-2 and beyond) in the value chain."
+   },
+   {
+    "term": "CSDDD",
+    "definition": "Corporate Sustainability Due Diligence Directive: requires companies to conduct due diligence on human rights and environmental risks across the value chain."
+   },
+   {
+    "term": "Due diligence obligation",
+    "definition": "The core duty to identify, prevent, mitigate and remediate risks."
+   },
+   {
+    "term": "Value chain (CSDDD)",
+    "definition": "Both upstream (raw materials, production) and downstream (distribution, use, end-of-life) activities."
+   },
+   {
+    "term": "Grievance mechanism",
+    "definition": "A mandatory channel through which affected parties or their representatives can lodge a complaint."
+   },
+   {
+    "term": "Climate transition plan (CSDDD)",
+    "definition": "The obligation for large companies to hold a plan compatible with the Paris Agreement."
+   },
+   {
+    "term": "Staggered application (CSDDD)",
+    "definition": "The directive applies first to the largest companies (by turnover and headcount), later to smaller ones."
+   },
+   {
+    "term": "Remediation",
+    "definition": "Repairing or compensating harm caused by a company or its value chain."
+   },
+   {
+    "term": "National supervisory authority (CSDDD)",
+    "definition": "The authority each member state must designate to oversee compliance and impose fines."
+   },
+   {
+    "term": "Civil liability",
+    "definition": "A CSDDD provision letting victims sue a company directly for harm caused by inadequate due diligence."
+   },
+   {
+    "term": "Risk prioritisation",
+    "definition": "The requirement to address the most severe and likely risks first when resources are limited."
+   },
+   {
+    "term": "Contractual cascading",
+    "definition": "The practice of a company passing due diligence requirements down to its direct suppliers by contract."
+   },
+   {
+    "term": "OECD Guidelines for Multinational Enterprises",
+    "definition": "The voluntary reference framework underlying the CSDDD's due diligence obligations."
+   },
+   {
+    "term": "UNGPs (UN Guiding Principles)",
+    "definition": "The 2011 UN framework introducing the 'protect, respect, remedy' structure, the basis for CSDDD."
+   }
+  ],
+  "sfdr": [
+   {
+    "term": "Article 6 product",
+    "definition": "SFDR category for financial products without a specific sustainability claim."
+   },
+   {
+    "term": "SFDR product classification",
+    "definition": "The process by which a fund manager determines whether a product falls under Article 6, 8 or 9."
+   },
+   {
+    "term": "Financial market participant (FMP)",
+    "definition": "SFDR term for the entities covered by the regulation: asset managers, insurers, pension funds and similar."
+   },
+   {
+    "term": "SFDR",
+    "definition": "Sustainable Finance Disclosure Regulation: requires financial market participants to disclose sustainability risks and impacts."
+   },
+   {
+    "term": "Article 8 product",
+    "definition": "SFDR category for products promoting environmental or social characteristics ('light green')."
+   },
+   {
+    "term": "Article 9 product",
+    "definition": "SFDR category for products with sustainable investment as an explicit objective ('dark green')."
+   },
+   {
+    "term": "Pre-contractual disclosure",
+    "definition": "Mandatory SFDR information that must be given to investors before purchasing a financial product."
+   },
+   {
+    "term": "Periodic reporting (SFDR)",
+    "definition": "An annual mandatory update on the actual sustainability performance of an Article 8 or 9 product."
+   },
+   {
+    "term": "Greenwashing risk (financial sector)",
+    "definition": "The risk that an Article 8/9 product is presented as more sustainable than its underlying holdings justify."
+   },
+   {
+    "term": "PAI (Principal Adverse Impacts)",
+    "definition": "A mandatory set of indicators measuring the main negative effects of investments on sustainability."
+   },
+   {
+    "term": "Sustainable investment (SFDR definition)",
+    "definition": "An investment contributing to an environmental or social objective, doing no significant harm to any other objective, and following good governance."
+   },
+   {
+    "term": "RTS (Regulatory Technical Standards)",
+    "definition": "Detailed technical rules ('Level 2') supplementing the main SFDR regulation."
+   },
+   {
+    "term": "Entity-level disclosure",
+    "definition": "The requirement for the financial institution itself (not just per product) to disclose sustainability policy."
+   },
+   {
+    "term": "Taxonomy alignment percentage (SFDR)",
+    "definition": "The share of a portfolio meeting EU Taxonomy criteria, mandatory to disclose under SFDR."
+   },
+   {
+    "term": "SFDR review (categorisation)",
+    "definition": "A proposed reform to replace the Article 8/9 split with clearer product categories after criticism that it confuses investors."
+   },
+   {
+    "term": "ESAs (European Supervisory Authorities)",
+    "definition": "The joint body of EBA, ESMA and EIOPA that drafts SFDR technical standards."
+   }
+  ],
+  "eu-taxonomy": [
+   {
+    "term": "EU Taxonomy",
+    "definition": "A classification system defining which economic activities qualify as 'environmentally sustainable'."
+   },
+   {
+    "term": "Six environmental objectives",
+    "definition": "Climate mitigation, climate adaptation, water, circular economy, pollution, biodiversity."
+   },
+   {
+    "term": "Substantial contribution",
+    "definition": "The requirement that an activity contributes materially to at least one of the six environmental objectives."
+   },
+   {
+    "term": "DNSH (Do No Significant Harm)",
+    "definition": "The requirement that an activity does not significantly harm any of the other five objectives."
+   },
+   {
+    "term": "Taxonomy-eligible activity",
+    "definition": "An activity included in the taxonomy, regardless of whether it actually meets the criteria."
+   },
+   {
+    "term": "Taxonomy-aligned activity",
+    "definition": "An activity that is both eligible and actually meets all criteria (substantial contribution + DNSH + safeguards)."
+   },
+   {
+    "term": "Minimum safeguards",
+    "definition": "The requirement that an activity meets baseline social safeguards (OECD Guidelines, UNGPs)."
+   },
+   {
+    "term": "Technical screening criteria",
+    "definition": "Detailed, activity-specific thresholds determining whether substantial contribution and DNSH are met."
+   },
+   {
+    "term": "CapEx/OpEx/turnover KPIs",
+    "definition": "The three financial metrics companies must use to report taxonomy alignment."
+   },
+   {
+    "term": "Transitional activity",
+    "definition": "An activity with no low-carbon alternative that qualifies temporarily as sustainable while meeting the sector's best-performing level."
+   },
+   {
+    "term": "Enabling activity",
+    "definition": "An activity that doesn't itself meet an environmental objective but enables other activities to contribute substantially."
+   },
+   {
+    "term": "Delegated acts",
+    "definition": "Supplementary EU legislation setting out the technical screening criteria per sector."
+   },
+   {
+    "term": "Green Asset Ratio",
+    "definition": "A mandatory indicator for banks measuring the share of taxonomy-aligned assets on the balance sheet."
+   },
+   {
+    "term": "Carbon leakage sectors (Taxonomy)",
+    "definition": "Sectors at heightened risk of production relocation, subject to stricter or different criteria."
+   }
+  ],
+  "gri-standards": [
+   {
+    "term": "GRI",
+    "definition": "Global Reporting Initiative: the oldest and most widely used global sustainability reporting standard."
+   },
+   {
+    "term": "GRI content index",
+    "definition": "A mandatory overview linking each reported indicator to its exact location in the report."
+   },
+   {
+    "term": "Integrated report vs. GRI report",
+    "definition": "A GRI report can stand alone or form part of a broader integrated annual report."
+   },
+   {
+    "term": "GRI Universal Standards",
+    "definition": "The three baseline standards (GRI 1, 2, 3) that apply to every reporting organisation."
+   },
+   {
+    "term": "GRI 1: Foundation",
+    "definition": "Sets out the reporting principles and baseline requirements every GRI report must meet."
+   },
+   {
+    "term": "GRI 2: General Disclosures",
+    "definition": "Requires baseline information on the organisation, governance and stakeholder engagement."
+   },
+   {
+    "term": "GRI 3: Material Topics",
+    "definition": "Describes the process for identifying and reporting on material topics."
+   },
+   {
+    "term": "GRI Topic Standards",
+    "definition": "Topic-specific standards (e.g. GRI 305 Emissions, GRI 408 Child Labor) prescribing concrete indicators."
+   },
+   {
+    "term": "Materiality assessment (GRI)",
+    "definition": "The GRI 3 process where impact on the economy, environment and people is central, not necessarily financial materiality."
+   },
+   {
+    "term": "GRI Sector Standards",
+    "definition": "Sector-specific standards (e.g. oil & gas, mining, agriculture) prescribing the key material topics per sector."
+   },
+   {
+    "term": "GSSB (Global Sustainability Standards Board)",
+    "definition": "The independent body that sets and maintains the GRI Standards."
+   },
+   {
+    "term": "'In accordance with GRI'",
+    "definition": "A formal claim that a report meets all Universal Standards requirements."
+   },
+   {
+    "term": "GRI-ESRS interoperability",
+    "definition": "Cooperation between GRI and EFRAG to minimise overlap between GRI indicators and ESRS requirements."
+   },
+   {
+    "term": "Boundary setting (GRI)",
+    "definition": "Determining where a reporting obligation for an indicator begins and ends (own operations vs. value chain)."
+   }
+  ],
+  "other-reporting-standards": [
+   {
+    "term": "CDP",
+    "definition": "A non-profit platform where companies and cities voluntarily disclose environmental data and receive a letter score."
+   },
+   {
+    "term": "CDP Climate Change questionnaire",
+    "definition": "The most widely used voluntary climate-data reporting form, often required by large customers in the value chain."
+   },
+   {
+    "term": "Assurance provider (reporting standards)",
+    "definition": "An external party (auditor or specialised firm) verifying the reliability of reported data."
+   },
+   {
+    "term": "SASB",
+    "definition": "Sustainability Accounting Standards Board: sector-specific, investor-focused standards, now under the ISSB since 2022."
+   },
+   {
+    "term": "TCFD",
+    "definition": "Task Force on Climate-related Financial Disclosures: a framework for climate risk reporting."
+   },
+   {
+    "term": "ISSB",
+    "definition": "International Sustainability Standards Board: sets global, investor-focused sustainability standards (IFRS S1/S2)."
+   },
+   {
+    "term": "IFRS S1",
+    "definition": "General requirements for disclosure of sustainability-related financial information."
+   },
+   {
+    "term": "IFRS S2",
+    "definition": "Climate-related disclosures, built directly on the TCFD structure."
+   },
+   {
+    "term": "Four TCFD pillars",
+    "definition": "Governance, strategy, risk management, metrics & targets: a structure echoed in TNFD and IFRS S2."
+   },
+   {
+    "term": "Sector-agnostic vs. sector-specific standard",
+    "definition": "The distinction between broad standards (GRI Universal, ESRS 2) and standards tailored to one sector (SASB, GRI Sector Standards)."
+   },
+   {
+    "term": "TNFD",
+    "definition": "Taskforce on Nature-related Financial Disclosures: an analogous framework for nature and biodiversity risk."
+   },
+   {
+    "term": "Integrated Reporting <IR>",
+    "definition": "A framework (IIRC, now under the IFRS Foundation) combining financial and non-financial value creation into one narrative via six capitals."
+   },
+   {
+    "term": "Six capitals (Integrated Reporting)",
+    "definition": "Financial, manufactured, intellectual, human, social/relationship and natural capital."
+   },
+   {
+    "term": "CDSB (Climate Disclosure Standards Board)",
+    "definition": "A former framework for climate and environmental reporting, folded into the ISSB in 2022."
+   },
+   {
+    "term": "Value Reporting Foundation",
+    "definition": "The 2021 merger of SASB and the IIRC, itself later absorbed into the ISSB."
+   },
+   {
+    "term": "Scenario analysis (TCFD)",
+    "definition": "A method for stress-testing a strategy against different climate pathways (e.g. 1.5C vs. 4C scenarios)."
+   },
+   {
+    "term": "LEAP approach (TNFD)",
+    "definition": "Locate, Evaluate, Assess, Prepare: the process companies use to map nature-related risks."
+   },
+   {
+    "term": "Double vs. single materiality (standards)",
+    "definition": "ESRS/GRI apply double materiality; SASB/IFRS S1&S2 apply primarily financial (single) materiality."
+   },
+   {
+    "term": "NGFS climate scenarios",
+    "definition": "Standard scenarios from the Network for Greening the Financial System, widely used in TCFD/IFRS S2 scenario analysis."
+   },
+   {
+    "term": "Convergence of standards",
+    "definition": "The trend of GRI, ISSB, ESRS and TNFD aligning their frameworks to reduce duplicate reporting."
+   }
+  ],
+  "sustainable-finance-ethical-investing": [
+   {
+    "term": "Sustainable finance",
+    "definition": "Financing and investment that accounts for ESG factors alongside financial return."
+   },
+   {
+    "term": "ESG integration (investing)",
+    "definition": "Systematically weighing ESG factors in the financial analysis and valuation of an investment."
+   },
+   {
+    "term": "Negative/exclusionary screening",
+    "definition": "An investment strategy excluding certain sectors or companies (e.g. weapons, tobacco, fossil fuels)."
+   },
+   {
+    "term": "Thematic investing",
+    "definition": "A strategy focused on a single sustainability theme (e.g. water, renewable energy, gender equality)."
+   },
+   {
+    "term": "Green bond",
+    "definition": "A bond whose proceeds are earmarked for environmental projects."
+   },
+   {
+    "term": "Social bond",
+    "definition": "A bond whose proceeds are specifically earmarked for projects with social impact."
+   },
+   {
+    "term": "ESG rating",
+    "definition": "A score (e.g. from MSCI, Sustainalytics, ISS) summarising a company's ESG performance or risk."
+   },
+   {
+    "term": "Best-in-class screening",
+    "definition": "A strategy selecting the top ESG performers within each sector."
+   },
+   {
+    "term": "Impact investing",
+    "definition": "Investing with the explicit intent of generating measurable positive social or environmental impact alongside return."
+   },
+   {
+    "term": "Sustainability-linked bond (SLB)",
+    "definition": "A bond whose coupon is tied to achieving pre-agreed sustainability KPIs."
+   },
+   {
+    "term": "Stewardship / active ownership",
+    "definition": "Investors using voting and dialogue to influence a company's ESG policy."
+   },
+   {
+    "term": "Double vs. triple bottom line",
+    "definition": "Double bottom line measures financial and social/environmental return; triple bottom line adds a third, distinct dimension."
+   },
+   {
+    "term": "Green Bond Principles (ICMA)",
+    "definition": "Voluntary market guidelines promoting transparency and integrity in green bonds."
+   },
+   {
+    "term": "EU Green Bond Standard",
+    "definition": "A voluntary, legally anchored EU standard for green bonds, linked to the EU Taxonomy."
+   },
+   {
+    "term": "Say-on-climate",
+    "definition": "A shareholder vote on a company's climate transition plan."
+   },
+   {
+    "term": "Rating divergence",
+    "definition": "The phenomenon of different ESG rating agencies assigning widely differing scores to the same company."
+   },
+   {
+    "term": "Fiduciary duty (ESG context)",
+    "definition": "Debate over whether weighing ESG factors is compatible with an investor's duty to act in beneficiaries' interests."
+   },
+   {
+    "term": "Blended finance",
+    "definition": "Combining public/philanthropic capital with commercial capital to lower risk and attract private investment into sustainable projects."
+   }
+  ],
+  "climate-carbon-accounting": [
+   {
+    "term": "GHG Protocol",
+    "definition": "The most widely used global standard for measuring and reporting greenhouse gas emissions."
+   },
+   {
+    "term": "Scope 1 emissions",
+    "definition": "Direct emissions from sources owned or controlled by the organisation (e.g. company vehicles, factory boilers)."
+   },
+   {
+    "term": "Scope 2 emissions",
+    "definition": "Indirect emissions from the generation of purchased electricity, steam, heat or cooling."
+   },
+   {
+    "term": "Carbon neutral",
+    "definition": "A claim of zero net CO2 emissions, often achieved through offsetting without a mandatory deep reduction beforehand."
+   },
+   {
+    "term": "Carbon offset",
+    "definition": "A certificate representing a ton of avoided or compensated CO2 emissions elsewhere."
+   },
+   {
+    "term": "CO2-equivalent (CO2e)",
+    "definition": "A unit making the warming effect of different greenhouse gases comparable to CO2."
+   },
+   {
+    "term": "Scope 3 emissions",
+    "definition": "All other indirect emissions across the value chain, upstream and downstream (often the largest share)."
+   },
+   {
+    "term": "Net zero",
+    "definition": "A state where remaining greenhouse gas emissions are fully offset by removals, after deep reductions consistent with a 1.5 degree pathway."
+   },
+   {
+    "term": "Science Based Targets (SBTi)",
+    "definition": "An initiative that validates corporate targets against the level of reduction climate science requires."
+   },
+   {
+    "term": "Carbon removal",
+    "definition": "A technique that actually extracts CO2 from the atmosphere (e.g. reforestation, Direct Air Capture)."
+   },
+   {
+    "term": "Emission factor",
+    "definition": "A conversion factor turning activity data into CO2-equivalent figures."
+   },
+   {
+    "term": "EU ETS",
+    "definition": "Emissions Trading System: the European carbon market where companies must buy or receive emission allowances."
+   },
+   {
+    "term": "Carbon leakage",
+    "definition": "Relocating CO2-intensive production to countries with less stringent climate policy."
+   },
+   {
+    "term": "Physical vs. transition risk",
+    "definition": "Physical risk is direct damage from climate change; transition risk is the financial fallout of shifting to a low-carbon economy."
+   },
+   {
+    "term": "Scope 2 location-based",
+    "definition": "A calculation method based on the average emissions intensity of the regional electricity grid."
+   },
+   {
+    "term": "Scope 2 market-based",
+    "definition": "A calculation method based on specific energy contracts and certificates (e.g. Guarantees of Origin)."
+   },
+   {
+    "term": "CBAM",
+    "definition": "Carbon Border Adjustment Mechanism: a carbon border tax on imports from outside the EU to prevent carbon leakage."
+   },
+   {
+    "term": "Internal carbon price",
+    "definition": "A notional price per ton of CO2 a company uses internally to steer investment decisions."
+   }
+  ],
+  "circular-economy-biodiversity": [
+   {
+    "term": "Circular economy",
+    "definition": "An economic model aimed at retaining the value of materials and products through reuse, repair and recycling."
+   },
+   {
+    "term": "Linear economy",
+    "definition": "The traditional 'take-make-waste' model the circular economy pushes against."
+   },
+   {
+    "term": "Ellen MacArthur Foundation",
+    "definition": "The leading non-profit advancing the global transition to a circular economy."
+   },
+   {
+    "term": "Natural capital",
+    "definition": "The stock of natural resources and ecosystem services on which economic activity depends."
+   },
+   {
+    "term": "Ecosystem services",
+    "definition": "The benefits nature provides to people (e.g. pollination, water purification, climate regulation)."
+   },
+   {
+    "term": "Biodiversity loss",
+    "definition": "The decline in the variety of species and ecosystems, recognised as a financial risk under ESRS E4 and TNFD."
+   },
+   {
+    "term": "Extended producer responsibility (EPR)",
+    "definition": "The principle that producers remain responsible for a product's environmental impact after sale, including its waste phase."
+   },
+   {
+    "term": "EU Nature Restoration Law",
+    "definition": "EU legislation requiring member states to restore degraded ecosystems."
+   },
+   {
+    "term": "Material Circularity Indicator",
+    "definition": "A measurement method (Ellen MacArthur Foundation) quantifying how circular a product or company is."
+   },
+   {
+    "term": "Cradle-to-cradle",
+    "definition": "A design philosophy where products are designed so materials fully return to a biological or technical cycle after use."
+   },
+   {
+    "term": "EUDR (deforestation-free supply chains)",
+    "definition": "An EU regulation requiring companies to prove products (e.g. cocoa, soy, timber) don't come from deforested land."
+   },
+   {
+    "term": "Nature dependency",
+    "definition": "The extent to which business activities and profit rely on healthy ecosystems, core to TNFD analysis."
+   }
+  ],
+  "social-issues-human-rights": [
+   {
+    "term": "Modern slavery",
+    "definition": "An umbrella term for slavery, human trafficking, forced labour and child labour."
+   },
+   {
+    "term": "Child labour",
+    "definition": "Work that harms a child's development, health or schooling."
+   },
+   {
+    "term": "Social dialogue",
+    "definition": "Consultation between employers, worker representatives and government over working conditions."
+   },
+   {
+    "term": "DEI (Diversity, Equity & Inclusion)",
+    "definition": "Policy aimed at diversity, equity and inclusion within an organisation."
+   },
+   {
+    "term": "Social audit",
+    "definition": "A (often third-party) assessment of working conditions at a supplier against a code of conduct."
+   },
+   {
+    "term": "Human rights due diligence",
+    "definition": "The process of identifying and addressing risks of human rights violations in own operations and the value chain."
+   },
+   {
+    "term": "Forced labour",
+    "definition": "Work performed under coercion or threat of penalty, without voluntary consent."
+   },
+   {
+    "term": "Living wage",
+    "definition": "Income that provides a worker and their family a decent standard of living, often higher than the statutory minimum wage."
+   },
+   {
+    "term": "Freedom of association",
+    "definition": "Workers' right to organise and bargain collectively."
+   },
+   {
+    "term": "Pay gap",
+    "definition": "The difference in pay between groups of employees (e.g. gender pay gap), mandatory to report under ESRS S1."
+   },
+   {
+    "term": "Just transition (social perspective)",
+    "definition": "The principle that the shift to a sustainable economy must be fair, protecting jobs and communities dependent on fossil sectors."
+   },
+   {
+    "term": "Community-level grievance mechanism",
+    "definition": "A channel through which local residents or affected communities, not just employees, can raise complaints about business impact."
+   },
+   {
+    "term": "FPIC (Free, Prior and Informed Consent)",
+    "definition": "The right of indigenous communities to give informed consent in advance for projects on their land."
+   },
+   {
+    "term": "Human rights impact assessment (HRIA)",
+    "definition": "A systematic assessment of the actual and potential human rights impact of a project or business activity."
+   }
+  ],
+  "governance-anti-corruption": [
+   {
+    "term": "Corporate governance",
+    "definition": "The system of rules, practices and processes by which a company is directed and controlled."
+   },
+   {
+    "term": "Anti-corruption policy",
+    "definition": "Internal policy aimed at preventing bribery and corruption, a mandatory element of ESRS G1."
+   },
+   {
+    "term": "Board diversity",
+    "definition": "Diversity within the board of directors or supervisory board, often reported as a quantitative indicator."
+   },
+   {
+    "term": "Tone at the top",
+    "definition": "The degree to which senior management models ethical standards and compliance through its own behaviour."
+   },
+   {
+    "term": "One-tier vs. two-tier board",
+    "definition": "Two-tier separates management and oversight into two bodies; one-tier combines executive and non-executive directors on one board."
+   },
+   {
+    "term": "Say-on-pay",
+    "definition": "Shareholders' voting right on executive remuneration policy."
+   },
+   {
+    "term": "Whistleblower Directive",
+    "definition": "An EU directive mandating reporting channels and protection for whistleblowers."
+   },
+   {
+    "term": "UNGC 10 principles",
+    "definition": "The UN Global Compact's ten principles on human rights, labour, environment and anti-corruption."
+   },
+   {
+    "term": "ESG-linked executive pay",
+    "definition": "A practice tying part of executive remuneration to achieving ESG targets."
+   },
+   {
+    "term": "Shareholder activism",
+    "definition": "Shareholders using votes, resolutions or public pressure to influence a company's strategy or conduct."
+   },
+   {
+    "term": "Lobbying transparency",
+    "definition": "Disclosure of the amounts and topics involved in influencing legislation, required under ESRS G1."
+   },
+   {
+    "term": "Supplier payment terms",
+    "definition": "An ESRS G1 indicator measuring how quickly a company pays its (especially smaller) suppliers."
+   }
+  ],
+  "greenwashing-empco-ucpd": [
+   {
+    "term": "Greenwashing",
+    "definition": "Exaggerating, fabricating or under-substantiating environmental claims to create a greener image than is warranted."
+   },
+   {
+    "term": "Generic environmental claim",
+    "definition": "A vague claim (e.g. 'eco-friendly') without a recognised label or substantiation, banned under EmpCo unless demonstrably substantiated."
+   },
+   {
+    "term": "Greenwashing trigger words",
+    "definition": "Words like 'green', 'sustainable', 'eco-friendly' used without quantitative backing, carrying heightened enforcement risk."
+   },
+   {
+    "term": "EmpCo Directive",
+    "definition": "'Empowering Consumers for the Green Transition': bans specific misleading environmental and sustainability practices."
+   },
+   {
+    "term": "UCPD",
+    "definition": "Unfair Commercial Practices Directive: the broader EU directive on unfair commercial practices that EmpCo builds on."
+   },
+   {
+    "term": "Comparative environmental claim",
+    "definition": "A claim that a product is more environmentally friendly than a competitor or previous version; requires verifiable, objective substantiation."
+   },
+   {
+    "term": "Future environmental performance claim",
+    "definition": "A claim about future sustainability goals; permitted under EmpCo only with a concrete, time-bound implementation plan."
+   },
+   {
+    "term": "Substantiation",
+    "definition": "The requirement that every environmental claim be backed by verifiable, up-to-date evidence."
+   },
+   {
+    "term": "Sustainability label",
+    "definition": "Permitted under EmpCo only if based on an official certification scheme or established by a public authority."
+   },
+   {
+    "term": "Greenhushing",
+    "definition": "Deliberately staying silent about sustainability performance for fear of criticism or legal risk - the mirror image of greenwashing."
+   },
+   {
+    "term": "National enforcement authority (EmpCo)",
+    "definition": "The consumer authority each member state designates to oversee compliance and impose fines."
+   },
+   {
+    "term": "Green Claims Directive (proposal)",
+    "definition": "An additional EU proposal that would require prior verification of explicit green claims by an independent party."
+   },
+   {
+    "term": "Carbon-neutral claim (EmpCo ban)",
+    "definition": "Claims based on emissions offsetting are banned under EmpCo unless explicitly explained and substantiated."
+   },
+   {
+    "term": "Product-level vs. company-level claim",
+    "definition": "The distinction determining the level of evidence and scope of substantiation required."
+   }
+  ],
+  "key-players-institutions": [
+   {
+    "term": "EFRAG",
+    "definition": "Develops the ESRS on behalf of the European Commission."
+   },
+   {
+    "term": "ESMA",
+    "definition": "European Securities and Markets Authority: the EU's capital markets supervisor, overseeing SFDR/Taxonomy compliance."
+   },
+   {
+    "term": "European Commission",
+    "definition": "Initiates and implements CSRD, CSDDD, SFDR, the Taxonomy and EmpCo."
+   },
+   {
+    "term": "ISSB",
+    "definition": "Sets IFRS S1 and S2 for global capital markets."
+   },
+   {
+    "term": "GRI",
+    "definition": "The oldest and most widely used voluntary sustainability reporting standard."
+   },
+   {
+    "term": "CDP",
+    "definition": "Runs the world's largest voluntary environmental disclosure system for companies and cities."
+   },
+   {
+    "term": "UN Global Compact",
+    "definition": "The largest voluntary corporate sustainability initiative, built on 10 principles."
+   },
+   {
+    "term": "B Lab",
+    "definition": "Awards B Corp certification to companies meeting strict social/environmental standards."
+   },
+   {
+    "term": "MSCI ESG Research",
+    "definition": "One of the largest providers of ESG ratings (AAA-CCC) for investors."
+   },
+   {
+    "term": "SASB",
+    "definition": "Developed sector-specific, financially material standards; folded into the ISSB structure since 2022."
+   },
+   {
+    "term": "TCFD",
+    "definition": "A task force that in 2017 delivered the climate risk reporting framework underpinning IFRS S2 and ESRS E1."
+   },
+   {
+    "term": "TNFD",
+    "definition": "A task force analogous to TCFD, focused on nature and biodiversity risk."
+   },
+   {
+    "term": "PRI",
+    "definition": "A UN-supported network of investors committed to responsible investment."
+   },
+   {
+    "term": "Sustainalytics",
+    "definition": "Measures companies' unmanaged ESG risk on a scale from 0 (low) to 40+ (severe)."
+   },
+   {
+    "term": "IFRS Foundation",
+    "definition": "The parent body of both the financial IASB and the sustainability-focused ISSB."
+   },
+   {
+    "term": "OECD",
+    "definition": "Publishes the OECD Guidelines for Multinational Enterprises, a reference framework for due diligence."
+   },
+   {
+    "term": "ILO",
+    "definition": "International Labour Organization: sets international labour standards, a reference point for CSDDD."
+   },
+   {
+    "term": "UNEP FI",
+    "definition": "A partnership between the UN and the financial sector promoting sustainable finance."
+   },
+   {
+    "term": "FSB (Financial Stability Board)",
+    "definition": "Established the TCFD in 2015 to assess climate risk to financial stability."
+   },
+   {
+    "term": "EIOPA",
+    "definition": "Oversees SFDR compliance by insurers and pension funds."
+   }
+  ],
+  "timeline-milestones": [
+   {
+    "term": "1987 - Brundtland Report",
+    "definition": "'Our Common Future' introduced the classic definition of sustainable development."
+   },
+   {
+    "term": "1997 - GRI founded",
+    "definition": "The first widely used global sustainability reporting standard."
+   },
+   {
+    "term": "2000 - UN Global Compact launched",
+    "definition": "The first large-scale voluntary code of conduct for companies worldwide."
+   },
+   {
+    "term": "2015 (Sep) - SDGs adopted",
+    "definition": "17 goals shaping the global sustainability agenda through 2030."
+   },
+   {
+    "term": "2015 (Dec) - Paris Agreement",
+    "definition": "A global deal to limit warming to well below 2 degrees, the basis for net-zero targets."
+   },
+   {
+    "term": "2006 - PRI launched",
+    "definition": "Introduced ESG principles specifically for institutional investors."
+   },
+   {
+    "term": "2014 - NFRD adopted",
+    "definition": "The first EU requirement for non-financial reporting by large companies, the CSRD's predecessor."
+   },
+   {
+    "term": "2017 - TCFD recommendations published",
+    "definition": "Laid the groundwork for climate risk reporting later echoed in IFRS S2 and ESRS E1."
+   },
+   {
+    "term": "2019 (Dec) - European Green Deal launched",
+    "definition": "The EU's overarching strategy to reach climate neutrality by 2050, the framework for CSRD/CSDDD/Taxonomy."
+   },
+   {
+    "term": "2020 - EU Taxonomy Regulation",
+    "definition": "Defines what counts as an 'environmentally sustainable' economic activity."
+   },
+   {
+    "term": "2021 (Mar) - SFDR applies",
+    "definition": "Requires financial market participants to disclose sustainability risks."
+   },
+   {
+    "term": "2021 (Nov) - ISSB creation announced",
+    "definition": "Announced at COP26, the basis for consolidating SASB and CDSB under the IFRS Foundation."
+   },
+   {
+    "term": "2022 - CSRD adopted",
+    "definition": "Replaces the NFRD, extending the reporting requirement to roughly 50,000 EU companies."
+   },
+   {
+    "term": "2023 (Jun) - IFRS S1 and S2 published",
+    "definition": "The ISSB's first global sustainability and climate reporting standards."
+   },
+   {
+    "term": "2024 (Jan) - First CSRD reports",
+    "definition": "Start of the phased rollout, beginning with large listed companies (FY2024)."
+   },
+   {
+    "term": "2024 (Spring) - CSDDD adopted",
+    "definition": "Requires due diligence on human rights and the environment across the value chain, with civil liability."
+   },
+   {
+    "term": "2024 (Mar) - EmpCo Directive adopted",
+    "definition": "Bans vague or unsubstantiated environmental claims in consumer advertising."
+   },
+   {
+    "term": "2026 (Sep) - EmpCo becomes applicable",
+    "definition": "The transposition deadline after which member states must actively enforce the directive."
+   },
+   {
+    "term": "2021 - GRI Universal Standards revised",
+    "definition": "Explicitly introduces the double materiality principle into GRI."
+   },
+   {
+    "term": "2023 (Jan) - First ESRS sets published",
+    "definition": "Concrete reporting requirements (E1-E5, S1-S4, G1) companies must report against under CSRD."
+   },
+   {
+    "term": "2027 (indicative) - CSDDD applies to largest companies",
+    "definition": "The start of application for the largest companies under the phased rollout."
+   },
+   {
+    "term": "2028 (indicative) - 'Reasonable assurance' under CSRD",
+    "definition": "The planned tightening of assurance requirements from limited to reasonable."
+   }
+  ]
+ },
+ "pairs": [
+  {
+   "moduleId": "csrd-esrs",
+   "optionA": "CSRD",
+   "optionB": "NFRD",
+   "correctIndex": 0,
+   "statement": "Replaced and expanded the 2014 NFRD with mandatory assurance, ESRS, and digital tagging (XBRL) — its predecessor had none of these.",
+   "explanation": "CSRD replaces and expands the 2014 NFRD with mandatory assurance, ESRS, and digital tagging (XBRL); NFRD had no mandatory standards."
+  },
+  {
+   "moduleId": "esg-fundamentals",
+   "optionA": "Materiality",
+   "optionB": "Double materiality",
+   "correctIndex": 1,
+   "statement": "Specifies two required directions of assessment — impact and financial — rather than just being 'relevance' in general.",
+   "explanation": "Materiality is relevance in general; double materiality specifies two directions (impact + financial) as required under CSRD."
+  },
+  {
+   "moduleId": "climate-carbon-accounting",
+   "optionA": "Carbon neutral",
+   "optionB": "Net zero",
+   "correctIndex": 0,
+   "statement": "Can be achieved by offsetting emissions elsewhere, without necessarily reducing them first.",
+   "explanation": "Carbon neutral often offsets emissions without a reduction requirement; net zero requires deep reduction before any remaining offsetting."
+  },
+  {
+   "moduleId": "climate-carbon-accounting",
+   "optionA": "Scope 2 location-based",
+   "optionB": "Scope 2 market-based",
+   "correctIndex": 1,
+   "statement": "Accounts for the emissions tied to the specific energy contracts a company has purchased, rather than the grid's average mix.",
+   "explanation": "Location-based uses the grid's average emission factor; market-based accounts for specific energy contracts."
+  },
+  {
+   "moduleId": "sustainable-finance-ethical-investing",
+   "optionA": "Green bond",
+   "optionB": "Sustainability-linked bond",
+   "correctIndex": 0,
+   "statement": "Its proceeds must be earmarked for specific green projects.",
+   "explanation": "Green bond proceeds are earmarked for green projects; an SLB's coupon is tied to sustainability KPIs, regardless of use of proceeds."
+  },
+  {
+   "moduleId": "sfdr",
+   "optionA": "SFDR Article 8",
+   "optionB": "SFDR Article 9",
+   "correctIndex": 1,
+   "statement": "Has sustainable investment as its explicit objective — the 'dark green' category.",
+   "explanation": "Article 8 promotes environmental/social characteristics ('light green'); Article 9 has sustainable investment as an explicit objective ('dark green')."
+  },
+  {
+   "moduleId": "gri-standards",
+   "optionA": "GRI",
+   "optionB": "ESRS",
+   "correctIndex": 0,
+   "statement": "A global, voluntary standard focused on a company's impact on the world.",
+   "explanation": "GRI is global and voluntary, focused on impact; ESRS is mandatory within the EU (CSRD) and based on double materiality."
+  },
+  {
+   "moduleId": "other-reporting-standards",
+   "optionA": "TCFD",
+   "optionB": "TNFD",
+   "correctIndex": 1,
+   "statement": "Extends the same risk-disclosure structure as its climate counterpart to nature and biodiversity.",
+   "explanation": "TCFD focuses on climate-related risk; TNFD extends the same structure to nature and biodiversity risk."
+  },
+  {
+   "moduleId": "other-reporting-standards",
+   "optionA": "SASB",
+   "optionB": "GRI",
+   "correctIndex": 0,
+   "statement": "Sector-specific and investor-focused, built around financial materiality rather than broad stakeholder impact.",
+   "explanation": "SASB is sector-specific and investor-focused (financial materiality); GRI is broad and stakeholder-focused (impact materiality)."
+  },
+  {
+   "moduleId": "csddd",
+   "optionA": "CSDDD",
+   "optionB": "CSRD",
+   "correctIndex": 0,
+   "statement": "Requires companies to actually conduct due diligence on human rights and environmental risks across their value chain — not just report on them.",
+   "explanation": "CSDDD requires companies to conduct due diligence on human rights/environment in the value chain; CSRD only requires reporting on it."
+  },
+  {
+   "moduleId": "sustainable-finance-ethical-investing",
+   "optionA": "Impact investing",
+   "optionB": "ESG integration",
+   "correctIndex": 0,
+   "statement": "Deliberately seeks measurable positive impact alongside financial return, not just risk management.",
+   "explanation": "Impact investing deliberately seeks measurable positive impact alongside return; ESG integration factors ESG into risk/opportunity analysis without impact as an explicit goal."
+  },
+  {
+   "moduleId": "sustainable-finance-ethical-investing",
+   "optionA": "Negative screening",
+   "optionB": "Best-in-class",
+   "correctIndex": 1,
+   "statement": "Selects the top ESG performers within each sector, rather than excluding entire sectors outright.",
+   "explanation": "Negative screening excludes sectors/companies; best-in-class selects the top ESG performers within each sector, without exclusion."
+  },
+  {
+   "moduleId": "climate-carbon-accounting",
+   "optionA": "Carbon offsets",
+   "optionB": "Carbon removal",
+   "correctIndex": 0,
+   "statement": "Compensates for emissions elsewhere — often avoided emissions — rather than actually extracting CO2 from the atmosphere.",
+   "explanation": "Offsets compensate for emissions elsewhere (often avoided emissions); removals actually extract CO2 from the atmosphere."
+  },
+  {
+   "moduleId": "eu-taxonomy",
+   "optionA": "Taxonomy eligibility",
+   "optionB": "Taxonomy alignment",
+   "correctIndex": 1,
+   "statement": "Means an activity doesn't just qualify for the EU Taxonomy list — it actually meets the technical screening criteria and does no significant harm.",
+   "explanation": "Eligibility means an activity is listed in the taxonomy; alignment means it also actually meets the technical screening criteria and DNSH."
+  },
+  {
+   "moduleId": "eu-taxonomy",
+   "optionA": "Substantial contribution",
+   "optionB": "DNSH",
+   "correctIndex": 0,
+   "statement": "Means an activity materially advances at least one environmental objective.",
+   "explanation": "Substantial contribution means an activity materially advances one environmental objective; DNSH means it must not significantly harm any other."
+  },
+  {
+   "moduleId": "greenwashing-empco-ucpd",
+   "optionA": "EmpCo Directive",
+   "optionB": "Green Claims Directive",
+   "correctIndex": 1,
+   "statement": "Adds a requirement for independent verification of explicit environmental claims before a company can make them.",
+   "explanation": "EmpCo bans specific misleading practices under consumer law; the Green Claims Directive adds independent verification requirements for explicit green claims."
+  },
+  {
+   "moduleId": "climate-carbon-accounting",
+   "optionA": "Voluntary carbon market",
+   "optionB": "Compliance carbon market",
+   "correctIndex": 0,
+   "statement": "Companies buy carbon credits by choice, with no legal obligation to do so.",
+   "explanation": "In the voluntary market, companies buy credits by choice; the compliance market (e.g. EU ETS) is legally mandatory."
+  },
+  {
+   "moduleId": "csrd-esrs",
+   "optionA": "Limited assurance",
+   "optionB": "Reasonable assurance",
+   "correctIndex": 1,
+   "statement": "A stricter level of audit confidence than what CSRD currently requires — planned as a future step up.",
+   "explanation": "Limited assurance gives moderate confidence (the current CSRD requirement); reasonable assurance is stricter and planned as a future step."
+  },
+  {
+   "moduleId": "climate-carbon-accounting",
+   "optionA": "Stranded assets",
+   "optionB": "Transition risk",
+   "correctIndex": 0,
+   "statement": "Assets — like fossil fuel reserves — that lose value specifically because of the transition to a low-carbon economy.",
+   "explanation": "Stranded assets are assets that lose value due to the transition (e.g. fossil reserves); transition risk is the broader category of financial risk around it."
+  },
+  {
+   "moduleId": "climate-carbon-accounting",
+   "optionA": "Physical risk",
+   "optionB": "Transition risk",
+   "correctIndex": 1,
+   "statement": "The broader category of financial risk from an economy shifting away from fossil fuels, rather than the direct physical damage climate change itself causes.",
+   "explanation": "Physical risk is direct damage from climate change; transition risk is financial risk from shifting to a low-carbon economy."
+  },
+  {
+   "moduleId": "key-players-institutions",
+   "optionA": "UN Global Compact",
+   "optionB": "PRI",
+   "correctIndex": 0,
+   "statement": "Targets companies broadly, around ten universal principles.",
+   "explanation": "UNGC targets companies broadly (10 principles); PRI specifically targets institutional investors and asset managers."
+  },
+  {
+   "moduleId": "sustainable-finance-ethical-investing",
+   "optionA": "B Corp certification",
+   "optionB": "ESG rating",
+   "correctIndex": 1,
+   "statement": "An ongoing, externally assigned score — not a one-time, whole-company certification.",
+   "explanation": "B Corp is a voluntary whole-company certification by B Lab; an ESG rating is an ongoing, externally assigned score."
+  },
+  {
+   "moduleId": "key-players-institutions",
+   "optionA": "Sustainalytics risk score",
+   "optionB": "MSCI ESG rating",
+   "correctIndex": 0,
+   "statement": "Measures a company's unmanaged ESG risk, where a lower score is better.",
+   "explanation": "Sustainalytics measures unmanaged ESG risk (lower is better); MSCI assigns a letter score (AAA-CCC) based on relative sector performance."
+  },
+  {
+   "moduleId": "social-issues-human-rights",
+   "optionA": "Modern slavery",
+   "optionB": "Forced labour",
+   "correctIndex": 0,
+   "statement": "The umbrella term covering trafficking, child labour, and other severe forms of exploitation.",
+   "explanation": "Modern slavery is the umbrella term (including trafficking, child labour); forced labour is one specific form of it (ILO Convention 29)."
+  },
+  {
+   "moduleId": "social-issues-human-rights",
+   "optionA": "Living wage",
+   "optionB": "Minimum wage",
+   "correctIndex": 0,
+   "statement": "The income actually needed for a decent standard of living — usually higher than the legal minimum.",
+   "explanation": "Minimum wage is the statutory floor; living wage is the income needed for a decent life, often higher."
+  },
+  {
+   "moduleId": "governance-anti-corruption",
+   "optionA": "Say-on-pay",
+   "optionB": "Shareholder activism",
+   "correctIndex": 0,
+   "statement": "A shareholder vote specifically on executive remuneration policy.",
+   "explanation": "Say-on-pay is the vote on remuneration policy; shareholder activism is the broader practice of influencing strategy or conduct."
+  },
+  {
+   "moduleId": "other-reporting-standards",
+   "optionA": "Integrated reporting",
+   "optionB": "Sustainability reporting",
+   "correctIndex": 1,
+   "statement": "Can stand on its own, separate from the company's financial reporting.",
+   "explanation": "Integrated reporting combines financial and non-financial value creation into one narrative; sustainability reporting can stand apart from it."
+  },
+  {
+   "moduleId": "climate-carbon-accounting",
+   "optionA": "CBAM",
+   "optionB": "EU ETS",
+   "correctIndex": 0,
+   "statement": "Applies a comparable carbon price to imports from outside the EU, rather than to companies operating inside it.",
+   "explanation": "EU ETS is the internal carbon market for EU companies; CBAM applies a comparable carbon price to imports from outside the EU."
+  },
+  {
+   "moduleId": "climate-carbon-accounting",
+   "optionA": "Carbon leakage",
+   "optionB": "Scope 3 emissions",
+   "correctIndex": 1,
+   "statement": "The broader category of indirect emissions across a company's entire value chain.",
+   "explanation": "Carbon leakage is relocating production to countries with laxer climate policy; Scope 3 is the broader category of indirect emissions across the value chain."
+  },
+  {
+   "moduleId": "other-reporting-standards",
+   "optionA": "ISSB",
+   "optionB": "EFRAG",
+   "correctIndex": 1,
+   "statement": "Sets the EU-specific, mandatory ESRS standards on behalf of the European Commission.",
+   "explanation": "ISSB sets global, investor-focused standards (IFRS S1/S2); EFRAG sets the EU-specific, mandatory ESRS for the European Commission."
+  }
+ ]
+}
