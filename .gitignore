@@ -4,6 +4,12 @@
 *.pyc
 *.swp
 .DS_Store
+
+# Debugging/analysis scratch files, not part of the app
+scratch_*.png
+live_logcat.txt
+SustainWise_broncode.md
+.claude/
 .atom/
 .build/
 .buildlog/

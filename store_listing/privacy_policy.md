@@ -27,10 +27,6 @@ This data is never transmitted anywhere. It is not sent to the developer, to any
 - No personal data (name, email, location, contacts, etc.) is requested or collected.
 - No data is shared with third parties, because no data leaves your device.
 
-## "Request free scan"
-
-The app's Profile screen includes a button offering a free website/marketing-copy scan for greenwashing risk. At present, tapping this button does not collect or transmit any information — it is a placeholder acknowledgment only. If this feature is activated in a future update to actually process a request (for example, collecting an email address or a URL to scan), this privacy policy will be updated first to describe exactly what is collected and why, and that update will be reflected in the app's version history.
-
 ## Children's privacy
 
 SustainWise is intended for a general professional and adult audience (sustainability, compliance, and finance topics) and is not directed at children. It does not knowingly collect data from anyone, including children, because it does not collect data from any user.

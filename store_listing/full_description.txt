@@ -13,8 +13,10 @@ HOW IT WORKS
 • Flashcards — flip a term to reveal its real definition, then rate yourself so the app knows what to reinforce
 • Quiz — multiple-choice questions built from real definitions, with an explanation every time, right or wrong
 • Confusable Pairs — a harder round for the acronyms and concepts people mix up most (CSRD vs. NFRD, GRI vs. ESRS, and more)
-• Streaks & XP — daily practice that actually builds a habit, with your progress saved on your device
+• Streaks, XP & levels — daily practice that actually builds a habit, with your progress saved on your device
+• Daily goal & achievements — a real reason to open the app today, judged only against your own progress
 • A real learning path — modules unlock as you go, grouped into units from foundational ESG concepts through EU reporting law, sustainable finance, climate accounting, governance, and more
+• Expert Challenge — 25 genuinely hard questions on thresholds, edge cases and the fine print, unlocked once you've completed the full curriculum
 
 WHAT'S INSIDE
 Real, curated content — not generic AI summaries — covering CSRD & ESRS, CSDDD, SFDR, the EU Taxonomy, GRI Standards, TCFD/TNFD/SASB/ISSB, sustainable and ethical investing, climate & carbon accounting, circular economy & biodiversity, human rights & social issues, governance & anti-corruption, greenwashing regulation, and the key institutions and milestones behind it all.

@@ -1,21 +1,25 @@
 import 'package:flutter/material.dart';
+import '../services/app_feedback.dart';
 import '../theme/app_theme.dart';
 
-enum AppTab { path, stats, profile }
+enum AppTab { path, glossary, stats, profile }
 
-/// The Path/Stats/Profile tab bar, shared by every top-level screen so its
-/// behavior (and which tab lights up) never drifts between them.
+/// The Path/Glossary/Stats/Profile tab bar, shared by every top-level
+/// screen so its behavior (and which tab lights up) never drifts between
+/// them.
 class AppBottomNav extends StatelessWidget {
   const AppBottomNav({
     super.key,
     required this.current,
     required this.onPathTap,
+    required this.onGlossaryTap,
     required this.onStatsTap,
     required this.onProfileTap,
   });
 
   final AppTab current;
   final VoidCallback onPathTap;
+  final VoidCallback onGlossaryTap;
   final VoidCallback onStatsTap;
   final VoidCallback onProfileTap;
 
@@ -29,9 +33,30 @@ class AppBottomNav extends StatelessWidget {
         height: 60,
         child: Row(
           children: [
-            _navItem(icon: Icons.route, label: 'Path', selected: current == AppTab.path, onTap: onPathTap),
-            _navItem(icon: Icons.bar_chart_outlined, label: 'Stats', selected: current == AppTab.stats, onTap: onStatsTap),
-            _navItem(icon: Icons.person_outline, label: 'Profile', selected: current == AppTab.profile, onTap: onProfileTap),
+            _navItem(
+              icon: Icons.route,
+              label: 'Path',
+              selected: current == AppTab.path,
+              onTap: onPathTap,
+            ),
+            _navItem(
+              icon: Icons.menu_book_outlined,
+              label: 'Glossary',
+              selected: current == AppTab.glossary,
+              onTap: onGlossaryTap,
+            ),
+            _navItem(
+              icon: Icons.bar_chart_outlined,
+              label: 'Stats',
+              selected: current == AppTab.stats,
+              onTap: onStatsTap,
+            ),
+            _navItem(
+              icon: Icons.person_outline,
+              label: 'Profile',
+              selected: current == AppTab.profile,
+              onTap: onProfileTap,
+            ),
           ],
         ),
       ),
@@ -47,13 +72,23 @@ class AppBottomNav extends StatelessWidget {
     final color = selected ? AppColors.teal : AppColors.inkSoft;
     return Expanded(
       child: InkWell(
-        onTap: onTap,
+        onTap: () {
+          AppFeedback.tap();
+          onTap();
+        },
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(icon, color: color, size: 22),
             const SizedBox(height: 2),
-            Text(label, style: TextStyle(color: color, fontSize: 12.5, fontWeight: selected ? FontWeight.w700 : FontWeight.w500)),
+            Text(
+              label,
+              style: TextStyle(
+                color: color,
+                fontSize: 12.5,
+                fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+              ),
+            ),
           ],
         ),
       ),
@@ -63,6 +98,9 @@ class AppBottomNav extends StatelessWidget {
 
 void showComingSoon(BuildContext context, String label) {
   ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(content: Text('$label — coming soon'), duration: const Duration(seconds: 1)),
+    SnackBar(
+      content: Text('$label — coming soon'),
+      duration: const Duration(seconds: 1),
+    ),
   );
 }

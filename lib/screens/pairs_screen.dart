@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../data/models.dart';
 import '../data/progress_store.dart';
+import '../services/app_feedback.dart';
 import '../theme/app_theme.dart';
+import '../widgets/animated_counter.dart';
+import '../widgets/app_route.dart';
 import 'lesson_complete_screen.dart';
 
 /// Confusable-pairs ("which is which?") round — a clue statement that
@@ -38,21 +41,27 @@ class _PairsScreenState extends State<PairsScreen> {
 
   void _select(int i) {
     if (_answered) return;
+    final isCorrect = i == _current.correctIndex;
+    isCorrect ? AppFeedback.correct() : AppFeedback.incorrect();
     setState(() {
       _selected = i;
-      if (i == _current.correctIndex) _correctCount++;
+      if (isCorrect) _correctCount++;
     });
   }
 
   void _continue() {
+    AppFeedback.tap();
     if (_index >= widget.pairs.length - 1) {
-      ProgressStore.instance.completeLesson(moduleId: widget.moduleId);
+      final totalCorrect = widget.priorCorrect + _correctCount;
+      final totalQuestions = widget.priorTotal + widget.pairs.length;
+      ProgressStore.instance.completeLesson(
+        moduleId: widget.moduleId,
+        correct: totalCorrect,
+        total: totalQuestions,
+      );
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => LessonCompleteScreen(
-            correct: widget.priorCorrect + _correctCount,
-            total: widget.priorTotal + widget.pairs.length,
-          ),
+        appRoute(
+          LessonCompleteScreen(correct: totalCorrect, total: totalQuestions),
         ),
       );
       return;
@@ -74,16 +83,19 @@ class _PairsScreenState extends State<PairsScreen> {
               children: [
                 IconButton(
                   icon: const Icon(Icons.close, color: AppColors.inkSoft),
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () {
+                    AppFeedback.tap();
+                    Navigator.of(context).pop();
+                  },
                 ),
                 Expanded(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(99),
-                    child: LinearProgressIndicator(
+                    child: AnimatedProgressBar(
                       value: _progress.clamp(0, 1),
                       minHeight: 8,
                       backgroundColor: AppColors.border,
-                      valueColor: const AlwaysStoppedAnimation(AppColors.teal),
+                      valueColor: AppColors.teal,
                     ),
                   ),
                 ),
@@ -127,13 +139,22 @@ class _PairsScreenState extends State<PairsScreen> {
                         border: Border.all(color: AppColors.border),
                         borderRadius: BorderRadius.circular(18),
                         boxShadow: [
-                          BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 16, offset: const Offset(0, 6)),
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.06),
+                            blurRadius: 16,
+                            offset: const Offset(0, 6),
+                          ),
                         ],
                       ),
                       child: Text(
                         _current.statement,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.ink, height: 1.45),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.ink,
+                          height: 1.45,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24),
@@ -194,7 +215,11 @@ class _PairsScreenState extends State<PairsScreen> {
                         child: Text(
                           _current.explanation,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(fontSize: 13.5, color: AppColors.ink, height: 1.45),
+                          style: const TextStyle(
+                            fontSize: 13.5,
+                            color: AppColors.ink,
+                            height: 1.45,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 18),
@@ -205,12 +230,19 @@ class _PairsScreenState extends State<PairsScreen> {
                           style: FilledButton.styleFrom(
                             backgroundColor: AppColors.teal,
                             padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                           onPressed: _continue,
                           child: Text(
-                            _index >= widget.pairs.length - 1 ? 'Finish' : 'Continue',
-                            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                            _index >= widget.pairs.length - 1
+                                ? 'Finish'
+                                : 'Continue',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 15,
+                            ),
                           ),
                         ),
                       ),
@@ -236,7 +268,12 @@ class _PairsScreenState extends State<PairsScreen> {
 enum _PairState { neutral, correct, wrong }
 
 class _PairChip extends StatelessWidget {
-  const _PairChip({super.key, required this.label, required this.state, required this.onTap});
+  const _PairChip({
+    super.key,
+    required this.label,
+    required this.state,
+    required this.onTap,
+  });
 
   final String label;
   final _PairState state;
@@ -276,7 +313,11 @@ class _PairChip extends StatelessWidget {
           child: Text(
             label,
             textAlign: TextAlign.center,
-            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 15, color: textColor),
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 15,
+              color: textColor,
+            ),
           ),
         ),
       ),

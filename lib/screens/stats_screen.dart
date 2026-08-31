@@ -4,8 +4,10 @@ import '../data/models.dart';
 import '../data/progress_store.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_bottom_nav.dart';
+import '../widgets/app_route.dart';
 import '../widgets/progress_ring.dart';
 import '../widgets/week_activity_chart.dart';
+import 'glossary_screen.dart';
 import 'profile_screen.dart';
 
 /// Stats — the detail view behind the numbers Home/Profile only summarize:
@@ -14,20 +16,8 @@ import 'profile_screen.dart';
 class StatsScreen extends StatelessWidget {
   const StatsScreen({super.key});
 
-  static const _weekActivity = [
-    DayActivity('Mo', 0.35),
-    DayActivity('Tu', 0.55),
-    DayActivity('We', 0.0),
-    DayActivity('Th', 0.70),
-    DayActivity('Fr', 0.45),
-    DayActivity('Sa', 0.85),
-    DayActivity('Su', 1.0, isToday: true),
-  ];
-
   @override
   Widget build(BuildContext context) {
-    final activeDays = _weekActivity.where((d) => d.level > 0).length;
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -36,98 +26,162 @@ class StatsScreen extends StatelessWidget {
       ),
       child: ListenableBuilder(
         listenable: ProgressStore.instance,
-        builder: (context, _) => Scaffold(
-        backgroundColor: AppColors.bg,
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Your stats', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: AppColors.ink)),
-                const SizedBox(height: 4),
-                const Text(
-                  'How your practice is trending, and how far you are on the path.',
-                  style: TextStyle(fontSize: 13, color: AppColors.inkSoft, height: 1.4),
-                ),
-                const SizedBox(height: 20),
-                Row(
+        builder: (context, _) {
+          // Computed inside the builder (not hoisted up into the outer
+          // build()) so it re-reads live on every ProgressStore
+          // notification, the same as everything else on this screen —
+          // not just once when the screen is first pushed.
+          final weekActivity = buildWeekActivity(
+            xpPerDay: ProgressStore.instance.thisWeekXp,
+            todayIndex: ProgressStore.instance.todayWeekdayIndex,
+            goalXp: ProgressStore.dailyGoalXp,
+          );
+          final activeDays = weekActivity.where((d) => d.level > 0).length;
+          return Scaffold(
+            backgroundColor: AppColors.bg,
+            body: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: _HeadlineTile(
-                        icon: Icons.local_fire_department,
-                        iconColor: AppColors.amber,
-                        value: '${ProgressStore.instance.streakDays}',
-                        label: 'day streak',
-                        caption: 'Best: ${ProgressStore.instance.longestStreak} days',
+                    const Text(
+                      'Your stats',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.ink,
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: _HeadlineTile(
-                        icon: Icons.gps_fixed,
-                        iconColor: AppColors.teal,
-                        value: '${MockData.overallAccuracy.round()}%', // not yet tracked per-session
-                        label: 'overall accuracy',
-                        caption: 'Across all quizzes',
+                    const SizedBox(height: 4),
+                    const Text(
+                      'How your practice is trending, and how far you are on the path.',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: AppColors.inkSoft,
+                        height: 1.4,
                       ),
                     ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    border: Border.all(color: AppColors.border),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _HeadlineTile(
+                            icon: Icons.local_fire_department,
+                            iconColor: AppColors.amber,
+                            value: '${ProgressStore.instance.streakDays}',
+                            label: 'day streak',
+                            caption:
+                                'Best: ${ProgressStore.instance.longestStreak} days',
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: _HeadlineTile(
+                            icon: Icons.gps_fixed,
+                            iconColor: AppColors.teal,
+                            value: ProgressStore.instance.esgFluency == null
+                                ? '—'
+                                : '${ProgressStore.instance.esgFluency!.round()}%',
+                            label: 'overall accuracy',
+                            caption: ProgressStore.instance.esgFluency == null
+                                ? 'Complete a module to see this'
+                                : 'Across completed modules & Expert Challenge',
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        border: Border.all(color: AppColors.border),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('This week', style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: AppColors.ink)),
-                          Text(
-                            '$activeDays/7 days',
-                            style: const TextStyle(fontFamily: 'monospace', fontSize: 12, color: AppColors.inkSoft),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text(
+                                'This week',
+                                style: TextStyle(
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.ink,
+                                ),
+                              ),
+                              Text(
+                                '$activeDays/7 days',
+                                style: const TextStyle(
+                                  fontFamily: 'monospace',
+                                  fontSize: 12,
+                                  color: AppColors.inkSoft,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 14),
+                          WeekActivityChart(
+                            days: weekActivity,
+                            trackHeight: 56,
                           ),
                         ],
                       ),
-                      const SizedBox(height: 14),
-                      const WeekActivityChart(days: _weekActivity, trackHeight: 56),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(height: 24),
+                    const Text(
+                      'Progress by unit',
+                      style: TextStyle(
+                        fontSize: 15.5,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.ink,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    for (var i = 0; i < MockData.units.length; i++)
+                      _buildUnitProgress(MockData.units[i], i),
+                    _buildExpertChallengeProgress(),
+                  ],
                 ),
-                const SizedBox(height: 24),
-                const Text('Progress by unit', style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w800, color: AppColors.ink)),
-                const SizedBox(height: 12),
-                for (final unit in MockData.units) _buildUnitProgress(unit),
-              ],
+              ),
             ),
-          ),
-        ),
-        bottomNavigationBar: AppBottomNav(
-          current: AppTab.stats,
-          onPathTap: () => Navigator.of(context).pop(),
-          onStatsTap: () {},
-          onProfileTap: () => Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const ProfileScreen()),
-          ),
-        ),
-        ),
+            bottomNavigationBar: AppBottomNav(
+              current: AppTab.stats,
+              onPathTap: () => Navigator.of(context).pop(),
+              onGlossaryTap: () => Navigator.of(
+                context,
+              ).pushReplacement(appRoute(const GlossaryScreen())),
+              onStatsTap: () {},
+              onProfileTap: () => Navigator.of(
+                context,
+              ).pushReplacement(appRoute(const ProfileScreen())),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildUnitProgress(LearningUnit unit) {
-    final completed = unit.modules.where((m) => ProgressStore.instance.statusFor(m.id) != ModuleStatus.available).length;
+  Widget _buildUnitProgress(LearningUnit unit, int index) {
+    // Only ModuleStatus.done counts as "learned" — a module that's merely
+    // unlocked (current) hasn't actually been finished yet, even though a
+    // learner can now reach it.
+    final completed = unit.modules
+        .where(
+          (m) => ProgressStore.instance.statusFor(m.id) == ModuleStatus.done,
+        )
+        .length;
     final total = unit.modules.length;
     final termsLearned = unit.modules
-        .where((m) => ProgressStore.instance.statusFor(m.id) != ModuleStatus.available)
+        .where(
+          (m) => ProgressStore.instance.statusFor(m.id) == ModuleStatus.done,
+        )
         .fold(0, (sum, m) => sum + m.termCount);
-    final accent = unit.tint == AppColors.amberSoft ? AppColors.amberDeep : AppColors.tealDeep;
+    final accent =
+        AppColors.unitAccents[index % AppColors.unitAccents.length].fill;
     final progress = total == 0 ? 0.0 : completed / total;
 
     return Container(
@@ -152,11 +206,82 @@ class StatsScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(unit.title, style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w700, color: AppColors.ink)),
+                Text(
+                  unit.title,
+                  style: const TextStyle(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.ink,
+                  ),
+                ),
                 const SizedBox(height: 3),
                 Text(
                   '$termsLearned/${unit.totalTerms} terms learned',
-                  style: const TextStyle(fontSize: 12, color: AppColors.inkSoft),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.inkSoft,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Sits outside every unit (it unlocks only once all of them are done),
+  // so it gets its own row here rather than being folded into one — the
+  // one place in the app that otherwise made it look like completing it
+  // left no trace in the stats a learner actually checks.
+  Widget _buildExpertChallengeProgress() {
+    final store = ProgressStore.instance;
+    final completed = store.expertChallengeCompleted;
+    final unlocked = store.expertChallengeUnlocked;
+    final accuracy = store.expertChallengeAccuracy;
+    final subtitle = completed
+        ? '${(accuracy! * MockData.expertChallenge.length).round()}/${MockData.expertChallenge.length} correct — ${(accuracy * 100).round()}% accuracy'
+        : unlocked
+        ? 'Unlocked — not attempted yet'
+        : 'Complete every module above to unlock';
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        border: Border.all(color: AppColors.border),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Row(
+        children: [
+          ProgressRing(
+            percent: completed ? 100 : 0,
+            centerValue: completed ? '✓' : '—',
+            centerLabel: '',
+            size: 52,
+            fillColor: AppColors.amberDeep,
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Expert Challenge',
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.ink,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.inkSoft,
+                  ),
                 ),
               ],
             ),
@@ -196,10 +321,24 @@ class _HeadlineTile extends StatelessWidget {
         children: [
           Icon(icon, color: iconColor, size: 20),
           const SizedBox(height: 8),
-          Text(value, style: const TextStyle(fontFamily: 'monospace', fontWeight: FontWeight.w800, fontSize: 20, color: AppColors.ink)),
-          Text(label, style: const TextStyle(fontSize: 11.5, color: AppColors.inkSoft)),
+          Text(
+            value,
+            style: const TextStyle(
+              fontFamily: 'monospace',
+              fontWeight: FontWeight.w800,
+              fontSize: 20,
+              color: AppColors.ink,
+            ),
+          ),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 11.5, color: AppColors.inkSoft),
+          ),
           const SizedBox(height: 4),
-          Text(caption, style: const TextStyle(fontSize: 10.5, color: AppColors.inkSoft)),
+          Text(
+            caption,
+            style: const TextStyle(fontSize: 11.5, color: AppColors.inkSoft),
+          ),
         ],
       ),
     );

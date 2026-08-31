@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import '../data/models.dart';
 import '../data/progress_store.dart';
+import '../services/app_feedback.dart';
 import '../theme/app_theme.dart';
+import '../widgets/animated_counter.dart';
+import '../widgets/app_route.dart';
+import '../widgets/moment_badge.dart';
 import 'lesson_complete_screen.dart';
 import 'pairs_screen.dart';
 
@@ -9,7 +13,11 @@ import 'pairs_screen.dart';
 /// Answering locks the question, always reveals the correct option, and
 /// shows a one-line explanation instead of a bare right/wrong signal.
 class QuizScreen extends StatefulWidget {
-  const QuizScreen({super.key, required this.questions, required this.moduleId});
+  const QuizScreen({
+    super.key,
+    required this.questions,
+    required this.moduleId,
+  });
 
   final List<QuizQuestion> questions;
   final String moduleId;
@@ -23,27 +31,52 @@ class _QuizScreenState extends State<QuizScreen> {
   int? _selected;
   int _correctCount = 0;
 
+  // Consecutive correct answers in this quiz — resets on any wrong pick.
+  // Distinct from [_correctCount], which never goes down and drives the
+  // end-of-lesson score rather than the in-the-moment combo feedback.
+  int _combo = 0;
+  bool _justMastered = false;
+
   QuizQuestion get _current => widget.questions[_index];
   bool get _answered => _selected != null;
-  double get _progress => (_index + (_answered ? 1 : 0)) / widget.questions.length;
+  double get _progress =>
+      (_index + (_answered ? 1 : 0)) / widget.questions.length;
 
   void _selectOption(int i) {
     if (_answered) return;
+    final isCorrect = i == _current.correctIndex;
+    isCorrect ? AppFeedback.correct() : AppFeedback.incorrect();
+    final wasScheduled = ProgressStore.instance.isScheduled(_current.termId);
     setState(() {
       _selected = i;
-      if (i == _current.correctIndex) _correctCount++;
+      _justMastered = false;
+      if (isCorrect) {
+        _correctCount++;
+        _combo++;
+        ProgressStore.instance.clearMiss(_current.termId);
+        // Only a term that was actually due for review (not a first-time
+        // correct answer) can be "mastered" — clearMiss is a no-op
+        // otherwise, so gate on wasScheduled to avoid a false positive.
+        if (wasScheduled &&
+            !ProgressStore.instance.isScheduled(_current.termId))
+          _justMastered = true;
+      } else {
+        _combo = 0;
+        ProgressStore.instance.recordMiss(_current.termId);
+      }
     });
   }
 
   void _continue() {
+    AppFeedback.tap();
     if (_index >= widget.questions.length - 1) {
       final pairs = MockData.pairsFor(widget.moduleId);
       if (pairs.isNotEmpty) {
         // Quiz done — move on to the harder confusable-pairs round on the
         // same module, replacing this screen so Back returns to Home.
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-            builder: (_) => PairsScreen(
+          appRoute(
+            PairsScreen(
               pairs: pairs,
               moduleId: widget.moduleId,
               priorCorrect: _correctCount,
@@ -54,10 +87,17 @@ class _QuizScreenState extends State<QuizScreen> {
         return;
       }
       // No confusable pairs for this module — the quiz is the whole lesson.
-      ProgressStore.instance.completeLesson(moduleId: widget.moduleId);
+      ProgressStore.instance.completeLesson(
+        moduleId: widget.moduleId,
+        correct: _correctCount,
+        total: widget.questions.length,
+      );
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => LessonCompleteScreen(correct: _correctCount, total: widget.questions.length),
+        appRoute(
+          LessonCompleteScreen(
+            correct: _correctCount,
+            total: widget.questions.length,
+          ),
         ),
       );
       return;
@@ -65,6 +105,7 @@ class _QuizScreenState extends State<QuizScreen> {
     setState(() {
       _index++;
       _selected = null;
+      _justMastered = false;
     });
   }
 
@@ -79,16 +120,19 @@ class _QuizScreenState extends State<QuizScreen> {
               children: [
                 IconButton(
                   icon: const Icon(Icons.close, color: AppColors.inkSoft),
-                  onPressed: () => Navigator.of(context).pop(),
+                  onPressed: () {
+                    AppFeedback.tap();
+                    Navigator.of(context).pop();
+                  },
                 ),
                 Expanded(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(99),
-                    child: LinearProgressIndicator(
+                    child: AnimatedProgressBar(
                       value: _progress.clamp(0, 1),
                       minHeight: 8,
                       backgroundColor: AppColors.border,
-                      valueColor: const AlwaysStoppedAnimation(AppColors.teal),
+                      valueColor: AppColors.teal,
                     ),
                   ),
                 ),
@@ -103,16 +147,24 @@ class _QuizScreenState extends State<QuizScreen> {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.description_outlined, size: 14, color: AppColors.tealDeep),
+                        const Icon(
+                          Icons.description_outlined,
+                          size: 14,
+                          color: AppColors.tealDeep,
+                        ),
                         const SizedBox(width: 5),
-                        Text(
-                          _current.moduleLabel,
-                          style: const TextStyle(
-                            fontFamily: 'monospace',
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.4,
-                            color: AppColors.tealDeep,
+                        Flexible(
+                          child: Text(
+                            _current.moduleLabel,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontFamily: 'monospace',
+                              fontSize: 11.5,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: 0.4,
+                              color: AppColors.tealDeep,
+                            ),
                           ),
                         ),
                       ],
@@ -120,7 +172,12 @@ class _QuizScreenState extends State<QuizScreen> {
                     const SizedBox(height: 14),
                     Text(
                       _current.question,
-                      style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w700, color: AppColors.ink, height: 1.35),
+                      style: const TextStyle(
+                        fontSize: 19,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.ink,
+                        height: 1.35,
+                      ),
                     ),
                     const SizedBox(height: 20),
                     for (var i = 0; i < _current.options.length; i++)
@@ -135,6 +192,32 @@ class _QuizScreenState extends State<QuizScreen> {
                         ),
                       ),
                     if (_answered) ...[
+                      if (_combo >= 2) ...[
+                        Center(
+                          child: _ComboBadge(
+                            key: ValueKey(_combo),
+                            combo: _combo,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                      ],
+                      if (_justMastered) ...[
+                        Row(
+                          children: [
+                            const MomentBadge(type: MomentType.check, size: 30),
+                            const SizedBox(width: 8),
+                            const Text(
+                              'Term fully mastered!',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 13.5,
+                                color: AppColors.tealDeep,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                      ],
                       const SizedBox(height: 4),
                       Container(
                         width: double.infinity,
@@ -145,7 +228,11 @@ class _QuizScreenState extends State<QuizScreen> {
                         ),
                         child: Text(
                           _current.explanation,
-                          style: const TextStyle(fontSize: 13.5, color: AppColors.ink, height: 1.45),
+                          style: const TextStyle(
+                            fontSize: 13.5,
+                            color: AppColors.ink,
+                            height: 1.45,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 18),
@@ -156,12 +243,19 @@ class _QuizScreenState extends State<QuizScreen> {
                           style: FilledButton.styleFrom(
                             backgroundColor: AppColors.teal,
                             padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                           onPressed: _continue,
                           child: Text(
-                            _index >= widget.questions.length - 1 ? 'Finish' : 'Continue',
-                            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+                            _index >= widget.questions.length - 1
+                                ? 'Finish'
+                                : 'Continue',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 15,
+                            ),
                           ),
                         ),
                       ),
@@ -242,7 +336,9 @@ class _OptionTile extends StatelessWidget {
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: state == _OptionState.neutral ? AppColors.bg : badgeColor,
+                  color: state == _OptionState.neutral
+                      ? AppColors.bg
+                      : badgeColor,
                   border: Border.all(color: badgeColor, width: 1.5),
                 ),
                 child: Text(
@@ -251,7 +347,9 @@ class _OptionTile extends StatelessWidget {
                     fontFamily: 'monospace',
                     fontWeight: FontWeight.w700,
                     fontSize: 12.5,
-                    color: state == _OptionState.neutral ? AppColors.inkSoft : Colors.white,
+                    color: state == _OptionState.neutral
+                        ? AppColors.inkSoft
+                        : Colors.white,
                   ),
                 ),
               ),
@@ -259,11 +357,62 @@ class _OptionTile extends StatelessWidget {
               Expanded(
                 child: Text(
                   text,
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: textColor),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: textColor,
+                  ),
                 ),
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A pill that pops in once a run of consecutive correct answers reaches
+/// two — in-the-moment feedback for the streak itself, distinct from the
+/// end-of-lesson score, so momentum is rewarded while it's happening.
+class _ComboBadge extends StatelessWidget {
+  const _ComboBadge({super.key, required this.combo});
+
+  final int combo;
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0.6, end: 1.0),
+      duration: const Duration(milliseconds: 280),
+      curve: Curves.elasticOut,
+      builder: (context, scale, child) =>
+          Transform.scale(scale: scale, child: child),
+      child: Container(
+        key: const Key('quiz-combo-badge'),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+        decoration: BoxDecoration(
+          color: AppColors.amberSoft,
+          borderRadius: BorderRadius.circular(99),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.local_fire_department,
+              size: 16,
+              color: AppColors.amberDeep,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              '$combo in a row!',
+              style: const TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 12.5,
+                color: AppColors.amberDeep,
+              ),
+            ),
+          ],
         ),
       ),
     );

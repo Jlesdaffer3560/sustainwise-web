@@ -12,8 +12,37 @@ class DayActivity {
   final bool isToday;
 }
 
+const _weekdayLabels = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
+
+/// Builds this week's real [DayActivity] list from actual per-day XP —
+/// shared by Stats and Profile so their two "This week" charts read from
+/// one place instead of each keeping (and risking drifting from) its own
+/// copy. [xpPerDay] and [todayIndex] come straight from
+/// [ProgressStore.thisWeekXp]/[ProgressStore.todayWeekdayIndex]; a day is
+/// "full" once it hits [goalXp] (the daily goal), same reference point as
+/// the Home daily-goal ring.
+List<DayActivity> buildWeekActivity({
+  required List<int> xpPerDay,
+  required int todayIndex,
+  required int goalXp,
+}) {
+  assert(xpPerDay.length == 7);
+  return [
+    for (var i = 0; i < 7; i++)
+      DayActivity(
+        _weekdayLabels[i],
+        (xpPerDay[i] / goalXp).clamp(0.0, 1.0),
+        isToday: i == todayIndex,
+      ),
+  ];
+}
+
 class WeekActivityChart extends StatelessWidget {
-  const WeekActivityChart({super.key, required this.days, this.trackHeight = 36});
+  const WeekActivityChart({
+    super.key,
+    required this.days,
+    this.trackHeight = 36,
+  });
 
   final List<DayActivity> days;
   final double trackHeight;
@@ -54,8 +83,12 @@ class WeekActivityChart extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 9,
                       fontFamily: 'monospace',
-                      fontWeight: day.isToday ? FontWeight.w700 : FontWeight.w400,
-                      color: day.isToday ? AppColors.amber : AppColors.inkSoft,
+                      fontWeight: day.isToday
+                          ? FontWeight.w700
+                          : FontWeight.w400,
+                      color: day.isToday
+                          ? AppColors.amberDeep
+                          : AppColors.inkSoft,
                     ),
                   ),
                 ],

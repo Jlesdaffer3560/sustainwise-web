@@ -3,8 +3,10 @@ import '../theme/app_theme.dart';
 
 /// A ring/donut progress indicator, matching `.ring-wrap` in the mockup.
 /// The fill percentage is drawn by [_RingPainter] — no manual circumference
-/// math is duplicated anywhere else, same principle as the mockup's JS.
-class ProgressRing extends StatelessWidget {
+/// math is duplicated anywhere else, same principle as the mockup's JS. The
+/// fill sweep eases to its new value instead of snapping, so it reads as
+/// filling in live rather than a static gauge.
+class ProgressRing extends StatefulWidget {
   const ProgressRing({
     super.key,
     required this.percent,
@@ -21,30 +23,57 @@ class ProgressRing extends StatelessWidget {
   final Color fillColor;
 
   @override
+  State<ProgressRing> createState() => _ProgressRingState();
+}
+
+class _ProgressRingState extends State<ProgressRing> {
+  late double _oldPercent;
+
+  @override
+  void initState() {
+    super.initState();
+    _oldPercent = 0; // always fills in from empty on first appearance
+  }
+
+  @override
+  void didUpdateWidget(covariant ProgressRing oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _oldPercent = oldWidget.percent;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: size,
-      height: size,
+      width: widget.size,
+      height: widget.size,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          CustomPaint(
-            size: Size(size, size),
-            painter: _RingPainter(percent: percent, fillColor: fillColor),
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: _oldPercent, end: widget.percent),
+            duration: const Duration(milliseconds: 700),
+            curve: Curves.easeOutCubic,
+            builder: (context, percent, child) => CustomPaint(
+              size: Size(widget.size, widget.size),
+              painter: _RingPainter(
+                percent: percent,
+                fillColor: widget.fillColor,
+              ),
+            ),
           ),
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                centerValue,
+                widget.centerValue,
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
-                  fontSize: size >= 100 ? 20 : 15,
+                  fontSize: widget.size >= 100 ? 20 : 15,
                   color: AppColors.tealDeep,
                 ),
               ),
               Text(
-                centerLabel,
+                widget.centerLabel,
                 style: const TextStyle(fontSize: 9, color: AppColors.inkSoft),
               ),
             ],

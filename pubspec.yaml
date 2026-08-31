@@ -1,4 +1,4 @@
-name: regulingo
+name: sustainwise
 description: "SustainWise — master the language of sustainability. A Duolingo-style app for learning ESG/sustainability regulatory jargon."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -16,7 +16,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.0+1
+version: 1.6.10+26
 
 environment:
   sdk: ^3.12.2
@@ -37,7 +37,12 @@ dependencies:
 
   # Local persistence for streak/XP/module progress.
   shared_preferences: ^2.3.3
-
+  audioplayers: ^6.8.1
+  # Opens a regulatory milestone's official source link (Regulatory Radar).
+  url_launcher: ^6.3.1
+  flutter_local_notifications: ^22.3.0
+  timezone: ^0.11.1
+  flutter_timezone: ^5.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -62,6 +67,32 @@ flutter:
 
   assets:
     - assets/data/esg_content.json
+    - assets/sounds/tap.wav
+    - assets/sounds/correct.wav
+    - assets/sounds/incorrect.wav
+    - assets/sounds/complete.wav
+
+  # Bundled locally rather than fetched via google_fonts at runtime — that
+  # package downloads the font file over the network on first use and
+  # silently falls back to the platform default if the request fails, which
+  # is exactly what was happening here.
+  fonts:
+    - family: Outfit
+      fonts:
+        - asset: assets/fonts/Outfit-Variable.ttf
+          weight: 400
+        - asset: assets/fonts/Outfit-Variable.ttf
+          weight: 600
+        - asset: assets/fonts/Outfit-Variable.ttf
+          weight: 700
+    # Used only for the "SustainWise" wordmark in the Home hero — a single
+    # italic serif accent against the rest of the app's Outfit sans, not a
+    # second body font.
+    - family: LoraItalic
+      fonts:
+        - asset: assets/fonts/Lora-Italic-Variable.ttf
+          weight: 600
+          style: italic
 
   # To add assets to your application, add an assets section, like this:
   # assets:
