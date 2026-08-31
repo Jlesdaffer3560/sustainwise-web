@@ -432,52 +432,52 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  _pill(
-                    Icons.local_fire_department,
-                    ProgressStore.instance.streakDays,
-                    AppColors.amber,
-                  ),
-                  // A one-shot flame flourish the moment the streak count
-                  // itself changes — separate from the bigger
-                  // [MilestoneMoment] reserved for the 7/30/100 milestones.
-                  if (_showFlameBadge)
-                    Positioned(
-                      right: -10,
-                      top: -14,
-                      child: IgnorePointer(
-                        child: MomentBadge(type: MomentType.flame, size: 30),
-                      ),
+          // Streak/XP pills are the same progress display the Daily Goal
+          // card was removed for — a returning-user retention cue, not
+          // something a one-time website visitor needs front and center.
+          // Native keeps them; Stats/Profile on web still show progress by
+          // design, but the landing hero doesn't need to lead with it.
+          if (!kIsWeb)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    _pill(
+                      Icons.local_fire_department,
+                      ProgressStore.instance.streakDays,
+                      AppColors.amber,
                     ),
-                ],
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // A destructive action doesn't belong front-and-center on
-                  // a website's landing view the way it can on a native
-                  // hero the user already owns — Profile still has the
-                  // same reset row on web.
-                  if (!kIsWeb) ...[
+                    // A one-shot flame flourish the moment the streak count
+                    // itself changes — separate from the bigger
+                    // [MilestoneMoment] reserved for the 7/30/100 milestones.
+                    if (_showFlameBadge)
+                      Positioned(
+                        right: -10,
+                        top: -14,
+                        child: IgnorePointer(
+                          child: MomentBadge(type: MomentType.flame, size: 30),
+                        ),
+                      ),
+                  ],
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
                     _resetIconButton(context),
                     const SizedBox(width: 8),
+                    _pill(
+                      Icons.star,
+                      ProgressStore.instance.totalXp,
+                      Colors.white,
+                      formatter: _formatXp,
+                    ),
                   ],
-                  _pill(
-                    Icons.star,
-                    ProgressStore.instance.totalXp,
-                    Colors.white,
-                    formatter: _formatXp,
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
+                ),
+              ],
+            ),
+          SizedBox(height: kIsWeb ? 4 : 16),
           const Text(
             'SustainWise',
             textAlign: TextAlign.center,
