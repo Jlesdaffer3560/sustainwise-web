@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'data/models.dart';
 import 'data/progress_store.dart';
 import 'screens/intro_screen.dart';
@@ -11,6 +12,10 @@ import 'web/web_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Forces clean paths (/glossary) instead of a "/#/glossary" hash — the
+  // hash form still works, but a plain URL is what makes the site feel like
+  // a website rather than a single-page app bolted onto one.
+  if (kIsWeb) usePathUrlStrategy();
   await MockData.load();
   await ProgressStore.instance.load();
 

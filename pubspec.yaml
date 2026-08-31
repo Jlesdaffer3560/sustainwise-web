@@ -30,6 +30,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # Forces clean web URLs (/glossary) instead of a "/#/glossary" hash — a
+  # bundled Flutter SDK package, not a pub.dev dependency, and a no-op on
+  # non-web platforms.
+  flutter_web_plugins:
+    sdk: flutter
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
