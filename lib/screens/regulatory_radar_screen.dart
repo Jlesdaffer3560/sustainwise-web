@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../data/models.dart';
@@ -238,6 +239,13 @@ class _MilestoneCard extends StatelessWidget {
               ],
             ),
           ],
+          // Web only: source/jurisdiction/status/last-reviewed detail, per
+          // direct request for the Radar to "look more credible" to an
+          // ESG/regulatory audience — this is real metadata the app
+          // already carries on the module (RegulatoryMeta), just not shown
+          // anywhere before. The native app's card is unchanged.
+          if (kIsWeb && module?.regulatory?.hasContent == true)
+            _RegulatoryMetaRow(meta: module!.regulatory!),
           if (milestone.sourceUrl != null) ...[
             const SizedBox(height: 10),
             InkWell(
@@ -266,6 +274,64 @@ class _MilestoneCard extends StatelessWidget {
               ),
             ),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+/// Web only: a small labeled-chip row for the module's regulatory
+/// metadata (jurisdiction, status, last reviewed, version) — real data the
+/// app already carries, just newly surfaced here for a regulatory/ESG
+/// audience that wants to see provenance, not only a date and a title.
+class _RegulatoryMetaRow extends StatelessWidget {
+  const _RegulatoryMetaRow({required this.meta});
+
+  final RegulatoryMeta meta;
+
+  @override
+  Widget build(BuildContext context) {
+    final chips = <(IconData, String)>[
+      if (meta.jurisdiction != null) (Icons.public, meta.jurisdiction!),
+      if (meta.status != null) (Icons.verified_outlined, meta.status!),
+      if (meta.lastReviewed != null)
+        (Icons.fact_check_outlined, 'Reviewed ${meta.lastReviewed}'),
+      if (meta.version != null) (Icons.history, meta.version!),
+    ];
+    if (chips.isEmpty) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(top: 10),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 6,
+        children: [
+          for (final (icon, label) in chips)
+            Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 8,
+                vertical: 4,
+              ),
+              decoration: BoxDecoration(
+                color: AppColors.bg,
+                borderRadius: BorderRadius.circular(99),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(icon, size: 12, color: AppColors.inkSoft),
+                  const SizedBox(width: 4),
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.inkSoft,
+                    ),
+                  ),
+                ],
+              ),
+            ),
         ],
       ),
     );

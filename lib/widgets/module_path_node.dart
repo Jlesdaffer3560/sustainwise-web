@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../data/models.dart';
 import '../services/app_feedback.dart';
 import '../theme/app_theme.dart';
+import '../web/responsive.dart';
 
 /// One step in the learning path, rendered as a full-width rounded button
 /// row (icon + title + status) rather than a circular "path dot" — a
@@ -106,10 +107,153 @@ class _ModulePathNodeState extends State<ModulePathNode>
       ModuleStatus.available => lockedInk,
     };
 
+    // Desktop web only: the chunky 3D rim and full-saturation fill read as
+    // "candy"/game-like per external review — soberer here means a flat
+    // white card, a left accent stripe carrying the module's color instead
+    // of a solid fill, and no pressable-rim depth effect. The native app
+    // and narrow web keep the exact original treatment untouched.
+    final desktop = isDesktopWeb(context);
+    final Color cardBg = desktop ? AppColors.surface : fillColor;
+    final Color cardFg = desktop
+        ? (status == ModuleStatus.available ? lockedInk : AppColors.ink)
+        : fgColor;
+    final Color cardFgSoft = desktop
+        ? (status == ModuleStatus.available ? lockedInk : AppColors.inkSoft)
+        : fgSoft;
+    final Color cardIconAccent = desktop
+        ? (status == ModuleStatus.available ? lockedInk : rimColor)
+        : iconAccent;
+
+    final row = Material(
+      color: cardBg,
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        key: Key('module-node-${widget.module.id}'),
+        borderRadius: BorderRadius.circular(18),
+        onTap: widget.onTap == null
+            ? null
+            : () {
+                AppFeedback.tap();
+                widget.onTap!();
+              },
+        onTapDown: desktop ? null : (_) => setState(() => _pressed = true),
+        onTapCancel: desktop ? null : () => setState(() => _pressed = false),
+        onTapUp: desktop ? null : (_) => setState(() => _pressed = false),
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            border: desktop
+                ? Border(
+                    top: BorderSide(color: AppColors.border),
+                    right: BorderSide(color: AppColors.border),
+                    bottom: BorderSide(color: AppColors.border),
+                    left: BorderSide(color: rimColor, width: 4),
+                  )
+                : (status == ModuleStatus.available
+                      ? Border.all(color: AppColors.border)
+                      : null),
+          ),
+          child: Row(
+            children: [
+              AnimatedBuilder(
+                animation: _revealController,
+                builder: (context, child) {
+                  final t = Curves.elasticOut.transform(
+                    _revealController.value.clamp(0.0, 1.0),
+                  );
+                  return Opacity(
+                    opacity: _revealController.value.clamp(0.0, 1.0),
+                    child: Transform.scale(
+                      scale: 0.4 + t * 0.6,
+                      child: Transform.rotate(
+                        angle: (1 - t) * -0.4,
+                        child: child,
+                      ),
+                    ),
+                  );
+                },
+                child: Icon(
+                  _buildIcon(status),
+                  color: cardIconAccent,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.module.title,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                        color: cardFg,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      switch (status) {
+                        // No "Start here"/"Continue" copy on this row at
+                        // all — the Home screen's "Continue learning" card
+                        // is the single place that owns that call-to-action
+                        // wording. Here, the amber fill, play icon and
+                        // chevron alone signal "this is next"; the subtitle
+                        // just describes the module, same as a locked row.
+                        ModuleStatus.current => widget.module.summary,
+                        // Explicit, not just implied by icon color — a done
+                        // row should never read as "this is where I
+                        // continue," only the single current row should.
+                        // It's also no longer tappable into the lesson, so
+                        // the copy doesn't invite a tap either.
+                        ModuleStatus.done => 'Completed',
+                        ModuleStatus.available => widget.module.summary,
+                      },
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: cardFgSoft,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(
+                switch (status) {
+                  // On web every module is actually reachable (see
+                  // home_screen.dart's _onModuleTap), so a padlock would be
+                  // a lie — use the same "open" chevron as the current
+                  // module instead.
+                  ModuleStatus.available => kIsWeb
+                      ? Icons.chevron_right
+                      : Icons.lock_outline,
+                  // A forward-pointing chevron is reserved for the one
+                  // truly "next" module — a done row gets a checkmark
+                  // instead, so it can never be mistaken for "continue
+                  // here."
+                  ModuleStatus.current => Icons.chevron_right,
+                  ModuleStatus.done => Icons.check_circle,
+                },
+                color: cardIconAccent,
+                size: 20,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    // Desktop web: flat card, no pressable-rim depth. Native/mobile-web:
+    // the original Stack + offset "rim" duplicate giving the row its
+    // pressable, chunky lip — untouched.
+    if (desktop) return row;
     return Stack(
       children: [
-        // The rim: a darker duplicate sitting slightly lower, giving the
-        // row a pressable, 3-dimensional lip along its bottom edge.
         Positioned.fill(
           top: _rimDepth,
           child: DecoratedBox(
@@ -126,127 +270,7 @@ class _ModulePathNodeState extends State<ModulePathNode>
             bottom: _pressed ? 0 : _rimDepth,
             top: _pressed ? _rimDepth : 0,
           ),
-          child: Material(
-            color: fillColor,
-            borderRadius: BorderRadius.circular(18),
-            child: InkWell(
-              key: Key('module-node-${widget.module.id}'),
-              borderRadius: BorderRadius.circular(18),
-              onTap: widget.onTap == null
-                  ? null
-                  : () {
-                      AppFeedback.tap();
-                      widget.onTap!();
-                    },
-              onTapDown: (_) => setState(() => _pressed = true),
-              onTapCancel: () => setState(() => _pressed = false),
-              onTapUp: (_) => setState(() => _pressed = false),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
-                ),
-                decoration: status == ModuleStatus.available
-                    ? BoxDecoration(
-                        borderRadius: BorderRadius.circular(18),
-                        border: Border.all(color: AppColors.border),
-                      )
-                    : null,
-                child: Row(
-                  children: [
-                    AnimatedBuilder(
-                      animation: _revealController,
-                      builder: (context, child) {
-                        final t = Curves.elasticOut.transform(
-                          _revealController.value.clamp(0.0, 1.0),
-                        );
-                        return Opacity(
-                          opacity: _revealController.value.clamp(0.0, 1.0),
-                          child: Transform.scale(
-                            scale: 0.4 + t * 0.6,
-                            child: Transform.rotate(
-                              angle: (1 - t) * -0.4,
-                              child: child,
-                            ),
-                          ),
-                        );
-                      },
-                      child: Icon(
-                        _buildIcon(status),
-                        color: iconAccent,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.module.title,
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w800,
-                              color: fgColor,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            switch (status) {
-                              // No "Start here"/"Continue" copy on this row
-                              // at all — the Home screen's "Continue
-                              // learning" card is the single place that
-                              // owns that call-to-action wording. Here, the
-                              // amber fill, play icon and chevron alone
-                              // signal "this is next"; the subtitle just
-                              // describes the module, same as a locked row.
-                              ModuleStatus.current => widget.module.summary,
-                              // Explicit, not just implied by icon color —
-                              // a done row should never read as "this is
-                              // where I continue," only the single current
-                              // row should. It's also no longer tappable
-                              // into the lesson, so the copy doesn't invite
-                              // a tap either.
-                              ModuleStatus.done => 'Completed',
-                              ModuleStatus.available => widget.module.summary,
-                            },
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: fgSoft,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Icon(
-                      switch (status) {
-                        // On web every module is actually reachable (see
-                        // home_screen.dart's _onModuleTap), so a padlock
-                        // would be a lie — use the same "open" chevron as
-                        // the current module instead.
-                        ModuleStatus.available => kIsWeb
-                            ? Icons.chevron_right
-                            : Icons.lock_outline,
-                        // A forward-pointing chevron is reserved for the
-                        // one truly "next" module — a done row gets a
-                        // checkmark instead, so it can never be mistaken
-                        // for "continue here."
-                        ModuleStatus.current => Icons.chevron_right,
-                        ModuleStatus.done => Icons.check_circle,
-                      },
-                      color: iconAccent,
-                      size: 20,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          child: row,
         ),
       ],
     );
