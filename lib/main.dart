@@ -45,16 +45,18 @@ class EsgJargonApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       // The whole UI is built mobile-first (bottom nav, phone-width cards).
-      // On web, a wide browser window would otherwise stretch that layout
-      // edge-to-edge, so pin it to a phone-width column and letterbox the
-      // rest — narrower viewports (mobile browsers) are unaffected since
-      // the constraint only ever caps width, never forces it.
+      // On a wide browser window that would stretch every card edge-to-edge,
+      // so cap it — generously, not phone-width — and fill the margin with
+      // the app's own page background rather than a stark letterbox color,
+      // so it reads as page whitespace instead of dead space. Narrower
+      // viewports (mobile browsers) are unaffected since this only ever
+      // caps width, never forces it.
       builder: kIsWeb
           ? (context, child) => ColoredBox(
-              color: AppColors.ink,
+              color: AppColors.bg,
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 480),
+                  constraints: const BoxConstraints(maxWidth: 720),
                   child: child,
                 ),
               ),
