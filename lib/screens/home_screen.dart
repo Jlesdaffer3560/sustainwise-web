@@ -245,7 +245,14 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Expanded(
               flex: 2,
+              // mainAxisSize.min is load-bearing here, not decoration: this
+              // Row sits inside a vertically-unbounded SingleChildScrollView,
+              // so a plain Column (mainAxisSize.max by default) would try to
+              // occupy *infinite* height under the loose constraint that
+              // implies — Flutter can't lay that out, and silently renders
+              // this whole side as zero-height instead of throwing.
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   for (var i = 0; i < MockData.units.length; i++)
                     _buildUnitSection(context, MockData.units[i], i),
@@ -255,6 +262,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Expanded(
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   _buildDailyGoalCard(),
                   _buildMistakesCard(context),
