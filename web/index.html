@@ -62,19 +62,13 @@
     @media (prefers-reduced-motion: reduce) {
       #loading div:first-child { animation: none; border-top-color: #E5E2D6; }
     }
-
     /*
-      Per direct request, following two rounds of external review calling
-      the native app's saturated unit-accent palette (red/pink/lime/violet
-      etc.) too "candy"/game-like for ESG professionals. Scoped to the
-      <flutter-view> custom element Flutter creates for its own canvas —
-      not <body> — so it only tones down what Flutter itself renders, not
-      this loading screen's own markup. This CSS filter is a web-only,
-      zero-Dart-code way to do it: the app's actual color constants (used
-      by both the native app and this web build) are completely untouched,
-      so the Android app is guaranteed unaffected by this rule.
+      An earlier global `flutter-view { filter: saturate(80%); }` rule
+      lived here — replaced by a Flutter-native ColorFiltered wrapper
+      scoped to just the learning-path section (see
+      lib/web/desaturated_path.dart), per review feedback that a blanket
+      canvas filter also dulled icons/badges it wasn't meant to touch.
     */
-    flutter-view { filter: saturate(80%); }
   </style>
 
   <script>

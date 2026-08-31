@@ -2,11 +2,13 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../data/models.dart';
 import '../data/progress_store.dart';
 import '../services/app_feedback.dart';
 import '../theme/app_theme.dart';
+import '../web/desaturated_path.dart';
 import '../web/responsive.dart';
 import '../widgets/animated_counter.dart';
 import '../widgets/app_bottom_nav.dart';
@@ -199,12 +201,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         Expanded(
-          child: Scrollbar(
-            thumbVisibility: true,
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(0, 16, 0, 24),
-              child: _buildDesktopSidebar(context),
-            ),
+          // No forced-visible Scrollbar here, unlike the path column — two
+          // permanently-visible scrollbars side by side read as noisy per
+          // review feedback, and these three cards fit almost any real
+          // window height anyway. Still scrolls (via the platform's own
+          // hover/drag behavior) on the rare short viewport where they
+          // don't fit.
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(0, 16, 0, 24),
+            child: _buildDesktopSidebar(context),
           ),
         ),
       ],
@@ -237,8 +242,14 @@ class _HomeScreenState extends State<HomeScreen> {
         _buildMistakesCard(context),
         _buildRegulatoryRadarCard(context),
         const _ScrollHint(),
-        for (var i = 0; i < MockData.units.length; i++)
-          _buildUnitSection(context, MockData.units[i], i),
+        desaturatedOnWeb(
+          Column(
+            children: [
+              for (var i = 0; i < MockData.units.length; i++)
+                _buildUnitSection(context, MockData.units[i], i),
+            ],
+          ),
+        ),
         _buildExpertChallengeCard(context),
         _buildCopyrightFooter(),
       ],
@@ -267,17 +278,25 @@ class _HomeScreenState extends State<HomeScreen> {
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
           child: _GlossarySearchBar(
-            onSubmit: (query) => Navigator.of(
-              context,
-            ).push(appRoute(GlossaryScreen(initialQuery: query))),
+            // A real URL (/glossary?q=...) — shareable, bookmarkable, and
+            // restored correctly on refresh — rather than an imperative
+            // push that only exists for this browser tab's session.
+            onSubmit: (query) =>
+                context.go('/glossary?q=${Uri.encodeQueryComponent(query)}'),
           ),
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
           child: _buildContinueLearningCard(context),
         ),
-        for (var i = 0; i < MockData.units.length; i++)
-          _buildUnitSection(context, MockData.units[i], i),
+        desaturatedOnWeb(
+          Column(
+            children: [
+              for (var i = 0; i < MockData.units.length; i++)
+                _buildUnitSection(context, MockData.units[i], i),
+            ],
+          ),
+        ),
         _buildExpertChallengeCard(context),
         _buildCopyrightFooter(),
       ],
@@ -381,7 +400,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 7),
           Text(
-            'Master the language of sustainability',
+            // Web gets a more deliberately professional line — a first-time
+            // visitor here is more likely evaluating this as a tool for
+            // ESG/compliance/finance work than browsing an app store.
+            kIsWeb
+                ? 'Practical ESG microlearning for professionals'
+                : 'Master the language of sustainability',
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16,

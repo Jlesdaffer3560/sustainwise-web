@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../data/models.dart';
 import '../data/progress_store.dart';
@@ -5,6 +6,7 @@ import '../services/app_feedback.dart';
 import '../theme/app_theme.dart';
 import '../widgets/animated_counter.dart';
 import '../widgets/app_route.dart';
+import '../widgets/content_empty_state.dart';
 import '../widgets/moment_badge.dart';
 import 'lesson_complete_screen.dart';
 import 'pairs_screen.dart';
@@ -111,6 +113,15 @@ class _QuizScreenState extends State<QuizScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // See LessonScreen's identical guard — not reachable with today's
+    // content (quizFor() only returns [] below 4 terms, and every module
+    // has ≥10), but a crash isn't an acceptable way for a web visitor to
+    // find out if that ever changes.
+    if (kIsWeb && widget.questions.isEmpty) {
+      return const ContentEmptyState(
+        message: 'No quiz content available for this module yet.',
+      );
+    }
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(

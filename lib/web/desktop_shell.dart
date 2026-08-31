@@ -133,6 +133,18 @@ class _Sidebar extends StatelessWidget {
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 18),
+              child: Text(
+                'Learn. Practice. Track.',
+                style: TextStyle(
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.3,
+                  color: AppColors.inkSoft,
+                ),
+              ),
+            ),
             for (final tab in tabs)
               _SidebarLink(tab: tab, selected: location == tab.location),
             const Spacer(),

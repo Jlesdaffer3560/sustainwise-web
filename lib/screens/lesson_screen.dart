@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data/models.dart';
@@ -5,6 +6,7 @@ import '../services/app_feedback.dart';
 import '../theme/app_theme.dart';
 import '../widgets/animated_counter.dart';
 import '../widgets/app_route.dart';
+import '../widgets/content_empty_state.dart';
 import 'quiz_screen.dart';
 
 /// The flashcard study screen — flip to reveal the definition, then
@@ -71,6 +73,16 @@ class _LessonScreenState extends State<LessonScreen>
 
   @override
   Widget build(BuildContext context) {
+    // Guards against widget.deck[_index] below indexing into nothing — not
+    // reachable with today's content (every module has ≥10 terms, per
+    // test/content_validation_test.dart), but a future content edit could
+    // change that, and a crash isn't an acceptable way for a web visitor to
+    // find out. Web-only: see ContentEmptyState's own doc comment.
+    if (kIsWeb && widget.deck.isEmpty) {
+      return const ContentEmptyState(
+        message: 'No lesson content available for this module yet.',
+      );
+    }
     return AnnotatedRegion<SystemUiOverlayStyle>(
       // This screen has a light background, unlike Home's dark hero panel —
       // the status bar needs dark icons here for contrast.

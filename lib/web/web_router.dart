@@ -32,7 +32,12 @@ GoRouter buildWebRouter() {
           ),
           GoRoute(
             path: '/glossary',
-            builder: (context, state) => const GlossaryScreen(),
+            // A search from Home's search bar goes through this query
+            // param (/glossary?q=dnsh) instead of an imperative Navigator
+            // push, so the result is a real URL — shareable, bookmarkable,
+            // and restored correctly on refresh.
+            builder: (context, state) =>
+                GlossaryScreen(initialQuery: state.uri.queryParameters['q']),
           ),
           GoRoute(
             path: '/stats',
