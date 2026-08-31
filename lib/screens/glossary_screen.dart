@@ -1,9 +1,9 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data/models.dart';
 import '../services/app_feedback.dart';
 import '../theme/app_theme.dart';
+import '../web/responsive.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/app_route.dart';
 import 'profile_screen.dart';
@@ -102,8 +102,9 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
             ],
           ),
         ),
-        // On web, tab navigation lives in the sidebar (DesktopShell) instead.
-        bottomNavigationBar: kIsWeb
+        // On web, tab navigation lives in the sidebar (DesktopShell) instead
+        // — but only once there's room for one.
+        bottomNavigationBar: isDesktopWeb(context)
             ? null
             : AppBottomNav(
                 current: AppTab.glossary,

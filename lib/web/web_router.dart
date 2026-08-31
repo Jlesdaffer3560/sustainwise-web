@@ -15,6 +15,12 @@ import 'desktop_shell.dart';
 GoRouter buildWebRouter() {
   return GoRouter(
     initialLocation: '/',
+    // Any unmatched path (a stale bookmark, a typo) lands on Home instead
+    // of go_router's bare default error page.
+    redirect: (context, state) {
+      const known = {'/', '/home', '/glossary', '/stats', '/profile'};
+      return known.contains(state.matchedLocation) ? null : '/home';
+    },
     routes: [
       GoRoute(path: '/', builder: (context, state) => const IntroScreen()),
       ShellRoute(

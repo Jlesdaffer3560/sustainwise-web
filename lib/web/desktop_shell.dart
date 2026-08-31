@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../theme/app_theme.dart';
+import 'responsive.dart';
 
 /// The web build's persistent frame around the four top-level tabs — a
 /// fixed sidebar instead of the native app's bottom tab bar, so the site
@@ -29,6 +30,12 @@ class DesktopShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Narrow web viewports (a phone browser) get the same single-column
+    // layout as the native app instead — including its own bottom tab bar,
+    // which each screen still renders itself below this breakpoint. A
+    // fixed 240px sidebar would leave next to nothing for content there.
+    if (!isDesktopWeb(context)) return child;
+
     final location = GoRouterState.of(context).matchedLocation;
     return Scaffold(
       backgroundColor: AppColors.bg,
@@ -37,10 +44,15 @@ class DesktopShell extends StatelessWidget {
         children: [
           _Sidebar(location: location, tabs: _tabs),
           Expanded(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 760),
-                child: child,
+            // Scopes ScaffoldMessenger.of(context) calls made by the routed
+            // screen (e.g. "Already completed" snackbars) to this content
+            // column, so they don't stretch under the sidebar too.
+            child: ScaffoldMessenger(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 760),
+                  child: child,
+                ),
               ),
             ),
           ),

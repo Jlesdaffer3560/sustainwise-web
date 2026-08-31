@@ -5,6 +5,7 @@ import '../data/models.dart';
 import '../data/progress_store.dart';
 import '../services/app_feedback.dart';
 import '../theme/app_theme.dart';
+import '../web/responsive.dart';
 import '../widgets/animated_counter.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/app_route.dart';
@@ -186,8 +187,12 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      // On web, tab navigation lives in the sidebar (DesktopShell) instead.
-      bottomNavigationBar: kIsWeb ? null : _buildBottomNav(context),
+      // On web, tab navigation lives in the sidebar (DesktopShell) instead
+      // — but only once there's room for one; narrow web viewports keep
+      // this bottom bar just like the native app.
+      bottomNavigationBar: isDesktopWeb(context)
+          ? null
+          : _buildBottomNav(context),
     );
   }
 
