@@ -137,16 +137,16 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Stack(
           alignment: Alignment.topCenter,
           children: [
-            Scrollbar(
-              thumbVisibility: true,
-              child: SingleChildScrollView(
-                key: const Key('module-path-scroll'),
-                padding: const EdgeInsets.only(bottom: 24),
-                child: isDesktopWeb(context)
-                    ? _buildDesktopContent(context)
-                    : _buildMobileContent(context),
-              ),
-            ),
+            isDesktopWeb(context)
+                ? _buildDesktopScrollLayout(context)
+                : Scrollbar(
+                    thumbVisibility: true,
+                    child: SingleChildScrollView(
+                      key: const Key('module-path-scroll'),
+                      padding: const EdgeInsets.only(bottom: 24),
+                      child: _buildMobileContent(context),
+                    ),
+                  ),
             // A milestone just landed — burst over the top of the hero
             // where the eye already is. Daily goal keeps the plain confetti
             // (it happens near-daily); a streak milestone or finishing the
@@ -173,9 +173,77 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// Desktop-web only: hero/search/continue-card as a fixed header shared
+  /// by both panes (so they start level with each other), then the path
+  /// and the daily-goal/mistakes/radar cards as two *independently*
+  /// scrolling panes below it — otherwise the sidebar cards would scroll
+  /// out of view as soon as you scroll through the path, defeating the
+  /// point of showing them alongside it.
+  Widget _buildDesktopScrollLayout(BuildContext context) {
+    return Column(
+      children: [
+        _buildDesktopHeader(context),
+        Expanded(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 2,
+                child: Scrollbar(
+                  thumbVisibility: true,
+                  child: SingleChildScrollView(
+                    key: const Key('module-path-scroll'),
+                    padding: const EdgeInsets.only(bottom: 24, right: 8),
+                    child: _buildDesktopMainColumn(context),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Scrollbar(
+                  thumbVisibility: true,
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(0, 4, 0, 24),
+                    child: _buildDesktopSidebar(context),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopHeader(BuildContext context) {
+    return Column(
+      children: [
+        _buildHero(context),
+        Transform.translate(
+          offset: const Offset(0, -22),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: _buildIntroCard(),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: _GlossarySearchBar(
+            onSubmit: (query) => Navigator.of(
+              context,
+            ).push(appRoute(GlossaryScreen(initialQuery: query))),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+          child: _buildContinueLearningCard(context),
+        ),
+      ],
+    );
+  }
+
   /// The native app's (and narrow-web's) original single-column layout —
   /// moved here unchanged so [_buildScaffold] can branch into
-  /// [_buildDesktopContent] without touching this at all.
+  /// [_buildDesktopMainColumn] without touching this at all.
   Widget _buildMobileContent(BuildContext context) {
     return Column(
       children: [
@@ -207,81 +275,35 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// Desktop-web only: a compact "what do I do right now" row up top
-  /// (continue learning + a direct Glossary shortcut, since Glossary has
-  /// no presence at all in the mobile stack above), then the learning path
-  /// and the daily-goal/mistakes/radar cards side by side instead of
-  /// stacked — so a wide window shows path *and* status at once instead of
-  /// several screens' worth of scrolling before reaching either. Every
-  /// section is the exact same builder the native app uses; only their
-  /// arrangement differs here.
-  Widget _buildDesktopContent(BuildContext context) {
+  /// Desktop-web only, left pane: the full learning path, below the shared
+  /// [_buildDesktopHeader]. Scrolls independently of [_buildDesktopSidebar]
+  /// — see [_buildDesktopScrollLayout] — so Daily Goal/Radar stay in view
+  /// while this side scrolls through 16 modules. Every section is the
+  /// exact same builder the native app uses; only their arrangement
+  /// differs here.
+  Widget _buildDesktopMainColumn(BuildContext context) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        _buildHero(context),
-        Transform.translate(
-          offset: const Offset(0, -22),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: _buildIntroCard(),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          // IntrinsicHeight, not just CrossAxisAlignment.stretch — this Row
-          // sits inside a vertically-unbounded SingleChildScrollView, so
-          // stretch alone has no finite height to stretch children *to*
-          // ("BoxConstraints forces an infinite height", verified with a
-          // standalone repro). IntrinsicHeight resolves a real height first.
-          child: IntrinsicHeight(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Expanded(child: _buildContinueLearningCard(context)),
-                const SizedBox(width: 12),
-                _GlossaryShortcut(
-                  onTap: () => Navigator.of(
-                    context,
-                  ).push(appRoute(const GlossaryScreen())),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              flex: 2,
-              // mainAxisSize.min is load-bearing here, not decoration: this
-              // Row sits inside a vertically-unbounded SingleChildScrollView,
-              // so a plain Column (mainAxisSize.max by default) would try to
-              // occupy *infinite* height under the loose constraint that
-              // implies — Flutter can't lay that out, and silently renders
-              // this whole side as zero-height instead of throwing.
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  for (var i = 0; i < MockData.units.length; i++)
-                    _buildUnitSection(context, MockData.units[i], i),
-                  _buildExpertChallengeCard(context),
-                ],
-              ),
-            ),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildDailyGoalCard(),
-                  _buildMistakesCard(context),
-                  _buildRegulatoryRadarCard(context),
-                ],
-              ),
-            ),
-          ],
-        ),
+        for (var i = 0; i < MockData.units.length; i++)
+          _buildUnitSection(context, MockData.units[i], i),
+        _buildExpertChallengeCard(context),
         _buildCopyrightFooter(),
+      ],
+    );
+  }
+
+  /// Desktop-web only, right pane: status cards that stay visible the whole
+  /// time you're scrolling the path, instead of scrolling away with it —
+  /// see [_buildScaffold] for how the two panes get their own independent
+  /// scroll.
+  Widget _buildDesktopSidebar(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _buildDailyGoalCard(),
+        _buildMistakesCard(context),
+        _buildRegulatoryRadarCard(context),
       ],
     );
   }
@@ -376,9 +398,75 @@ class _HomeScreenState extends State<HomeScreen> {
               fontWeight: FontWeight.w600,
             ),
           ),
+          // Web-only: a first-time visitor has no app-store listing or
+          // onboarding to explain what this is before landing here, so the
+          // hero needs to sell it in one glance — three concrete benefits
+          // and a CTA that names the actual next action, not just a tagline.
+          if (kIsWeb) ..._buildHeroWebExtras(context),
         ],
       ),
     );
+  }
+
+  List<Widget> _buildHeroWebExtras(BuildContext context) {
+    const benefits = [
+      (Icons.school_outlined, 'Learn ESG jargon'),
+      (Icons.quiz_outlined, 'Practice with quizzes'),
+      (Icons.radar, 'Track EU regulatory milestones'),
+    ];
+    final next = _nextModule();
+    return [
+      const SizedBox(height: 18),
+      Wrap(
+        alignment: WrapAlignment.center,
+        spacing: 18,
+        runSpacing: 8,
+        children: [
+          for (final (icon, label) in benefits)
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(icon, size: 16, color: Colors.white.withValues(alpha: 0.85)),
+                const SizedBox(width: 6),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white.withValues(alpha: 0.85),
+                  ),
+                ),
+              ],
+            ),
+        ],
+      ),
+      if (next != null) ...[
+        const SizedBox(height: 18),
+        Center(
+          child: FilledButton(
+            key: const Key('hero-start-lesson-button'),
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.white,
+              foregroundColor: AppColors.heroDeep,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 22,
+                vertical: 13,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            onPressed: () => _onModuleTap(context, next),
+            child: Text(
+              ProgressStore.instance.completedModulesCount == 0
+                  ? 'Start first lesson'
+                  : 'Continue learning',
+              style: const TextStyle(fontWeight: FontWeight.w700),
+            ),
+          ),
+        ),
+      ],
+    ];
   }
 
   // A small, deliberately understated icon-only button — not a labeled
@@ -1257,49 +1345,72 @@ class _ScrollHint extends StatelessWidget {
   }
 }
 
-/// Desktop-web only: a direct link to Glossary next to the continue-learning
-/// card — on the mobile stack it's reachable via the bottom nav, but the
-/// desktop dashboard's top row is the "what can I do right now" moment, and
-/// Glossary (always-unlocked, 261 terms) belongs in that moment too.
-class _GlossaryShortcut extends StatelessWidget {
-  const _GlossaryShortcut({required this.onTap});
+/// Desktop-web only: Glossary (always-unlocked, 261 terms, doesn't require
+/// finishing any module) is the fastest real value for a visitor who just
+/// wants to know what one term means — this puts that ahead of the path
+/// itself, right under the hero, instead of a small link buried in a row.
+class _GlossarySearchBar extends StatefulWidget {
+  const _GlossarySearchBar({required this.onSubmit});
 
-  final VoidCallback onTap;
+  final ValueChanged<String> onSubmit;
+
+  @override
+  State<_GlossarySearchBar> createState() => _GlossarySearchBarState();
+}
+
+class _GlossarySearchBarState extends State<_GlossarySearchBar> {
+  final _controller = TextEditingController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    final q = _controller.text.trim();
+    if (q.isEmpty) return;
+    AppFeedback.tap();
+    widget.onSubmit(q);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Material(
       color: AppColors.surface,
-      borderRadius: BorderRadius.circular(18),
-      child: InkWell(
-        key: const Key('glossary-shortcut'),
-        borderRadius: BorderRadius.circular(18),
-        onTap: () {
-          AppFeedback.tap();
-          onTap();
-        },
-        child: Container(
-          width: 128,
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(color: AppColors.border),
+      borderRadius: BorderRadius.circular(16),
+      child: TextField(
+        key: const Key('glossary-search-bar'),
+        controller: _controller,
+        onSubmitted: (_) => _submit(),
+        style: const TextStyle(fontSize: 14.5, color: AppColors.ink),
+        decoration: InputDecoration(
+          hintText: 'Search ESG terms — DNSH, Scope 3, ESRS…',
+          hintStyle: TextStyle(fontSize: 14.5, color: AppColors.inkSoft),
+          prefixIcon: const Icon(
+            Icons.search,
+            color: AppColors.inkSoft,
+            size: 20,
           ),
-          child: const Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.menu_book_outlined, color: AppColors.tealDeep, size: 24),
-              SizedBox(height: 8),
-              Text(
-                'Search glossary',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.ink,
-                ),
-              ),
-            ],
+          suffixIcon: IconButton(
+            icon: const Icon(Icons.arrow_forward, color: AppColors.tealDeep),
+            onPressed: _submit,
+            tooltip: 'Search glossary',
+          ),
+          filled: true,
+          fillColor: AppColors.surface,
+          contentPadding: const EdgeInsets.symmetric(vertical: 14),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: AppColors.border),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: AppColors.border),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: AppColors.teal, width: 1.5),
           ),
         ),
       ),

@@ -15,15 +15,23 @@ import 'stats_screen.dart';
 /// Every card uses the same rich format as the flashcard, so a looked-up
 /// term is just as useful as one studied properly.
 class GlossaryScreen extends StatefulWidget {
-  const GlossaryScreen({super.key});
+  const GlossaryScreen({super.key, this.initialQuery});
+
+  // Set only by the web dashboard's search bar, which lets a visitor type a
+  // term before ever opening Glossary itself — the native app never passes
+  // this, so its Glossary always opens on the full, unfiltered list exactly
+  // as before.
+  final String? initialQuery;
 
   @override
   State<GlossaryScreen> createState() => _GlossaryScreenState();
 }
 
 class _GlossaryScreenState extends State<GlossaryScreen> {
-  final _searchController = TextEditingController();
-  String _query = '';
+  late final _searchController = TextEditingController(
+    text: widget.initialQuery ?? '',
+  );
+  late String _query = widget.initialQuery ?? '';
   final Set<String> _expanded = {};
 
   @override
