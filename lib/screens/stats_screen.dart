@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data/models.dart';
@@ -63,6 +64,44 @@ class StatsScreen extends StatelessWidget {
                         height: 1.4,
                       ),
                     ),
+                    // Web has no account/backend, so this is the one place
+                    // it's worth saying plainly — otherwise "I switched
+                    // devices and it's gone" reads as a bug, not as
+                    // expected behavior for a browser-local app.
+                    if (kIsWeb) ...[
+                      const SizedBox(height: 10),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 9,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.bg,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.info_outline,
+                              size: 15,
+                              color: AppColors.inkSoft,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'Saved in this browser only — not synced to an account or other devices.',
+                                style: TextStyle(
+                                  fontSize: 11.5,
+                                  color: AppColors.inkSoft,
+                                  height: 1.3,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 20),
                     Row(
                       children: [
