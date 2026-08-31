@@ -173,69 +173,39 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// Desktop-web only: hero/search/continue-card as a fixed header shared
-  /// by both panes (so they start level with each other), then the path
-  /// and the daily-goal/mistakes/radar cards as two *independently*
-  /// scrolling panes below it — otherwise the sidebar cards would scroll
-  /// out of view as soon as you scroll through the path, defeating the
-  /// point of showing them alongside it.
+  /// Desktop-web only: the path (hero, search, continue-card, units) and
+  /// the daily-goal/mistakes/radar cards as two *independently* scrolling
+  /// panes side by side — otherwise the sidebar cards would scroll out of
+  /// view as soon as you scroll through the path, defeating the point of
+  /// showing them alongside it. Deliberately NOT a shared fixed header
+  /// above both panes: hero+search+continue-card together are tall enough
+  /// that pinning them ate most of the viewport on a normal window height,
+  /// squeezing everything else into a sliver at the bottom — worse than
+  /// the misalignment this simpler version accepts (the right pane starts
+  /// a little higher than the left pane's actual module list).
   Widget _buildDesktopScrollLayout(BuildContext context) {
-    return Column(
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildDesktopHeader(context),
         Expanded(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 2,
-                child: Scrollbar(
-                  thumbVisibility: true,
-                  child: SingleChildScrollView(
-                    key: const Key('module-path-scroll'),
-                    padding: const EdgeInsets.only(bottom: 24, right: 8),
-                    child: _buildDesktopMainColumn(context),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Scrollbar(
-                  thumbVisibility: true,
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(0, 4, 0, 24),
-                    child: _buildDesktopSidebar(context),
-                  ),
-                ),
-              ),
-            ],
+          flex: 2,
+          child: Scrollbar(
+            thumbVisibility: true,
+            child: SingleChildScrollView(
+              key: const Key('module-path-scroll'),
+              padding: const EdgeInsets.only(bottom: 24, right: 8),
+              child: _buildDesktopMainColumn(context),
+            ),
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildDesktopHeader(BuildContext context) {
-    return Column(
-      children: [
-        _buildHero(context),
-        Transform.translate(
-          offset: const Offset(0, -22),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: _buildIntroCard(),
+        Expanded(
+          child: Scrollbar(
+            thumbVisibility: true,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(0, 16, 0, 24),
+              child: _buildDesktopSidebar(context),
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          child: _GlossarySearchBar(
-            onSubmit: (query) => Navigator.of(
-              context,
-            ).push(appRoute(GlossaryScreen(initialQuery: query))),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-          child: _buildContinueLearningCard(context),
         ),
       ],
     );
@@ -275,16 +245,37 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// Desktop-web only, left pane: the full learning path, below the shared
-  /// [_buildDesktopHeader]. Scrolls independently of [_buildDesktopSidebar]
-  /// — see [_buildDesktopScrollLayout] — so Daily Goal/Radar stay in view
-  /// while this side scrolls through 16 modules. Every section is the
-  /// exact same builder the native app uses; only their arrangement
-  /// differs here.
+  /// Desktop-web only, left pane: hero, a Glossary search bar (Glossary has
+  /// no presence at all in the mobile stack), the continue-learning card,
+  /// then the full learning path. Scrolls independently of
+  /// [_buildDesktopSidebar] — see [_buildDesktopScrollLayout] — so Daily
+  /// Goal/Radar stay in view while this side scrolls through 16 modules.
+  /// Every section is the exact same builder the native app uses; only
+  /// their arrangement differs here.
   Widget _buildDesktopMainColumn(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        _buildHero(context),
+        Transform.translate(
+          offset: const Offset(0, -22),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: _buildIntroCard(),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: _GlossarySearchBar(
+            onSubmit: (query) => Navigator.of(
+              context,
+            ).push(appRoute(GlossaryScreen(initialQuery: query))),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+          child: _buildContinueLearningCard(context),
+        ),
         for (var i = 0; i < MockData.units.length; i++)
           _buildUnitSection(context, MockData.units[i], i),
         _buildExpertChallengeCard(context),
