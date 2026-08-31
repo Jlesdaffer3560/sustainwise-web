@@ -94,33 +94,42 @@ class _Sidebar extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 28, 24, 22),
-              child: Row(
-                children: [
-                  Container(
-                    width: 30,
-                    height: 30,
-                    decoration: BoxDecoration(
-                      color: AppColors.teal,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Icon(
-                      Icons.eco_outlined,
-                      color: Colors.white,
-                      size: 18,
-                    ),
+              // The wordmark doubles as a "home" link, same as on any real
+              // website — from any tab, this is how you get back to Path.
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => context.go('/home'),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: AppColors.teal,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(
+                          Icons.eco_outlined,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      const Text(
+                        'SustainWise',
+                        style: TextStyle(
+                          fontFamily: 'LoraItalic',
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 18,
+                          color: AppColors.ink,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 10),
-                  const Text(
-                    'SustainWise',
-                    style: TextStyle(
-                      fontFamily: 'LoraItalic',
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 18,
-                      color: AppColors.ink,
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
             for (final tab in tabs)

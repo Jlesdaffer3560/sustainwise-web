@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../data/models.dart';
 import '../data/progress_store.dart';
 import '../services/app_feedback.dart';
@@ -1102,17 +1104,41 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildCopyrightFooter() {
+    const baseStyle = TextStyle(
+      fontSize: 12,
+      fontWeight: FontWeight.w600,
+      color: AppColors.inkSoft,
+    );
     return Padding(
       padding: const EdgeInsets.only(top: 20),
       child: Center(
-        child: Text(
-          '© 2026 Jordi Lesaffer · Novarisq Consulting',
-          style: TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
-            color: AppColors.inkSoft,
-          ),
-        ),
+        // Only "Novarisq Consulting" is a link on web (matches the
+        // marketing site's own footer) — the native app keeps the same
+        // plain, unlinked text it always had.
+        child: kIsWeb
+            ? Text.rich(
+                TextSpan(
+                  style: baseStyle,
+                  children: [
+                    const TextSpan(text: '© 2026 Jordi Lesaffer · '),
+                    TextSpan(
+                      text: 'Novarisq Consulting',
+                      style: const TextStyle(
+                        decoration: TextDecoration.underline,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () => launchUrl(
+                          Uri.parse('https://www.novarisq.com'),
+                          webOnlyWindowName: '_blank',
+                        ),
+                    ),
+                  ],
+                ),
+              )
+            : const Text(
+                '© 2026 Jordi Lesaffer · Novarisq Consulting',
+                style: baseStyle,
+              ),
       ),
     );
   }
