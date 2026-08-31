@@ -140,34 +140,9 @@ class _HomeScreenState extends State<HomeScreen> {
               child: SingleChildScrollView(
                 key: const Key('module-path-scroll'),
                 padding: const EdgeInsets.only(bottom: 24),
-                child: Column(
-                  children: [
-                    _buildHero(context),
-                    Transform.translate(
-                      offset: const Offset(0, -22),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: _buildIntroCard(),
-                      ),
-                    ),
-                    // Directly above Daily Goal, not under the hero title —
-                    // "what do I do right now" and "how's today going" read
-                    // as one connected pair of actionable cards this way,
-                    // rather than the CTA sitting off on its own up top.
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                      child: _buildContinueLearningCard(context),
-                    ),
-                    _buildDailyGoalCard(),
-                    _buildMistakesCard(context),
-                    _buildRegulatoryRadarCard(context),
-                    const _ScrollHint(),
-                    for (var i = 0; i < MockData.units.length; i++)
-                      _buildUnitSection(context, MockData.units[i], i),
-                    _buildExpertChallengeCard(context),
-                    _buildCopyrightFooter(),
-                  ],
-                ),
+                child: isDesktopWeb(context)
+                    ? _buildDesktopContent(context)
+                    : _buildMobileContent(context),
               ),
             ),
             // A milestone just landed — burst over the top of the hero
@@ -193,6 +168,104 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: isDesktopWeb(context)
           ? null
           : _buildBottomNav(context),
+    );
+  }
+
+  /// The native app's (and narrow-web's) original single-column layout —
+  /// moved here unchanged so [_buildScaffold] can branch into
+  /// [_buildDesktopContent] without touching this at all.
+  Widget _buildMobileContent(BuildContext context) {
+    return Column(
+      children: [
+        _buildHero(context),
+        Transform.translate(
+          offset: const Offset(0, -22),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: _buildIntroCard(),
+          ),
+        ),
+        // Directly above Daily Goal, not under the hero title — "what do I
+        // do right now" and "how's today going" read as one connected pair
+        // of actionable cards this way, rather than the CTA sitting off on
+        // its own up top.
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: _buildContinueLearningCard(context),
+        ),
+        _buildDailyGoalCard(),
+        _buildMistakesCard(context),
+        _buildRegulatoryRadarCard(context),
+        const _ScrollHint(),
+        for (var i = 0; i < MockData.units.length; i++)
+          _buildUnitSection(context, MockData.units[i], i),
+        _buildExpertChallengeCard(context),
+        _buildCopyrightFooter(),
+      ],
+    );
+  }
+
+  /// Desktop-web only: a compact "what do I do right now" row up top
+  /// (continue learning + a direct Glossary shortcut, since Glossary has
+  /// no presence at all in the mobile stack above), then the learning path
+  /// and the daily-goal/mistakes/radar cards side by side instead of
+  /// stacked — so a wide window shows path *and* status at once instead of
+  /// several screens' worth of scrolling before reaching either. Every
+  /// section is the exact same builder the native app uses; only their
+  /// arrangement differs here.
+  Widget _buildDesktopContent(BuildContext context) {
+    return Column(
+      children: [
+        _buildHero(context),
+        Transform.translate(
+          offset: const Offset(0, -22),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: _buildIntroCard(),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(child: _buildContinueLearningCard(context)),
+              const SizedBox(width: 12),
+              _GlossaryShortcut(
+                onTap: () => Navigator.of(
+                  context,
+                ).push(appRoute(const GlossaryScreen())),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 4),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 2,
+              child: Column(
+                children: [
+                  for (var i = 0; i < MockData.units.length; i++)
+                    _buildUnitSection(context, MockData.units[i], i),
+                  _buildExpertChallengeCard(context),
+                ],
+              ),
+            ),
+            Expanded(
+              child: Column(
+                children: [
+                  _buildDailyGoalCard(),
+                  _buildMistakesCard(context),
+                  _buildRegulatoryRadarCard(context),
+                ],
+              ),
+            ),
+          ],
+        ),
+        _buildCopyrightFooter(),
+      ],
     );
   }
 
@@ -1138,6 +1211,56 @@ class _ScrollHint extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Desktop-web only: a direct link to Glossary next to the continue-learning
+/// card — on the mobile stack it's reachable via the bottom nav, but the
+/// desktop dashboard's top row is the "what can I do right now" moment, and
+/// Glossary (always-unlocked, 261 terms) belongs in that moment too.
+class _GlossaryShortcut extends StatelessWidget {
+  const _GlossaryShortcut({required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.surface,
+      borderRadius: BorderRadius.circular(18),
+      child: InkWell(
+        key: const Key('glossary-shortcut'),
+        borderRadius: BorderRadius.circular(18),
+        onTap: () {
+          AppFeedback.tap();
+          onTap();
+        },
+        child: Container(
+          width: 128,
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: AppColors.border),
+          ),
+          child: const Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.menu_book_outlined, color: AppColors.tealDeep, size: 24),
+              SizedBox(height: 8),
+              Text(
+                'Search glossary',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.ink,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
