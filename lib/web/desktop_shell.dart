@@ -96,24 +96,25 @@ class _Sidebar extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(24, 28, 24, 22),
               // The wordmark doubles as a "home" link, same as on any real
               // website — from any tab, this is how you get back to Path.
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
+              // InkWell/Material, not a bare GestureDetector — matching
+              // _SidebarLink's already-working tap pattern exactly, on the
+              // chance the two behaved differently under some gesture-arena
+              // edge case that never showed up in an isolated test.
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  key: const Key('sidebar-wordmark'),
                   onTap: () => context.go('/home'),
+                  mouseCursor: SystemMouseCursors.click,
                   child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          color: AppColors.teal,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: const Icon(
-                          Icons.eco_outlined,
-                          color: Colors.white,
-                          size: 18,
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.asset(
+                          'assets/icon/app_icon.png',
+                          width: 30,
+                          height: 30,
                         ),
                       ),
                       const SizedBox(width: 10),

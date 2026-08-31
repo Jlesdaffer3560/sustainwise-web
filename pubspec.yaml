@@ -77,6 +77,9 @@ flutter:
     - assets/sounds/correct.wav
     - assets/sounds/incorrect.wav
     - assets/sounds/complete.wav
+    # Same source as the Play Store/web-icon assets — used by the web
+    # sidebar's wordmark so it's the real app icon, not a generic glyph.
+    - assets/icon/app_icon.png
 
   # Bundled locally rather than fetched via google_fonts at runtime — that
   # package downloads the font file over the network on first use and
