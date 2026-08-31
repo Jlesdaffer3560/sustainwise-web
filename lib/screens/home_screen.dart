@@ -238,7 +238,7 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
           child: _buildContinueLearningCard(context),
         ),
-        _buildDailyGoalCard(),
+        _buildDailyGoalCard(context),
         _buildMistakesCard(context),
         _buildRegulatoryRadarCard(context),
         const _ScrollHint(),
@@ -311,7 +311,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _buildDailyGoalCard(),
+        _buildDailyGoalCard(context),
         _buildMistakesCard(context),
         _buildRegulatoryRadarCard(context),
       ],
@@ -748,19 +748,12 @@ class _HomeScreenState extends State<HomeScreen> {
   /// every day, giving a reason to open the app today specifically, not
   /// just "eventually". Judged against the learner's own goal, never
   /// against other users.
-  Widget _buildDailyGoalCard() {
+  Widget _buildDailyGoalCard(BuildContext context) {
     final today = ProgressStore.instance.todayXp;
     final met = ProgressStore.instance.dailyGoalMet;
     final progress = (today / ProgressStore.dailyGoalXp).clamp(0.0, 1.0);
-    return Container(
-      key: const Key('daily-goal-card'),
-      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+    final content = Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppColors.border),
-      ),
       child: Row(
         children: [
           // The mascot standing in for the old plain track_changes icon —
@@ -827,6 +820,36 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
         ],
+      ),
+    );
+    final decoration = BoxDecoration(
+      color: AppColors.surface,
+      borderRadius: BorderRadius.circular(18),
+      border: Border.all(color: AppColors.border),
+    );
+    // Web only: a full stats breakdown is one tap away instead of this
+    // being a dead-end progress display — native keeps the plain
+    // Container it always had.
+    if (!kIsWeb) {
+      return Container(
+        key: const Key('daily-goal-card'),
+        margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+        decoration: decoration,
+        child: content,
+      );
+    }
+    return Container(
+      key: const Key('daily-goal-card'),
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      decoration: decoration,
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(18),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(18),
+          onTap: () => context.go('/stats'),
+          child: content,
+        ),
       ),
     );
   }

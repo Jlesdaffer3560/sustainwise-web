@@ -1,4 +1,5 @@
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import '../data/progress_store.dart';
 
@@ -49,6 +50,11 @@ class AppFeedback {
   }
 
   static void _play(String fileName) {
+    // Fine for the installed app; a website that suddenly plays a sound
+    // effect on tap (often with the tab backgrounded or on mute-by-default
+    // mobile browsers) reads as broken, not delightful. Haptics above
+    // still fire — those are silent and OS-mediated, not the same problem.
+    if (kIsWeb) return;
     try {
       // ignore: discarded_futures
       _player.play(AssetSource('sounds/$fileName')).catchError((_) {});
