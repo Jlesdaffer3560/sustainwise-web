@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data/models.dart';
@@ -345,7 +346,11 @@ class ProfileScreen extends StatelessWidget {
       child: Column(
         children: [
           _buildSoundToggleRow(),
-          _buildNotificationsRow(context),
+          // The daily reminder is built on flutter_local_notifications'
+          // zonedSchedule(), which throws UnsupportedError on the web
+          // platform — hide the row on web rather than expose a control
+          // that always fails to save.
+          if (!kIsWeb) _buildNotificationsRow(context),
           _settingsRow(context, 'Language', 'English'),
           _buildResetProgressRow(context),
         ],

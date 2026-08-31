@@ -50,7 +50,7 @@ class DesktopShell extends StatelessWidget {
             child: ScaffoldMessenger(
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 760),
+                  constraints: const BoxConstraints(maxWidth: 1000),
                   child: child,
                 ),
               ),

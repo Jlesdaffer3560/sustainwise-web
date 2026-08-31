@@ -244,8 +244,14 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _resetIconButton(context),
-                  const SizedBox(width: 8),
+                  // A destructive action doesn't belong front-and-center on
+                  // a website's landing view the way it can on a native
+                  // hero the user already owns — Profile still has the
+                  // same reset row on web.
+                  if (!kIsWeb) ...[
+                    _resetIconButton(context),
+                    const SizedBox(width: 8),
+                  ],
                   _pill(
                     Icons.star,
                     ProgressStore.instance.totalXp,
@@ -1069,7 +1075,10 @@ class _HomeScreenState extends State<HomeScreen> {
     // A completed module isn't a second "continue here" — only the single
     // current module opens a lesson directly. Tapping a done one points to
     // the Glossary instead, which is the actual tool for revisiting terms.
-    if (status == ModuleStatus.done) {
+    // On web, a visitor may specifically want to redo a module they already
+    // did — let it reopen instead. completeModule()'s `alreadyDone` guard
+    // already prevents a retake from paying out XP twice.
+    if (!kIsWeb && status == ModuleStatus.done) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
