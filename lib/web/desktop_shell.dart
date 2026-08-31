@@ -1,0 +1,190 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import '../theme/app_theme.dart';
+
+/// The web build's persistent frame around the four top-level tabs — a
+/// fixed sidebar instead of the native app's bottom tab bar, so the site
+/// reads as a website with real pages (own URL, working browser
+/// back/forward/refresh) rather than a phone screen pasted into a browser
+/// tab. Only used on web; the native app never builds this.
+class DesktopShell extends StatelessWidget {
+  const DesktopShell({super.key, required this.child});
+
+  final Widget child;
+
+  static const _tabs = [
+    _NavTab(location: '/home', icon: Icons.route, label: 'Path'),
+    _NavTab(
+      location: '/glossary',
+      icon: Icons.menu_book_outlined,
+      label: 'Glossary',
+    ),
+    _NavTab(location: '/stats', icon: Icons.bar_chart_outlined, label: 'Stats'),
+    _NavTab(
+      location: '/profile',
+      icon: Icons.person_outline,
+      label: 'Profile',
+    ),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final location = GoRouterState.of(context).matchedLocation;
+    return Scaffold(
+      backgroundColor: AppColors.bg,
+      body: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _Sidebar(location: location, tabs: _tabs),
+          Expanded(
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 760),
+                child: child,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _NavTab {
+  const _NavTab({
+    required this.location,
+    required this.icon,
+    required this.label,
+  });
+
+  final String location;
+  final IconData icon;
+  final String label;
+}
+
+class _Sidebar extends StatelessWidget {
+  const _Sidebar({required this.location, required this.tabs});
+
+  final String location;
+  final List<_NavTab> tabs;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 240,
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        border: Border(right: BorderSide(color: AppColors.border)),
+      ),
+      child: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 28, 24, 22),
+              child: Row(
+                children: [
+                  Container(
+                    width: 30,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: AppColors.teal,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(
+                      Icons.eco_outlined,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  const Text(
+                    'SustainWise',
+                    style: TextStyle(
+                      fontFamily: 'LoraItalic',
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 18,
+                      color: AppColors.ink,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            for (final tab in tabs)
+              _SidebarLink(tab: tab, selected: location == tab.location),
+            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Text(
+                'sustainwiseapp.com',
+                style: TextStyle(fontSize: 11.5, color: AppColors.inkSoft),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SidebarLink extends StatefulWidget {
+  const _SidebarLink({required this.tab, required this.selected});
+
+  final _NavTab tab;
+  final bool selected;
+
+  @override
+  State<_SidebarLink> createState() => _SidebarLinkState();
+}
+
+class _SidebarLinkState extends State<_SidebarLink> {
+  bool _hovering = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = widget.selected ? AppColors.teal : AppColors.inkSoft;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        onEnter: (_) => setState(() => _hovering = true),
+        onExit: (_) => setState(() => _hovering = false),
+        child: Material(
+          color: widget.selected
+              ? AppColors.teal.withValues(alpha: 0.10)
+              : (_hovering
+                    ? AppColors.border.withValues(alpha: 0.5)
+                    : Colors.transparent),
+          borderRadius: BorderRadius.circular(12),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () => context.go(widget.tab.location),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 11,
+              ),
+              child: Row(
+                children: [
+                  Icon(widget.tab.icon, size: 20, color: color),
+                  const SizedBox(width: 12),
+                  Text(
+                    widget.tab.label,
+                    style: TextStyle(
+                      fontSize: 14.5,
+                      fontWeight: widget.selected
+                          ? FontWeight.w700
+                          : FontWeight.w600,
+                      color: color,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data/models.dart';
@@ -57,17 +58,20 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
           ),
-          bottomNavigationBar: AppBottomNav(
-            current: AppTab.profile,
-            onPathTap: () => Navigator.of(context).pop(),
-            onGlossaryTap: () => Navigator.of(
-              context,
-            ).pushReplacement(appRoute(const GlossaryScreen())),
-            onStatsTap: () => Navigator.of(
-              context,
-            ).pushReplacement(appRoute(const StatsScreen())),
-            onProfileTap: () {},
-          ),
+          // On web, tab navigation lives in the sidebar (DesktopShell).
+          bottomNavigationBar: kIsWeb
+              ? null
+              : AppBottomNav(
+                  current: AppTab.profile,
+                  onPathTap: () => Navigator.of(context).pop(),
+                  onGlossaryTap: () => Navigator.of(
+                    context,
+                  ).pushReplacement(appRoute(const GlossaryScreen())),
+                  onStatsTap: () => Navigator.of(
+                    context,
+                  ).pushReplacement(appRoute(const StatsScreen())),
+                  onProfileTap: () {},
+                ),
         ),
       ),
     );

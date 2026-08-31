@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data/models.dart';
@@ -101,17 +102,20 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
             ],
           ),
         ),
-        bottomNavigationBar: AppBottomNav(
-          current: AppTab.glossary,
-          onPathTap: () => Navigator.of(context).pop(),
-          onGlossaryTap: () {},
-          onStatsTap: () => Navigator.of(
-            context,
-          ).pushReplacement(appRoute(const StatsScreen())),
-          onProfileTap: () => Navigator.of(
-            context,
-          ).pushReplacement(appRoute(const ProfileScreen())),
-        ),
+        // On web, tab navigation lives in the sidebar (DesktopShell) instead.
+        bottomNavigationBar: kIsWeb
+            ? null
+            : AppBottomNav(
+                current: AppTab.glossary,
+                onPathTap: () => Navigator.of(context).pop(),
+                onGlossaryTap: () {},
+                onStatsTap: () => Navigator.of(
+                  context,
+                ).pushReplacement(appRoute(const StatsScreen())),
+                onProfileTap: () => Navigator.of(
+                  context,
+                ).pushReplacement(appRoute(const ProfileScreen())),
+              ),
       ),
     );
   }

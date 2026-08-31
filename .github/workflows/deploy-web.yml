@@ -21,6 +21,12 @@ jobs:
       - run: flutter pub get
       - run: flutter build web --release --base-href /
 
+      # GitHub Pages serves this for any path with no matching file (e.g. a
+      # direct visit or refresh on /glossary). Making it identical to
+      # index.html lets the app boot normally there too, so its own
+      # go_router picks the right screen from the URL client-side.
+      - run: cp build/web/index.html build/web/404.html
+
       - uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

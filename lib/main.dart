@@ -7,6 +7,7 @@ import 'data/progress_store.dart';
 import 'screens/intro_screen.dart';
 import 'services/notification_service.dart';
 import 'theme/app_theme.dart';
+import 'web/web_router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,28 +41,23 @@ class EsgJargonApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Web gets a real router: each top-level tab is its own URL inside a
+    // persistent sidebar (DesktopShell), so the site behaves like a
+    // website (working back/forward/refresh) instead of a single phone
+    // screen pasted into a browser tab. The native app keeps its original,
+    // untouched single-Navigator setup.
+    if (kIsWeb) {
+      return MaterialApp.router(
+        title: 'SustainWise',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.light,
+        routerConfig: buildWebRouter(),
+      );
+    }
     return MaterialApp(
       title: 'SustainWise',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      // The whole UI is built mobile-first (bottom nav, phone-width cards).
-      // On a wide browser window that would stretch every card edge-to-edge,
-      // so cap it — generously, not phone-width — and fill the margin with
-      // the app's own page background rather than a stark letterbox color,
-      // so it reads as page whitespace instead of dead space. Narrower
-      // viewports (mobile browsers) are unaffected since this only ever
-      // caps width, never forces it.
-      builder: kIsWeb
-          ? (context, child) => ColoredBox(
-              color: AppColors.bg,
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 720),
-                  child: child,
-                ),
-              ),
-            )
-          : null,
       home: const IntroScreen(),
     );
   }

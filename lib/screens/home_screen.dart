@@ -186,7 +186,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: _buildBottomNav(context),
+      // On web, tab navigation lives in the sidebar (DesktopShell) instead.
+      bottomNavigationBar: kIsWeb ? null : _buildBottomNav(context),
     );
   }
 

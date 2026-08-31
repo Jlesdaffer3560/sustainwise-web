@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../theme/app_theme.dart';
 import '../widgets/app_route.dart';
 import '../widgets/mascot.dart';
@@ -49,8 +51,15 @@ class _IntroScreenState extends State<IntroScreen>
     // actually starts their first lesson — not here. A cold open is not
     // the moment to interrupt with a question before anything's been seen.
     _navigateTimer = Timer(_dwell, () {
-      if (mounted)
+      if (!mounted) return;
+      // On web this screen is its own top-level route ('/'), outside the
+      // DesktopShell — a plain Navigator push wouldn't update the URL or
+      // mount the sidebar, so it goes through the router instead.
+      if (kIsWeb) {
+        context.go('/home');
+      } else {
         Navigator.of(context).pushReplacement(appRoute(const HomeScreen()));
+      }
     });
   }
 
