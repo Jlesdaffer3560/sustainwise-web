@@ -238,7 +238,11 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
           child: _buildContinueLearningCard(context),
         ),
-        _buildDailyGoalCard(context),
+        // Streak/daily-goal is a retention mechanic for a returning app
+        // user — it doesn't fit a website visitor here once, so it's
+        // dropped on web entirely (both this narrow-web layout and the
+        // desktop one). Native keeps it exactly as it always was.
+        if (!kIsWeb) _buildDailyGoalCard(context),
         _buildMistakesCard(context),
         _buildRegulatoryRadarCard(context),
         const _ScrollHint(),
@@ -317,16 +321,16 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        _buildDailyGoalCard(context),
+        // No Daily Goal here — streak/daily-goal is a retention mechanic
+        // for a returning app user, not a website visitor. Mistakes is
+        // also progress-dependent (and empty for a first-time visitor),
+        // which would leave this whole column empty next to the long path
+        // column — the curriculum card below is the opposite: pure
+        // content, identical for every visitor, so there's always
+        // something substantial here, and it doubles as a scope/
+        // credibility signal ("this is a real 261-term curriculum").
         _buildMistakesCard(context),
         _buildRegulatoryRadarCard(context),
-        // Daily Goal/Mistakes are both progress-dependent — for a
-        // first-time visitor (no streak, nothing missed yet) that leaves
-        // this whole column mostly empty next to the long path column.
-        // This card is the opposite: pure content, identical for every
-        // visitor regardless of history, so it always has something to
-        // show — and it doubles as a scope/credibility signal ("this is a
-        // real 261-term curriculum," not a toy).
         _buildCurriculumOverviewCard(),
       ],
     );
@@ -1503,41 +1507,85 @@ class _GlossarySearchBarState extends State<_GlossarySearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(16),
-      child: TextField(
-        key: const Key('glossary-search-bar'),
-        controller: _controller,
-        onSubmitted: (_) => _submit(),
-        style: const TextStyle(fontSize: 14.5, color: AppColors.ink),
-        decoration: InputDecoration(
-          hintText: 'Search ESG terms — DNSH, Scope 3, ESRS…',
-          hintStyle: TextStyle(fontSize: 14.5, color: AppColors.inkSoft),
-          prefixIcon: const Icon(
-            Icons.search,
-            color: AppColors.inkSoft,
-            size: 20,
+    // Deliberately more prominent than a standard input — the Glossary is
+    // this site's strongest, most immediately useful feature for a
+    // first-time professional visitor, so its entry point earns visual
+    // weight: a bolder border and a soft brand-tinted background instead
+    // of blending in as one more plain form field.
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.teal.withValues(alpha: 0.10),
+            blurRadius: 16,
+            offset: const Offset(0, 4),
           ),
-          suffixIcon: IconButton(
-            icon: const Icon(Icons.arrow_forward, color: AppColors.tealDeep),
-            onPressed: _submit,
-            tooltip: 'Search glossary',
+        ],
+      ),
+      child: Material(
+        color: AppColors.teal.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(16),
+        child: TextField(
+          key: const Key('glossary-search-bar'),
+          controller: _controller,
+          onSubmitted: (_) => _submit(),
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            color: AppColors.ink,
           ),
-          filled: true,
-          fillColor: AppColors.surface,
-          contentPadding: const EdgeInsets.symmetric(vertical: 14),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: AppColors.border),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: AppColors.border),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: AppColors.teal, width: 1.5),
+          decoration: InputDecoration(
+            hintText: 'Search ESG terms — DNSH, Scope 3, ESRS…',
+            hintStyle: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: AppColors.inkSoft,
+            ),
+            prefixIcon: const Padding(
+              padding: EdgeInsets.only(left: 4),
+              child: Icon(Icons.search, color: AppColors.tealDeep, size: 22),
+            ),
+            suffixIcon: Padding(
+              padding: const EdgeInsets.all(6),
+              child: Material(
+                color: AppColors.teal,
+                shape: const CircleBorder(),
+                child: InkWell(
+                  customBorder: const CircleBorder(),
+                  onTap: _submit,
+                  child: const Padding(
+                    padding: EdgeInsets.all(8),
+                    child: Icon(
+                      Icons.arrow_forward,
+                      color: Colors.white,
+                      size: 16,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            filled: true,
+            fillColor: Colors.transparent,
+            contentPadding: const EdgeInsets.symmetric(vertical: 16),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(
+                color: AppColors.teal.withValues(alpha: 0.35),
+                width: 1.5,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: BorderSide(
+                color: AppColors.teal.withValues(alpha: 0.35),
+                width: 1.5,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(16),
+              borderSide: const BorderSide(color: AppColors.teal, width: 2),
+            ),
           ),
         ),
       ),
