@@ -285,10 +285,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 context.go('/glossary?q=${Uri.encodeQueryComponent(query)}'),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-          child: _buildContinueLearningCard(context),
-        ),
+        // On a first-ever visit, the hero's own "Start first lesson"
+        // button already covers this exact moment — showing this card too
+        // right underneath it repeats the same invitation twice in a row.
+        // Once there's real progress, the card earns its place back: it
+        // names the specific next module, which the hero button doesn't.
+        if (!(kIsWeb && ProgressStore.instance.completedModulesCount == 0))
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+            child: _buildContinueLearningCard(context),
+          ),
         desaturatedOnWeb(
           Column(
             children: [

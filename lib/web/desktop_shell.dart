@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart';
 import 'responsive.dart';
 
@@ -148,11 +149,25 @@ class _Sidebar extends StatelessWidget {
             for (final tab in tabs)
               _SidebarLink(tab: tab, selected: location == tab.location),
             const Spacer(),
+            // A visitor who arrived via a shared app.sustainwiseapp.com
+            // link has otherwise had no way to find the marketing site —
+            // this was previously plain, unclickable text.
             Padding(
               padding: const EdgeInsets.all(20),
-              child: Text(
-                'sustainwiseapp.com',
-                style: TextStyle(fontSize: 11.5, color: AppColors.inkSoft),
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: InkWell(
+                  onTap: () =>
+                      launchUrl(Uri.parse('https://sustainwiseapp.com')),
+                  child: const Text(
+                    'sustainwiseapp.com',
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      color: AppColors.inkSoft,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ),
               ),
             ),
           ],

@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import '../data/models.dart';
 import '../services/app_feedback.dart';
 import '../theme/app_theme.dart';
+import '../web/unload_guard.dart';
 import '../widgets/animated_counter.dart';
 import '../widgets/app_route.dart';
 import '../widgets/content_empty_state.dart';
@@ -35,6 +36,7 @@ class _LessonScreenState extends State<LessonScreen>
   @override
   void initState() {
     super.initState();
+    pushUnloadGuard();
     // A gentle continuous pulse on the "tap to flip" hint — the card is the
     // only interactive element on an otherwise near-empty screen, so it
     // needs an ongoing cue, not just a one-shot hint that's easy to miss.
@@ -46,6 +48,7 @@ class _LessonScreenState extends State<LessonScreen>
 
   @override
   void dispose() {
+    popUnloadGuard();
     _pulseController.dispose();
     super.dispose();
   }

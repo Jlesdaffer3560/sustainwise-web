@@ -345,7 +345,11 @@ class ProfileScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _buildSoundToggleRow(),
+          // AppFeedback._play() is suppressed entirely on web (a website
+          // playing sounds on tap reads as broken, not delightful) — this
+          // toggle would otherwise be a dead control with no audible
+          // effect either way, same reasoning as hiding Notifications.
+          if (!kIsWeb) _buildSoundToggleRow(),
           // The daily reminder is built on flutter_local_notifications'
           // zonedSchedule(), which throws UnsupportedError on the web
           // platform — hide the row on web rather than expose a control

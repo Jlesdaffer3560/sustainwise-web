@@ -4,6 +4,7 @@ import '../data/models.dart';
 import '../data/progress_store.dart';
 import '../services/app_feedback.dart';
 import '../theme/app_theme.dart';
+import '../web/unload_guard.dart';
 import '../widgets/animated_counter.dart';
 import '../widgets/app_route.dart';
 import '../widgets/content_empty_state.dart';
@@ -43,6 +44,18 @@ class _QuizScreenState extends State<QuizScreen> {
   bool get _answered => _selected != null;
   double get _progress =>
       (_index + (_answered ? 1 : 0)) / widget.questions.length;
+
+  @override
+  void initState() {
+    super.initState();
+    pushUnloadGuard();
+  }
+
+  @override
+  void dispose() {
+    popUnloadGuard();
+    super.dispose();
+  }
 
   void _selectOption(int i) {
     if (_answered) return;

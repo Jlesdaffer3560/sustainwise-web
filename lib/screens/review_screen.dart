@@ -3,6 +3,7 @@ import '../data/models.dart';
 import '../data/progress_store.dart';
 import '../services/app_feedback.dart';
 import '../theme/app_theme.dart';
+import '../web/unload_guard.dart';
 import '../widgets/animated_counter.dart';
 import '../widgets/moment_badge.dart';
 
@@ -32,6 +33,18 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
   QuizQuestion get _current => widget.questions[_index];
   bool get _answered => _selected != null;
+
+  @override
+  void initState() {
+    super.initState();
+    pushUnloadGuard();
+  }
+
+  @override
+  void dispose() {
+    popUnloadGuard();
+    super.dispose();
+  }
 
   void _selectOption(int i) {
     if (_answered) return;

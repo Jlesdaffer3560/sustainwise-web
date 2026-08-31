@@ -3,6 +3,7 @@ import '../data/models.dart';
 import '../data/progress_store.dart';
 import '../services/app_feedback.dart';
 import '../theme/app_theme.dart';
+import '../web/unload_guard.dart';
 import '../widgets/animated_counter.dart';
 import '../widgets/app_route.dart';
 import 'lesson_complete_screen.dart';
@@ -38,6 +39,18 @@ class _PairsScreenState extends State<PairsScreen> {
   ConfusablePair get _current => widget.pairs[_index];
   bool get _answered => _selected != null;
   double get _progress => (_index + (_answered ? 1 : 0)) / widget.pairs.length;
+
+  @override
+  void initState() {
+    super.initState();
+    pushUnloadGuard();
+  }
+
+  @override
+  void dispose() {
+    popUnloadGuard();
+    super.dispose();
+  }
 
   void _select(int i) {
     if (_answered) return;
