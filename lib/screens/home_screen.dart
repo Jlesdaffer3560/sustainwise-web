@@ -226,17 +226,24 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Expanded(child: _buildContinueLearningCard(context)),
-              const SizedBox(width: 12),
-              _GlossaryShortcut(
-                onTap: () => Navigator.of(
-                  context,
-                ).push(appRoute(const GlossaryScreen())),
-              ),
-            ],
+          // IntrinsicHeight, not just CrossAxisAlignment.stretch — this Row
+          // sits inside a vertically-unbounded SingleChildScrollView, so
+          // stretch alone has no finite height to stretch children *to*
+          // ("BoxConstraints forces an infinite height", verified with a
+          // standalone repro). IntrinsicHeight resolves a real height first.
+          child: IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(child: _buildContinueLearningCard(context)),
+                const SizedBox(width: 12),
+                _GlossaryShortcut(
+                  onTap: () => Navigator.of(
+                    context,
+                  ).push(appRoute(const GlossaryScreen())),
+                ),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: 4),
