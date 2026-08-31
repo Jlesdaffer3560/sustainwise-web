@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data/models.dart';
@@ -1044,7 +1045,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onModuleTap(BuildContext context, ModuleProgress module) {
     final status = ProgressStore.instance.statusFor(module.id);
-    if (status == ModuleStatus.available) {
+    // On web, a visitor is typically here once for a specific topic, not
+    // working through the app's day-by-day unlock progression — so every
+    // module opens directly, regardless of status. The native app keeps
+    // the real gate.
+    if (!kIsWeb && status == ModuleStatus.available) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(

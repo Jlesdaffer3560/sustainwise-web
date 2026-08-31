@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../data/models.dart';
 import '../services/app_feedback.dart';
@@ -224,7 +225,13 @@ class _ModulePathNodeState extends State<ModulePathNode>
                     const SizedBox(width: 8),
                     Icon(
                       switch (status) {
-                        ModuleStatus.available => Icons.lock_outline,
+                        // On web every module is actually reachable (see
+                        // home_screen.dart's _onModuleTap), so a padlock
+                        // would be a lie — use the same "open" chevron as
+                        // the current module instead.
+                        ModuleStatus.available => kIsWeb
+                            ? Icons.chevron_right
+                            : Icons.lock_outline,
                         // A forward-pointing chevron is reserved for the
                         // one truly "next" module — a done row gets a
                         // checkmark instead, so it can never be mistaken
