@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data/models.dart';
@@ -55,6 +56,15 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
   // either way, since term names are unique across the database.
   String _keyFor(Term t) => t.id ?? t.term;
 
+  // On web, a visitor looking up a term most likely wants to copy its
+  // definition into an email or a compliance note — Flutter renders
+  // everything to a canvas by default, so text isn't selectable at all
+  // unless explicitly wrapped in a SelectionArea. Native is untouched:
+  // long-press-to-select isn't part of the app's existing interactions,
+  // and this only ever wraps content when kIsWeb.
+  Widget _maybeSelectable(Widget child) =>
+      kIsWeb ? SelectionArea(child: child) : child;
+
   @override
   Widget build(BuildContext context) {
     final results = _filtered;
@@ -98,13 +108,16 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
               Expanded(
                 child: results.isEmpty
                     ? _buildEmptyState()
-                    : ListView.separated(
-                        key: const Key('glossary-list'),
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-                        itemCount: results.length,
-                        separatorBuilder: (_, _) => const SizedBox(height: 10),
-                        itemBuilder: (context, index) =>
-                            _buildTermCard(results[index]),
+                    : _maybeSelectable(
+                        ListView.separated(
+                          key: const Key('glossary-list'),
+                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+                          itemCount: results.length,
+                          separatorBuilder: (_, _) =>
+                              const SizedBox(height: 10),
+                          itemBuilder: (context, index) =>
+                              _buildTermCard(results[index]),
+                        ),
                       ),
               ),
             ],
