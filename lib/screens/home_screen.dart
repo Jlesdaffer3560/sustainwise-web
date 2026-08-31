@@ -320,7 +320,90 @@ class _HomeScreenState extends State<HomeScreen> {
         _buildDailyGoalCard(context),
         _buildMistakesCard(context),
         _buildRegulatoryRadarCard(context),
+        // Daily Goal/Mistakes are both progress-dependent — for a
+        // first-time visitor (no streak, nothing missed yet) that leaves
+        // this whole column mostly empty next to the long path column.
+        // This card is the opposite: pure content, identical for every
+        // visitor regardless of history, so it always has something to
+        // show — and it doubles as a scope/credibility signal ("this is a
+        // real 261-term curriculum," not a toy).
+        _buildCurriculumOverviewCard(),
       ],
+    );
+  }
+
+  Widget _buildCurriculumOverviewCard() {
+    final totalModules = MockData.units.fold(
+      0,
+      (sum, u) => sum + u.modules.length,
+    );
+    return Container(
+      key: const Key('curriculum-overview-card'),
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'What\'s inside',
+            style: TextStyle(
+              fontWeight: FontWeight.w800,
+              fontSize: 14.5,
+              color: AppColors.ink,
+            ),
+          ),
+          const SizedBox(height: 3),
+          Text(
+            '${MockData.allTerms.length} terms · $totalModules modules · '
+            '${MockData.units.length} units',
+            style: const TextStyle(
+              fontFamily: 'monospace',
+              fontSize: 11.5,
+              fontWeight: FontWeight.w700,
+              color: AppColors.inkSoft,
+            ),
+          ),
+          const SizedBox(height: 12),
+          for (var i = 0; i < MockData.units.length; i++)
+            Padding(
+              padding: EdgeInsets.only(
+                bottom: i == MockData.units.length - 1 ? 0 : 8,
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: AppColors.unitAccents[i %
+                              AppColors.unitAccents.length]
+                          .deep,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      MockData.units[i].title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.inkSoft,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
     );
   }
 
@@ -1488,6 +1571,22 @@ class _HowItWorksSectionState extends State<_HowItWorksSection> {
 
   @override
   Widget build(BuildContext context) {
+    // A collapsed-by-default toggle asks a web visitor to click before
+    // they even know what's behind it — most won't bother, so the actual
+    // explanation goes largely unread. A short line that's always visible
+    // fits a one-time visit much better than an interaction pattern built
+    // for repeat app opens. Native keeps the full collapsible version.
+    if (kIsWeb) {
+      return const Text(
+        'Flashcards, then a quiz, then confusable pairs — a few minutes '
+        'per module.',
+        style: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: AppColors.tealDeep,
+        ),
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
