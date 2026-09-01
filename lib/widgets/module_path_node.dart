@@ -151,12 +151,17 @@ class _ModulePathNodeState extends State<ModulePathNode>
               ? (status == ModuleStatus.available ? lockedInk : rimColor)
               : iconAccent);
 
+    // Smaller radius and calmer type weight on desktop — a review round
+    // called the rounder native proportions and heavy w800 titles still
+    // "Duolingo/game" adjacent even after the flat-card treatment. Native
+    // and narrow web keep the original 18px/w800 exactly as they were.
+    final radius = desktop ? 14.0 : 18.0;
     final row = Material(
       color: cardBg,
-      borderRadius: BorderRadius.circular(18),
+      borderRadius: BorderRadius.circular(radius),
       child: InkWell(
         key: Key('module-node-${widget.module.id}'),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(radius),
         onTap: widget.onTap == null
             ? null
             : () {
@@ -170,7 +175,7 @@ class _ModulePathNodeState extends State<ModulePathNode>
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(radius),
             border: desktop
                 ? Border(
                     top: BorderSide(color: AppColors.border),
@@ -184,29 +189,36 @@ class _ModulePathNodeState extends State<ModulePathNode>
           ),
           child: Row(
             children: [
-              AnimatedBuilder(
-                animation: _revealController,
-                builder: (context, child) {
-                  final t = Curves.elasticOut.transform(
-                    _revealController.value.clamp(0.0, 1.0),
-                  );
-                  return Opacity(
-                    opacity: _revealController.value.clamp(0.0, 1.0),
-                    child: Transform.scale(
-                      scale: 0.4 + t * 0.6,
-                      child: Transform.rotate(
-                        angle: (1 - t) * -0.4,
-                        child: child,
+              // The elastic scale/rotate pop is a game-like flourish native
+              // earns every time a module unlocks — desktop web skips it
+              // for a plain icon instead, on top of everything else this
+              // branch already sobers up.
+              if (desktop)
+                Icon(_buildIcon(status), color: cardIconAccent, size: 24)
+              else
+                AnimatedBuilder(
+                  animation: _revealController,
+                  builder: (context, child) {
+                    final t = Curves.elasticOut.transform(
+                      _revealController.value.clamp(0.0, 1.0),
+                    );
+                    return Opacity(
+                      opacity: _revealController.value.clamp(0.0, 1.0),
+                      child: Transform.scale(
+                        scale: 0.4 + t * 0.6,
+                        child: Transform.rotate(
+                          angle: (1 - t) * -0.4,
+                          child: child,
+                        ),
                       ),
-                    ),
-                  );
-                },
-                child: Icon(
-                  _buildIcon(status),
-                  color: cardIconAccent,
-                  size: 24,
+                    );
+                  },
+                  child: Icon(
+                    _buildIcon(status),
+                    color: cardIconAccent,
+                    size: 24,
+                  ),
                 ),
-              ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
@@ -216,7 +228,9 @@ class _ModulePathNodeState extends State<ModulePathNode>
                       widget.module.title,
                       style: TextStyle(
                         fontSize: 15,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: desktop
+                            ? FontWeight.w700
+                            : FontWeight.w800,
                         color: cardFg,
                       ),
                     ),

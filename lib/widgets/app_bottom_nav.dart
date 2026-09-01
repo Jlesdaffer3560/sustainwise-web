@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../services/app_feedback.dart';
 import '../theme/app_theme.dart';
@@ -35,7 +36,10 @@ class AppBottomNav extends StatelessWidget {
           children: [
             _navItem(
               icon: Icons.route,
-              label: 'Path',
+              // "Learning" on narrow web too, same reasoning as the
+              // desktop sidebar — this row is shared with native, which
+              // keeps "Path" exactly as it always was.
+              label: kIsWeb ? 'Learning' : 'Path',
               selected: current == AppTab.path,
               onTap: onPathTap,
             ),

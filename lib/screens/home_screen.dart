@@ -8,7 +8,6 @@ import '../data/models.dart';
 import '../data/progress_store.dart';
 import '../services/app_feedback.dart';
 import '../theme/app_theme.dart';
-import '../web/desaturated_path.dart';
 import '../web/responsive.dart';
 import '../widgets/animated_counter.dart';
 import '../widgets/app_bottom_nav.dart';
@@ -159,16 +158,19 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Stack(
           alignment: Alignment.topCenter,
           children: [
-            isDesktopWeb(context)
-                ? _buildDesktopScrollLayout(context)
-                : Scrollbar(
-                    thumbVisibility: true,
-                    child: SingleChildScrollView(
-                      key: const Key('module-path-scroll'),
-                      padding: const EdgeInsets.only(bottom: 24),
-                      child: _buildMobileContent(context),
-                    ),
-                  ),
+            if (isWideDesktopWeb(context))
+              _buildDesktopScrollLayout(context)
+            else if (isDesktopWeb(context))
+              _buildDesktopSingleColumnLayout(context)
+            else
+              Scrollbar(
+                thumbVisibility: true,
+                child: SingleChildScrollView(
+                  key: const Key('module-path-scroll'),
+                  padding: const EdgeInsets.only(bottom: 24),
+                  child: _buildMobileContent(context),
+                ),
+              ),
             // A milestone just landed — burst over the top of the hero
             // where the eye already is. Daily goal keeps the plain confetti
             // (it happens near-daily); a streak milestone or finishing the
@@ -236,6 +238,27 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// Desktop-web, between [kDesktopBreakpoint] and [kWideDesktopBreakpoint]:
+  /// the sidebar shell is already worth showing, but there isn't really
+  /// room for a second content column next to it without squeezing the
+  /// module list — the status cards stack below the path instead, in the
+  /// same single scroll, rather than fighting for width.
+  Widget _buildDesktopSingleColumnLayout(BuildContext context) {
+    return Scrollbar(
+      thumbVisibility: true,
+      child: SingleChildScrollView(
+        key: const Key('module-path-scroll'),
+        padding: const EdgeInsets.only(bottom: 24),
+        child: Column(
+          children: [
+            _buildDesktopMainColumn(context),
+            _buildDesktopSidebar(context),
+          ],
+        ),
+      ),
+    );
+  }
+
   /// The native app's (and narrow-web's) original single-column layout —
   /// moved here unchanged so [_buildScaffold] can branch into
   /// [_buildDesktopMainColumn] without touching this at all.
@@ -266,13 +289,11 @@ class _HomeScreenState extends State<HomeScreen> {
         _buildMistakesCard(context),
         _buildRegulatoryRadarCard(context),
         const _ScrollHint(),
-        desaturatedOnWeb(
-          Column(
-            children: [
-              for (var i = 0; i < MockData.units.length; i++)
-                _buildUnitSection(context, MockData.units[i], i),
-            ],
-          ),
+        Column(
+          children: [
+            for (var i = 0; i < MockData.units.length; i++)
+              _buildUnitSection(context, MockData.units[i], i),
+          ],
         ),
         _buildExpertChallengeCard(context),
         _buildCopyrightFooter(),
@@ -319,13 +340,11 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
             child: _buildContinueLearningCard(context),
           ),
-        desaturatedOnWeb(
-          Column(
-            children: [
-              for (var i = 0; i < MockData.units.length; i++)
-                _buildUnitSection(context, MockData.units[i], i),
-            ],
-          ),
+        Column(
+          children: [
+            for (var i = 0; i < MockData.units.length; i++)
+              _buildUnitSection(context, MockData.units[i], i),
+          ],
         ),
         _buildExpertChallengeCard(context),
         _buildCopyrightFooter(),
@@ -361,6 +380,8 @@ class _HomeScreenState extends State<HomeScreen> {
       0,
       (sum, u) => sum + u.modules.length,
     );
+    // This card only ever renders inside the desktop web sidebar.
+    final accents = unitAccentsFor(kIsWeb);
     return Container(
       key: const Key('curriculum-overview-card'),
       margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
@@ -402,9 +423,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     width: 8,
                     height: 8,
                     decoration: BoxDecoration(
-                      color: AppColors.unitAccents[i %
-                              AppColors.unitAccents.length]
-                          .deep,
+                      color: accents[i % accents.length].deep,
                       shape: BoxShape.circle,
                     ),
                   ),
@@ -564,8 +583,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Widget> _buildHeroWebExtras(BuildContext context) {
     const benefits = [
-      (Icons.school_outlined, 'Learn ESG jargon'),
-      (Icons.quiz_outlined, 'Practice with quizzes'),
+      (Icons.school_outlined, 'Build ESG & regulatory fluency'),
+      (Icons.quiz_outlined, 'Apply your knowledge'),
       (Icons.radar, 'Track EU regulatory milestones'),
     ];
     final next = _nextModule();
@@ -1192,7 +1211,8 @@ class _HomeScreenState extends State<HomeScreen> {
   /// (cycled from [AppColors.unitAccents] by position) so the path reads as
   /// a set of distinct topics rather than one repeated dark-green block.
   Widget _buildUnitSection(BuildContext context, LearningUnit unit, int index) {
-    final palette = AppColors.unitAccents[index % AppColors.unitAccents.length];
+    final accents = unitAccentsFor(kIsWeb);
+    final palette = accents[index % accents.length];
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       padding: const EdgeInsets.fromLTRB(18, 18, 18, 26),
@@ -1672,8 +1692,8 @@ class _HowItWorksSectionState extends State<_HowItWorksSection> {
     // for repeat app opens. Native keeps the full collapsible version.
     if (kIsWeb) {
       return const Text(
-        'Flashcards, then a quiz, then confusable pairs — a few minutes '
-        'per module.',
+        'Learn key concepts, test your knowledge, and distinguish '
+        'commonly confused terms — a few minutes per module.',
         style: TextStyle(
           fontSize: 13,
           fontWeight: FontWeight.w600,

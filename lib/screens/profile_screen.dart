@@ -164,15 +164,18 @@ class ProfileScreen extends StatelessWidget {
           ),
           const SizedBox(width: 18),
           // A week-activity chart is near-empty for a one-time web
-          // visitor — swapped for a plain read of what this visit
-          // actually covered instead. Native keeps the real weekly chart.
+          // visitor — swapped for a plain read of overall completion
+          // instead. Native keeps the real weekly chart. Labeled "Your
+          // progress", not "This visit" — completed/total is the same
+          // persisted browser-local progress shown everywhere else on
+          // this page, not scoped to the current session.
           Expanded(
             child: kIsWeb
                 ? Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
-                        'This visit',
+                        'Your progress',
                         style: TextStyle(
                           fontSize: 13.5,
                           fontWeight: FontWeight.w700,
@@ -275,7 +278,8 @@ class ProfileScreen extends StatelessWidget {
   }
 
   Widget _confidenceChip(LearningUnit unit, int index) {
-    final palette = AppColors.unitAccents[index % AppColors.unitAccents.length];
+    final accents = unitAccentsFor(kIsWeb);
+    final palette = accents[index % accents.length];
     final label = ProgressStore.instance.confidenceForUnit(unit);
     final parts = unit.title.split(' · ');
     final shortTitle = parts.length > 1

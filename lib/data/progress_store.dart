@@ -211,8 +211,25 @@ class ProgressStore extends ChangeNotifier {
   bool get expertChallengeUnlocked =>
       totalModulesCount > 0 && completedModulesCount >= totalModulesCount;
 
-  ModuleStatus statusFor(String moduleId) =>
-      _statuses[moduleId] ?? ModuleStatus.available;
+  // "current" is derived, not stored — the first not-yet-done module in
+  // curriculum order — rather than a flag `completeLesson` moves forward
+  // one module at a time. Native only ever completes modules in that same
+  // order, so this changes nothing there; but web lets a learner complete
+  // any unlocked module out of order (see home_screen.dart's
+  // _onModuleTap), and a stored-flag model let that leave the old
+  // "current" module still marked current after a later one was also
+  // promoted — two modules reading as "current" at once. Only "done" is
+  // ever actually persisted in [_statuses]; a legacy "current" entry from
+  // before this fix is simply never read as one again.
+  ModuleStatus statusFor(String moduleId) {
+    if (_statuses[moduleId] == ModuleStatus.done) return ModuleStatus.done;
+    final firstNotDone = _allModuleIds.firstWhere(
+      (id) => _statuses[id] != ModuleStatus.done,
+    );
+    return moduleId == firstNotDone
+        ? ModuleStatus.current
+        : ModuleStatus.available;
+  }
 
   List<String> get _allModuleIds =>
       MockData.units.expand((u) => u.modules).map((m) => m.id).toList();
@@ -397,8 +414,8 @@ class ProgressStore extends ChangeNotifier {
     _todayXpRaw = 0;
     _todayXpDate = null;
     _dailyXpHistory.clear();
-    final firstModuleId = MockData.units.expand((u) => u.modules).first.id;
-    _statuses[firstModuleId] = ModuleStatus.current;
+    // No explicit "current" to seed — with an empty _statuses, the first
+    // module is already the derived current one (see statusFor).
   }
 
   /// Wipes all progress — streak, XP, module status, mistakes queue,
@@ -411,8 +428,9 @@ class ProgressStore extends ChangeNotifier {
     await _save();
   }
 
-  /// Marks a module done, promotes the next available module to current,
-  /// records this attempt's quiz+pairs accuracy, awards XP, and updates the
+  /// Marks a module done (the next not-yet-done module becomes current
+  /// automatically — see [statusFor]), records this attempt's quiz+pairs
+  /// accuracy, awards XP, and updates the
   /// streak based on the calendar day.
   Future<void> completeLesson({
     required String moduleId,
@@ -425,15 +443,9 @@ class ProgressStore extends ChangeNotifier {
     final alreadyDone = statusFor(moduleId) == ModuleStatus.done;
     _statuses[moduleId] = ModuleStatus.done;
     if (total > 0) _accuracy[moduleId] = correct / total;
-
-    final ids = _allModuleIds;
-    final index = ids.indexOf(moduleId);
-    if (index != -1 && index + 1 < ids.length) {
-      final nextId = ids[index + 1];
-      if (statusFor(nextId) == ModuleStatus.available) {
-        _statuses[nextId] = ModuleStatus.current;
-      }
-    }
+    // No explicit "current" promotion needed — the next module (or
+    // whichever one is still first not-done) becomes current automatically
+    // once this one is marked done (see statusFor).
 
     if (!alreadyDone) _addXp(_xpPerLesson);
     _recordPracticeToday();

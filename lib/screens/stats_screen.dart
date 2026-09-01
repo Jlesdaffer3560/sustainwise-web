@@ -245,8 +245,8 @@ class StatsScreen extends StatelessWidget {
           (m) => ProgressStore.instance.statusFor(m.id) == ModuleStatus.done,
         )
         .fold(0, (sum, m) => sum + m.termCount);
-    final accent =
-        AppColors.unitAccents[index % AppColors.unitAccents.length].fill;
+    final accents = unitAccentsFor(kIsWeb);
+    final accent = accents[index % accents.length].fill;
     final progress = total == 0 ? 0.0 : completed / total;
 
     return Container(

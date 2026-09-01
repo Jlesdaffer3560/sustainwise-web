@@ -15,7 +15,9 @@ class DesktopShell extends StatelessWidget {
   final Widget child;
 
   static const _tabs = [
-    _NavTab(location: '/home', icon: Icons.route, label: 'Path'),
+    // "Learning", not "Path" — a review round called "Path" gamified for
+    // a professional audience. This file is web-only regardless.
+    _NavTab(location: '/home', icon: Icons.route, label: 'Learning'),
     _NavTab(
       location: '/glossary',
       icon: Icons.menu_book_outlined,
