@@ -151,6 +151,17 @@ class _ModulePathNodeState extends State<ModulePathNode>
               ? (status == ModuleStatus.available ? lockedInk : rimColor)
               : iconAccent);
 
+    // Desktop only: an available row's stripe was plain neutral gray,
+    // same as every other available row regardless of unit — with most
+    // modules unstarted on a first visit, that read as one long wall of
+    // white cards with no color at all. Carries the unit's own (already
+    // muted, on web) accent instead, so every row still identifies its
+    // topic before it's ever opened. Done/current keep their existing
+    // stripe color; native and narrow web are untouched.
+    final Color desktopStripeColor = status == ModuleStatus.available
+        ? (widget.doneRim ?? rimColor)
+        : rimColor;
+
     // Smaller radius and calmer type weight on desktop — a review round
     // called the rounder native proportions and heavy w800 titles still
     // "Duolingo/game" adjacent even after the flat-card treatment. Native
@@ -181,7 +192,7 @@ class _ModulePathNodeState extends State<ModulePathNode>
                     top: BorderSide(color: AppColors.border),
                     right: BorderSide(color: AppColors.border),
                     bottom: BorderSide(color: AppColors.border),
-                    left: BorderSide(color: rimColor, width: 4),
+                    left: BorderSide(color: desktopStripeColor, width: 4),
                   )
                 : (status == ModuleStatus.available
                       ? Border.all(color: AppColors.border)
