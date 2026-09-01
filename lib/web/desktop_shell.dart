@@ -4,7 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart';
 import 'responsive.dart';
 
-/// The web build's persistent frame around the four top-level tabs — a
+/// The web build's persistent frame around the three top-level tabs — a
 /// fixed sidebar instead of the native app's bottom tab bar, so the site
 /// reads as a website with real pages (own URL, working browser
 /// back/forward/refresh) rather than a phone screen pasted into a browser
@@ -23,11 +23,11 @@ class DesktopShell extends StatelessWidget {
       icon: Icons.menu_book_outlined,
       label: 'Glossary',
     ),
-    _NavTab(location: '/stats', icon: Icons.bar_chart_outlined, label: 'Stats'),
+    // Stats+Profile merged into one destination — see ProgressScreen.
     _NavTab(
-      location: '/profile',
-      icon: Icons.person_outline,
-      label: 'Profile',
+      location: '/progress',
+      icon: Icons.bar_chart_outlined,
+      label: 'Progress',
     ),
   ];
 

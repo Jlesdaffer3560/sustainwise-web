@@ -22,6 +22,7 @@ import 'expert_challenge_screen.dart';
 import 'glossary_screen.dart';
 import 'lesson_screen.dart';
 import 'profile_screen.dart';
+import 'progress_screen.dart';
 import 'regulatory_radar_screen.dart';
 import 'review_screen.dart';
 import 'stats_screen.dart';
@@ -1005,7 +1006,7 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(18),
         child: InkWell(
           borderRadius: BorderRadius.circular(18),
-          onTap: () => context.go('/stats'),
+          onTap: () => context.go('/progress'),
           child: content,
         ),
       ),
@@ -1447,10 +1448,14 @@ class _HomeScreenState extends State<HomeScreen> {
       onPathTap: () {},
       onGlossaryTap: () =>
           Navigator.of(context).push(appRoute(const GlossaryScreen())),
-      onStatsTap: () =>
-          Navigator.of(context).push(appRoute(const StatsScreen())),
-      onProfileTap: () =>
-          Navigator.of(context).push(appRoute(const ProfileScreen())),
+      // Web merges Stats+Profile into one ProgressScreen (see
+      // app_bottom_nav.dart's web item list) — native keeps them separate.
+      onStatsTap: () => Navigator.of(context).push(
+        appRoute(kIsWeb ? const ProgressScreen() : const StatsScreen()),
+      ),
+      onProfileTap: () => Navigator.of(context).push(
+        appRoute(kIsWeb ? const ProgressScreen() : const ProfileScreen()),
+      ),
     );
   }
 

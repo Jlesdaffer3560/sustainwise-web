@@ -33,39 +33,63 @@ class AppBottomNav extends StatelessWidget {
       child: SizedBox(
         height: 60,
         child: Row(
-          children: [
-            _navItem(
-              icon: Icons.route,
-              // "Learning" on narrow web too, same reasoning as the
-              // desktop sidebar — this row is shared with native, which
-              // keeps "Path" exactly as it always was.
-              label: kIsWeb ? 'Learning' : 'Path',
-              selected: current == AppTab.path,
-              onTap: onPathTap,
-            ),
-            _navItem(
-              icon: Icons.menu_book_outlined,
-              label: 'Glossary',
-              selected: current == AppTab.glossary,
-              onTap: onGlossaryTap,
-            ),
-            _navItem(
-              icon: Icons.bar_chart_outlined,
-              label: 'Stats',
-              selected: current == AppTab.stats,
-              onTap: onStatsTap,
-            ),
-            _navItem(
-              icon: Icons.person_outline,
-              label: 'Profile',
-              selected: current == AppTab.profile,
-              onTap: onProfileTap,
-            ),
-          ],
+          children: kIsWeb ? _webItems() : _nativeItems(),
         ),
       ),
     );
   }
+
+  List<Widget> _nativeItems() => [
+    _navItem(
+      icon: Icons.route,
+      label: 'Path',
+      selected: current == AppTab.path,
+      onTap: onPathTap,
+    ),
+    _navItem(
+      icon: Icons.menu_book_outlined,
+      label: 'Glossary',
+      selected: current == AppTab.glossary,
+      onTap: onGlossaryTap,
+    ),
+    _navItem(
+      icon: Icons.bar_chart_outlined,
+      label: 'Stats',
+      selected: current == AppTab.stats,
+      onTap: onStatsTap,
+    ),
+    _navItem(
+      icon: Icons.person_outline,
+      label: 'Profile',
+      selected: current == AppTab.profile,
+      onTap: onProfileTap,
+    ),
+  ];
+
+  // Web merges Stats+Profile into one "Progress" destination (see
+  // ProgressScreen) — callers pass the same callback to both onStatsTap
+  // and onProfileTap on web, so either works as this item's onTap.
+  // "Learning" instead of "Path", same reasoning as the desktop sidebar.
+  List<Widget> _webItems() => [
+    _navItem(
+      icon: Icons.route,
+      label: 'Learning',
+      selected: current == AppTab.path,
+      onTap: onPathTap,
+    ),
+    _navItem(
+      icon: Icons.menu_book_outlined,
+      label: 'Glossary',
+      selected: current == AppTab.glossary,
+      onTap: onGlossaryTap,
+    ),
+    _navItem(
+      icon: Icons.bar_chart_outlined,
+      label: 'Progress',
+      selected: current == AppTab.stats || current == AppTab.profile,
+      onTap: onStatsTap,
+    ),
+  ];
 
   Widget _navItem({
     required IconData icon,

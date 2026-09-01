@@ -8,6 +8,7 @@ import '../web/responsive.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/app_route.dart';
 import 'profile_screen.dart';
+import 'progress_screen.dart';
 import 'stats_screen.dart';
 
 /// A permanent, always-unlocked lookup of every term in the app — the
@@ -131,12 +132,18 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                 current: AppTab.glossary,
                 onPathTap: () => Navigator.of(context).pop(),
                 onGlossaryTap: () {},
-                onStatsTap: () => Navigator.of(
-                  context,
-                ).pushReplacement(appRoute(const StatsScreen())),
-                onProfileTap: () => Navigator.of(
-                  context,
-                ).pushReplacement(appRoute(const ProfileScreen())),
+                // Web merges Stats+Profile into one ProgressScreen; native
+                // keeps them separate.
+                onStatsTap: () => Navigator.of(context).pushReplacement(
+                  appRoute(
+                    kIsWeb ? const ProgressScreen() : const StatsScreen(),
+                  ),
+                ),
+                onProfileTap: () => Navigator.of(context).pushReplacement(
+                  appRoute(
+                    kIsWeb ? const ProgressScreen() : const ProfileScreen(),
+                  ),
+                ),
               ),
       ),
     );

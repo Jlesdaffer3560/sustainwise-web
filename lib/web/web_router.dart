@@ -1,19 +1,17 @@
 import 'package:go_router/go_router.dart';
 import '../screens/glossary_screen.dart';
 import '../screens/home_screen.dart';
-import '../screens/profile_screen.dart';
-import '../screens/stats_screen.dart';
+import '../screens/progress_screen.dart';
 import 'desktop_shell.dart';
 import 'page_title.dart';
 
 const Map<String, String> _pageTitles = {
-  '/home': 'Path — SustainWise',
+  '/home': 'Learning — SustainWise',
   '/glossary': 'Glossary — SustainWise',
-  '/stats': 'Stats — SustainWise',
-  '/profile': 'Profile — SustainWise',
+  '/progress': 'Progress — SustainWise',
 };
 
-/// Web-only: gives the four top-level tabs their own real URL (own
+/// Web-only: gives the three top-level tabs their own real URL (own
 /// browser-history entry, working back/forward/refresh) inside a shared
 /// [DesktopShell]. Deeper flows reached from within a tab — a lesson, the
 /// Expert Challenge, the Regulatory Radar — stay on the existing imperative
@@ -29,8 +27,13 @@ GoRouter buildWebRouter() {
     // path (a stale bookmark, a typo) does too, instead of go_router's
     // bare default error page.
     redirect: (context, state) {
-      const known = {'/home', '/glossary', '/stats', '/profile'};
-      return known.contains(state.matchedLocation) ? null : '/home';
+      // Stats and Profile merged into one Progress screen — old bookmarks
+      // or shared links to either still land somewhere real instead of
+      // falling through to the generic unknown-path redirect below.
+      final loc = state.matchedLocation;
+      if (loc == '/stats' || loc == '/profile') return '/progress';
+      const known = {'/home', '/glossary', '/progress'};
+      return known.contains(loc) ? null : '/home';
     },
     routes: [
       ShellRoute(
@@ -65,12 +68,8 @@ GoRouter buildWebRouter() {
                 GlossaryScreen(initialQuery: state.uri.queryParameters['q']),
           ),
           GoRoute(
-            path: '/stats',
-            builder: (context, state) => const StatsScreen(),
-          ),
-          GoRoute(
-            path: '/profile',
-            builder: (context, state) => const ProfileScreen(),
+            path: '/progress',
+            builder: (context, state) => const ProgressScreen(),
           ),
         ],
       ),
