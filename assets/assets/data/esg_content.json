@@ -3756,6 +3756,7 @@
    "title": "EmpCo Directive becomes applicable",
    "description": "The ban on unsubstantiated generic environmental claims and offset-based carbon-neutral claims starts being enforced across the EU.",
    "moduleId": "greenwashing-empco-ucpd",
+   "type": "applicable",
    "sourceUrl": null
   },
   {
@@ -3764,6 +3765,7 @@
    "title": "Revised ESRS starts applying",
    "description": "Companies begin reporting financial year 2027 under the simplified ESRS (roughly 61% fewer mandatory datapoints) — with transitional early application already possible from FY2026.",
    "moduleId": "csrd-esrs",
+   "type": "applicable",
    "sourceUrl": "https://finance.ec.europa.eu/news/commission-adopts-revised-sustainability-reporting-standards-2026-07-03_en"
   },
   {
@@ -3772,6 +3774,7 @@
    "title": "EU Taxonomy revised Delegated Act entered into force",
    "description": "A 10% materiality threshold now lets companies skip assessing minor activities, cutting required datapoints by roughly 64% for non-financial companies.",
    "moduleId": "eu-taxonomy",
+   "type": "inForce",
    "sourceUrl": null
   },
   {
@@ -3780,6 +3783,7 @@
    "title": "Omnibus I Directive entered into force",
    "description": "The reform that narrowed CSRD's scope and removed CSDDD's EU-wide civil liability regime and mandatory transition-plan obligation officially took effect.",
    "moduleId": "csrd-esrs",
+   "type": "inForce",
    "sourceUrl": null
   },
   {
@@ -3788,6 +3792,7 @@
    "title": "CSDDD applies to all in-scope companies",
    "description": "The single application date replacing the originally staggered rollout — every in-scope company, regardless of size tier, is covered from this date.",
    "moduleId": "csddd",
+   "type": "applicable",
    "sourceUrl": null
   },
   {
@@ -3796,6 +3801,7 @@
    "title": "CSRD Wave 2 starts applying",
    "description": "Large unlisted companies (over 1,000 employees, over €450m turnover) must start sustainability reporting for financial year 2027 — the first mandatory reports themselves will be filed and published in 2028.",
    "moduleId": "csrd-esrs",
+   "type": "applicable",
    "sourceUrl": null
   },
   {
@@ -3804,6 +3810,7 @@
    "title": "CSDDD transposition deadline",
    "description": "EU member states' deadline to write CSDDD's Omnibus-revised rules into national law — exactly one year before the directive actually starts applying to companies.",
    "moduleId": "csddd",
+   "type": "deadline",
    "sourceUrl": null
   },
   {
@@ -3812,6 +3819,7 @@
    "title": "EU Forced Labour Regulation applies",
    "description": "Regulation (EU) 2024/3015 becomes directly applicable across all member states, banning any product made with forced labour from being placed on, sold in, or exported from the EU market.",
    "moduleId": "social-issues-human-rights",
+   "type": "applicable",
    "sourceUrl": "https://transition-pathways.europa.eu/retail/legislation/forced-labour-regulation"
   }
  ]
