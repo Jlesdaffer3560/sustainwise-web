@@ -27,6 +27,26 @@ import 'regulatory_radar_screen.dart';
 import 'review_screen.dart';
 import 'stats_screen.dart';
 
+// Native's heavy black drop shadow (alpha .18, blur 20) reads as "app card
+// floating over a phone background" — fine there, but on a page ground it
+// piles up across several stacked cards into visual noise per external
+// review. Flatter and lighter on web only; native keeps the original.
+List<BoxShadow> _cardShadow() => kIsWeb
+    ? [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.06),
+          blurRadius: 12,
+          offset: const Offset(0, 4),
+        ),
+      ]
+    : [
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.18),
+          blurRadius: 20,
+          offset: const Offset(0, 8),
+        ),
+      ];
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -661,13 +681,7 @@ class _HomeScreenState extends State<HomeScreen> {
         decoration: BoxDecoration(
           color: AppColors.amberSoft,
           borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.18),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
+          boxShadow: _cardShadow(),
         ),
         child: Row(
           children: [
@@ -710,13 +724,7 @@ class _HomeScreenState extends State<HomeScreen> {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(18),
             border: Border.all(color: AppColors.border),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.18),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-            ],
+            boxShadow: _cardShadow(),
           ),
           child: Row(
             children: [
@@ -802,32 +810,44 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.18),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        boxShadow: _cardShadow(),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Duolingo for Sustainability Speak',
-            style: TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: 17,
-              color: AppColors.ink,
+          // The "Duolingo" wink undercuts the professional positioning the
+          // hero just established, per external review — web gets a plain
+          // functional heading instead. Native keeps the original copy.
+          if (kIsWeb)
+            const Text(
+              'How it works',
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 15.5,
+                color: AppColors.ink,
+              ),
+            )
+          else ...[
+            const Text(
+              'Duolingo for Sustainability Speak',
+              style: TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 17,
+                color: AppColors.ink,
+              ),
             ),
-          ),
-          const SizedBox(height: 6),
-          const Text(
-            'Duolingo taught the world Spanish. This teaches you to '
-            'survive a CSRD meeting. Fifteen minutes a day, real '
-            "definitions — and yes, it actually sticks.",
-            style: TextStyle(fontSize: 13.5, color: AppColors.ink, height: 1.4),
-          ),
+            const SizedBox(height: 6),
+            const Text(
+              'Duolingo taught the world Spanish. This teaches you to '
+              'survive a CSRD meeting. Fifteen minutes a day, real '
+              "definitions — and yes, it actually sticks.",
+              style: TextStyle(
+                fontSize: 13.5,
+                color: AppColors.ink,
+                height: 1.4,
+              ),
+            ),
+          ],
           const SizedBox(height: 12),
           const Divider(height: 1, color: AppColors.border),
           const SizedBox(height: 10),

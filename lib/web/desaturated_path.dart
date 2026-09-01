@@ -11,19 +11,22 @@ import 'package:flutter/material.dart';
 /// else on the page is touched, and native never calls this at all.
 ///
 /// The matrix is the standard luminance-preserving saturation formula
-/// (Rec. 601 weights 0.213/0.715/0.072) at 80% — same effective strength
-/// as the CSS rule it replaces.
+/// (Rec. 601 weights 0.213/0.715/0.072). Originally 80% (matching the CSS
+/// rule it replaced); dropped to 45% after a second external review still
+/// called the eight-unit rainbow "too busy" even at 80% — units stay
+/// distinguishable by hue, just calmer. Native colors are untouched either
+/// way, since this only ever runs on web.
 Widget desaturatedOnWeb(Widget child) {
   if (!kIsWeb) return child;
-  return ColorFiltered(colorFilter: const ColorFilter.matrix(_kSat80Matrix), child: child);
+  return ColorFiltered(colorFilter: const ColorFilter.matrix(_kSatMatrix), child: child);
 }
 
 const double _lumR = 0.213;
 const double _lumG = 0.715;
 const double _lumB = 0.072;
-const double _s = 0.8;
+const double _s = 0.45;
 
-const List<double> _kSat80Matrix = [
+const List<double> _kSatMatrix = [
   _lumR + _s * (1 - _lumR), _lumG * (1 - _s), _lumB * (1 - _s), 0, 0,
   _lumR * (1 - _s), _lumG + _s * (1 - _lumG), _lumB * (1 - _s), 0, 0,
   _lumR * (1 - _s), _lumG * (1 - _s), _lumB + _s * (1 - _lumB), 0, 0,

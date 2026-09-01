@@ -113,16 +113,33 @@ class _ModulePathNodeState extends State<ModulePathNode>
     // of a solid fill, and no pressable-rim depth effect. The native app
     // and narrow web keep the exact original treatment untouched.
     final desktop = isDesktopWeb(context);
-    final Color cardBg = desktop ? AppColors.surface : fillColor;
-    final Color cardFg = desktop
-        ? (status == ModuleStatus.available ? lockedInk : AppColors.ink)
-        : fgColor;
-    final Color cardFgSoft = desktop
-        ? (status == ModuleStatus.available ? lockedInk : AppColors.inkSoft)
-        : fgSoft;
-    final Color cardIconAccent = desktop
-        ? (status == ModuleStatus.available ? lockedInk : rimColor)
-        : iconAccent;
+    // On web every module is actually tappable (see home_screen.dart's
+    // _onModuleTap) — an "available" row rendered in the same dim,
+    // low-contrast ink native uses for a module you genuinely can't reach
+    // yet would still read as locked even with the padlock icon gone.
+    // Reads as a plain not-started item instead, on both narrow and
+    // desktop web. Native keeps the original muted treatment.
+    final openOnWeb = kIsWeb && status == ModuleStatus.available;
+    final Color cardBg = openOnWeb
+        ? AppColors.surface
+        : (desktop ? AppColors.surface : fillColor);
+    final Color cardFg = openOnWeb
+        ? AppColors.ink
+        : (desktop
+              ? (status == ModuleStatus.available ? lockedInk : AppColors.ink)
+              : fgColor);
+    final Color cardFgSoft = openOnWeb
+        ? AppColors.inkSoft
+        : (desktop
+              ? (status == ModuleStatus.available
+                    ? lockedInk
+                    : AppColors.inkSoft)
+              : fgSoft);
+    final Color cardIconAccent = openOnWeb
+        ? AppColors.inkSoft
+        : (desktop
+              ? (status == ModuleStatus.available ? lockedInk : rimColor)
+              : iconAccent);
 
     final row = Material(
       color: cardBg,

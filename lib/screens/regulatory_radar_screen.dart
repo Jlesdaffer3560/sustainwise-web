@@ -165,7 +165,7 @@ class _MilestoneCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(99),
                 ),
                 child: Text(
-                  isPast ? 'IN FORCE' : 'UPCOMING',
+                  milestone.statusLabel,
                   style: TextStyle(
                     fontFamily: 'monospace',
                     fontSize: 10,

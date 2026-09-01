@@ -221,6 +221,13 @@ class ConfusablePair {
 /// [DateTime.now()] at render time so the same bundled data reads as
 /// "upcoming" or "just passed" depending on when the app is opened, rather
 /// than needing a content update or a push-notification backend.
+/// What kind of date a milestone marks — a passed date means something
+/// legally different depending on which: only [inForce] actually means a
+/// rule is in force. An application date or a transposition deadline
+/// passing doesn't, even though all three read as "done" to a learner
+/// glancing at a calendar.
+enum MilestoneType { inForce, applicable, deadline }
+
 class RegulatoryMilestone {
   const RegulatoryMilestone({
     required this.id,
@@ -228,6 +235,7 @@ class RegulatoryMilestone {
     required this.title,
     required this.description,
     required this.moduleId,
+    required this.type,
     this.sourceUrl,
   });
 
@@ -236,9 +244,21 @@ class RegulatoryMilestone {
   final String title;
   final String description;
   final String moduleId;
+  final MilestoneType type;
   final String? sourceUrl;
 
   bool get isPast => date.isBefore(DateTime.now());
+
+  // The status badge label a learner actually needs — legally correct per
+  // [type] rather than a blanket "IN FORCE" for any date in the past.
+  String get statusLabel {
+    if (!isPast) return 'UPCOMING';
+    return switch (type) {
+      MilestoneType.inForce => 'IN FORCE',
+      MilestoneType.applicable => 'APPLICABLE',
+      MilestoneType.deadline => 'DEADLINE PASSED',
+    };
+  }
 }
 
 /// A locally-computed milestone badge — derived entirely from the learner's
@@ -419,6 +439,7 @@ class MockData {
           title: r['title'] as String,
           description: r['description'] as String,
           moduleId: r['moduleId'] as String,
+          type: MilestoneType.values.byName(r['type'] as String),
           sourceUrl: r['sourceUrl'] as String?,
         ),
     ]..sort((a, b) => a.date.compareTo(b.date));
