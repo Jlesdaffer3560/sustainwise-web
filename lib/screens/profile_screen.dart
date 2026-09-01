@@ -148,11 +148,6 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildChartsCard() {
     final completed = ProgressStore.instance.completedModulesCount;
     final total = ProgressStore.instance.totalModulesCount;
-    final weekActivity = buildWeekActivity(
-      xpPerDay: ProgressStore.instance.thisWeekXp,
-      todayIndex: ProgressStore.instance.todayWeekdayIndex,
-      goalXp: ProgressStore.dailyGoalXp,
-    );
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -168,7 +163,41 @@ class ProfileScreen extends StatelessWidget {
             centerLabel: 'modules',
           ),
           const SizedBox(width: 18),
-          Expanded(child: WeekActivityChart(days: weekActivity)),
+          // A week-activity chart is near-empty for a one-time web
+          // visitor — swapped for a plain read of what this visit
+          // actually covered instead. Native keeps the real weekly chart.
+          Expanded(
+            child: kIsWeb
+                ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'This visit',
+                        style: TextStyle(
+                          fontSize: 13.5,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.ink,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '$completed of $total modules done',
+                        style: const TextStyle(
+                          fontSize: 12.5,
+                          color: AppColors.inkSoft,
+                          height: 1.4,
+                        ),
+                      ),
+                    ],
+                  )
+                : WeekActivityChart(
+                    days: buildWeekActivity(
+                      xpPerDay: ProgressStore.instance.thisWeekXp,
+                      todayIndex: ProgressStore.instance.todayWeekdayIndex,
+                      goalXp: ProgressStore.dailyGoalXp,
+                    ),
+                  ),
+          ),
         ],
       ),
     );
@@ -272,13 +301,19 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildStatGrid() {
     return Row(
       children: [
-        Expanded(
-          child: _StatTile(
-            value: ProgressStore.instance.streakDays,
-            label: 'day streak',
+        // A day-streak tile is either 0 or 1 for a one-time web visitor —
+        // never the meaningful number it is in the native app. Dropped
+        // rather than shown alongside two tiles that are genuinely
+        // informative either way.
+        if (!kIsWeb) ...[
+          Expanded(
+            child: _StatTile(
+              value: ProgressStore.instance.streakDays,
+              label: 'day streak',
+            ),
           ),
-        ),
-        const SizedBox(width: 8),
+          const SizedBox(width: 8),
+        ],
         Expanded(
           child: _StatTile(
             value: ProgressStore.instance.completedTermsCount,
@@ -307,7 +342,15 @@ class ProfileScreen extends StatelessWidget {
   /// modules, the Expert Challenge — never against other users, since this
   /// app has no accounts or backend to compare against.
   Widget _buildAchievements() {
-    final achievements = ProgressStore.instance.achievements;
+    // The two streak-length badges (7-day, 30-day) can never unlock within
+    // a single web visit — they'd sit permanently locked, which reads as
+    // broken rather than aspirational the way it does in an app someone
+    // returns to daily. Native shows the full set unchanged.
+    final achievements = kIsWeb
+        ? ProgressStore.instance.achievements
+              .where((a) => a.id != 'week-streak' && a.id != 'month-streak')
+              .toList()
+        : ProgressStore.instance.achievements;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -321,7 +364,7 @@ class ProfileScreen extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         GridView.count(
-          crossAxisCount: 3,
+          crossAxisCount: kIsWeb ? 2 : 3,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: 10,
@@ -329,7 +372,7 @@ class ProfileScreen extends StatelessWidget {
           // Extra headroom over a tighter ratio — a 2-line title at larger
           // accessibility text sizes needs the room, since this grid can't
           // scroll to absorb overflow.
-          childAspectRatio: 0.74,
+          childAspectRatio: kIsWeb ? 1.5 : 0.74,
           children: [
             for (final a in achievements) _AchievementTile(achievement: a),
           ],

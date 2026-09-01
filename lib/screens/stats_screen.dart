@@ -106,14 +106,29 @@ class StatsScreen extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: _HeadlineTile(
-                            icon: Icons.local_fire_department,
-                            iconColor: AppColors.amber,
-                            value: '${ProgressStore.instance.streakDays}',
-                            label: 'day streak',
-                            caption:
-                                'Best: ${ProgressStore.instance.longestStreak} days',
-                          ),
+                          // A day-streak headline is either 0 or 1 for a
+                          // one-time visitor — never the meaningful number
+                          // it is in the native app. Modules done is real
+                          // information regardless of how many days this
+                          // took.
+                          child: kIsWeb
+                              ? _HeadlineTile(
+                                  icon: Icons.route,
+                                  iconColor: AppColors.teal,
+                                  value:
+                                      '${ProgressStore.instance.completedModulesCount}/${ProgressStore.instance.totalModulesCount}',
+                                  label: 'modules done',
+                                  caption:
+                                      '${ProgressStore.instance.completedTermsCount} terms learned',
+                                )
+                              : _HeadlineTile(
+                                  icon: Icons.local_fire_department,
+                                  iconColor: AppColors.amber,
+                                  value: '${ProgressStore.instance.streakDays}',
+                                  label: 'day streak',
+                                  caption:
+                                      'Best: ${ProgressStore.instance.longestStreak} days',
+                                ),
                         ),
                         const SizedBox(width: 10),
                         Expanded(
@@ -132,46 +147,52 @@ class StatsScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppColors.surface,
-                        border: Border.all(color: AppColors.border),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                'This week',
-                                style: TextStyle(
-                                  fontSize: 13.5,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColors.ink,
+                    // A week-activity chart is near-empty for a one-time
+                    // web visitor — almost every bar reads zero regardless
+                    // of how much was actually done today. Native keeps it.
+                    if (!kIsWeb) ...[
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.surface,
+                          border: Border.all(color: AppColors.border),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment:
+                                  MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  'This week',
+                                  style: TextStyle(
+                                    fontSize: 13.5,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.ink,
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                '$activeDays/7 days',
-                                style: const TextStyle(
-                                  fontFamily: 'monospace',
-                                  fontSize: 12,
-                                  color: AppColors.inkSoft,
+                                Text(
+                                  '$activeDays/7 days',
+                                  style: const TextStyle(
+                                    fontFamily: 'monospace',
+                                    fontSize: 12,
+                                    color: AppColors.inkSoft,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 14),
-                          WeekActivityChart(
-                            days: weekActivity,
-                            trackHeight: 56,
-                          ),
-                        ],
+                              ],
+                            ),
+                            const SizedBox(height: 14),
+                            WeekActivityChart(
+                              days: weekActivity,
+                              trackHeight: 56,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
+                      const SizedBox(height: 24),
+                    ],
                     const Text(
                       'Progress by unit',
                       style: TextStyle(
