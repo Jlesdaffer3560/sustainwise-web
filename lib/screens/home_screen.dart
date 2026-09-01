@@ -395,9 +395,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 12),
           for (var i = 0; i < MockData.units.length; i++)
             Padding(
-              padding: EdgeInsets.only(
-                bottom: i == MockData.units.length - 1 ? 0 : 8,
-              ),
+              padding: const EdgeInsets.only(bottom: 8),
               child: Row(
                 children: [
                   Container(
@@ -426,6 +424,34 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               ),
             ),
+          const Divider(height: 1, color: AppColors.border),
+          const SizedBox(height: 8),
+          // Sits outside every unit — unlocked only once all of them are
+          // done — so it was missing entirely from a summary that
+          // otherwise lists everything the curriculum contains.
+          Row(
+            children: [
+              const Icon(
+                Icons.workspace_premium,
+                size: 14,
+                color: AppColors.amberDeep,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Expert Challenge — '
+                  '${MockData.expertChallenge.length} bonus questions',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.inkSoft,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );

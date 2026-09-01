@@ -120,9 +120,19 @@ class _ModulePathNodeState extends State<ModulePathNode>
     // Reads as a plain not-started item instead, on both narrow and
     // desktop web. Native keeps the original muted treatment.
     final openOnWeb = kIsWeb && status == ModuleStatus.available;
+    // Plain white for every status read as too pale/uniform in practice —
+    // done and current rows now get a faint tint of their own accent
+    // (the unit's color for done, amber for current) so the path still
+    // shows visual progress at a glance, without going back to the
+    // full-saturation "candy" fill the flattening was meant to remove.
+    // Available stays plain white; it's meant to read as neutral.
     final Color cardBg = openOnWeb
         ? AppColors.surface
-        : (desktop ? AppColors.surface : fillColor);
+        : (desktop
+              ? rimColor.withValues(
+                  alpha: status == ModuleStatus.current ? 0.16 : 0.10,
+                )
+              : fillColor);
     final Color cardFg = openOnWeb
         ? AppColors.ink
         : (desktop
