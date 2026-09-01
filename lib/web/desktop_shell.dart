@@ -85,11 +85,18 @@ class _Sidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Navy, matching the hero's own backdrop — a plain white sidebar next
+    // to the cream page background read as an empty white bar with
+    // nothing to anchor it. Reusing the hero's exact color instead of a
+    // new one keeps the "premium navy" identity consistent everywhere the
+    // chrome (as opposed to page content) shows through.
     return Container(
       width: 240,
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        border: Border(right: BorderSide(color: AppColors.border)),
+        color: AppColors.heroDeep,
+        border: Border(
+          right: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
+        ),
       ),
       child: SafeArea(
         child: Column(
@@ -128,7 +135,7 @@ class _Sidebar extends StatelessWidget {
                           fontStyle: FontStyle.italic,
                           fontWeight: FontWeight.w600,
                           fontSize: 18,
-                          color: AppColors.ink,
+                          color: Colors.white,
                         ),
                       ),
                     ],
@@ -144,7 +151,7 @@ class _Sidebar extends StatelessWidget {
                   fontSize: 11.5,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.3,
-                  color: AppColors.inkSoft,
+                  color: Colors.white.withValues(alpha: 0.55),
                 ),
               ),
             ),
@@ -161,12 +168,13 @@ class _Sidebar extends StatelessWidget {
                 child: InkWell(
                   onTap: () =>
                       launchUrl(Uri.parse('https://sustainwiseapp.com')),
-                  child: const Text(
+                  child: Text(
                     'sustainwiseapp.com',
                     style: TextStyle(
                       fontSize: 11.5,
-                      color: AppColors.inkSoft,
+                      color: Colors.white.withValues(alpha: 0.45),
                       decoration: TextDecoration.underline,
+                      decorationColor: Colors.white.withValues(alpha: 0.45),
                     ),
                   ),
                 ),
@@ -194,7 +202,12 @@ class _SidebarLinkState extends State<_SidebarLink> {
 
   @override
   Widget build(BuildContext context) {
-    final color = widget.selected ? AppColors.teal : AppColors.inkSoft;
+    // A bright mint against navy for the selected item — teal itself
+    // (the brand accent everywhere else) is too dark/saturated to read
+    // clearly on this background; unselected items sit at partial white.
+    final color = widget.selected
+        ? AppColors.accentSoft
+        : Colors.white.withValues(alpha: 0.65);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
       child: MouseRegion(
@@ -203,9 +216,9 @@ class _SidebarLinkState extends State<_SidebarLink> {
         onExit: (_) => setState(() => _hovering = false),
         child: Material(
           color: widget.selected
-              ? AppColors.teal.withValues(alpha: 0.10)
+              ? AppColors.accentSoft.withValues(alpha: 0.14)
               : (_hovering
-                    ? AppColors.border.withValues(alpha: 0.5)
+                    ? Colors.white.withValues(alpha: 0.06)
                     : Colors.transparent),
           borderRadius: BorderRadius.circular(12),
           child: InkWell(
