@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -1562,18 +1564,33 @@ class _GlossarySearchBar extends StatefulWidget {
 
 class _GlossarySearchBarState extends State<_GlossarySearchBar> {
   final _controller = TextEditingController();
+  Timer? _debounce;
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _controller.dispose();
     super.dispose();
   }
 
   void _submit() {
+    _debounce?.cancel();
     final q = _controller.text.trim();
     if (q.isEmpty) return;
     AppFeedback.tap();
     widget.onSubmit(q);
+  }
+
+  // This bar had no reaction at all to typing — only Enter or the arrow
+  // button triggered a search, with zero feedback in between. Reported as
+  // "I typed a term and nothing happened," which is literally true: a
+  // visitor who doesn't know (or bother) to press Enter sees no response.
+  // Auto-searches shortly after typing stops instead, same as pressing
+  // Enter — the debounce avoids firing on every single keystroke.
+  void _onChanged(String value) {
+    _debounce?.cancel();
+    if (value.trim().isEmpty) return;
+    _debounce = Timer(const Duration(milliseconds: 500), _submit);
   }
 
   @override
@@ -1600,6 +1617,7 @@ class _GlossarySearchBarState extends State<_GlossarySearchBar> {
         child: TextField(
           key: const Key('glossary-search-bar'),
           controller: _controller,
+          onChanged: _onChanged,
           onSubmitted: (_) => _submit(),
           style: const TextStyle(
             fontSize: 15,
