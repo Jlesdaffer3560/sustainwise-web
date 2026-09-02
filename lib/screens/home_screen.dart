@@ -1100,7 +1100,17 @@ class _HomeScreenState extends State<HomeScreen> {
           borderRadius: BorderRadius.circular(16),
           onTap: () {
             AppFeedback.tap();
-            Navigator.of(context).push(appRoute(const RegulatoryRadarScreen()));
+            // A real, shareable/bookmarkable URL on web (push, not go, so
+            // the back button and the screen's own AppBar back arrow both
+            // still work correctly) — native keeps the plain Navigator
+            // push it always used.
+            if (kIsWeb) {
+              context.push('/radar');
+            } else {
+              Navigator.of(
+                context,
+              ).push(appRoute(const RegulatoryRadarScreen()));
+            }
           },
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),

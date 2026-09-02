@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../data/progress_store.dart';
 import '../services/app_feedback.dart';
@@ -17,9 +18,12 @@ void showResetProgressDialog(
     context: context,
     builder: (dialogContext) => AlertDialog(
       title: const Text('Reset all progress?'),
-      content: const Text(
-        'This clears your streak, XP, completed modules, and mistakes queue, and starts you back at the '
-        'very first module. This cannot be undone.',
+      // "Points", not "XP", on web — same reasoning as everywhere else
+      // this session. Native keeps "XP".
+      content: Text(
+        'This clears your streak, ${kIsWeb ? 'points' : 'XP'}, completed '
+        'modules, and mistakes queue, and starts you back at the very '
+        'first module. This cannot be undone.',
       ),
       actions: [
         TextButton(

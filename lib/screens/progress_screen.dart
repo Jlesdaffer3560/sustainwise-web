@@ -180,8 +180,10 @@ class ProgressScreen extends StatelessWidget {
         const SizedBox(height: 4),
         AnimatedCounterText(
           value: store.xpIntoLevel,
+          // "Points", not "XP" — less game vocabulary for a professional
+          // audience (this screen is web-only regardless).
           formatter: (v) =>
-              '$v/${store.xpPerLevel} XP to level ${store.level + 1}',
+              '$v/${store.xpPerLevel} points to level ${store.level + 1}',
           style: const TextStyle(fontSize: 11, color: AppColors.inkSoft),
         ),
       ],
@@ -348,7 +350,7 @@ class ProgressScreen extends StatelessWidget {
         Expanded(
           child: _StatTile(
             value: ProgressStore.instance.totalXp,
-            label: 'total XP',
+            label: 'total points',
             formatter: _formatXp,
           ),
         ),
@@ -495,8 +497,10 @@ class ProgressScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // "Milestones", not "Achievements" — less game vocabulary for a
+        // professional audience (this screen is web-only regardless).
         const Text(
-          'Achievements',
+          'Milestones',
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w800,

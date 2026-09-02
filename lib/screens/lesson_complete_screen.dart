@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data/models.dart';
@@ -151,18 +152,30 @@ class _LessonCompleteScreenState extends State<LessonCompleteScreen> {
                               MomentBadge(
                                 type: MomentType.star,
                                 size: 30,
-                                xpLabel: '+$xpEarned XP',
+                                // "Points", not "XP", on web — same reasoning
+                                // as everywhere else this session: less game
+                                // vocabulary for a professional audience.
+                                // Native keeps "XP".
+                                xpLabel: kIsWeb
+                                    ? '+$xpEarned points'
+                                    : '+$xpEarned XP',
                               ),
-                              const SizedBox(width: 10),
-                              Text(
-                                '${ProgressStore.instance.streakDays}-day streak',
-                                style: const TextStyle(
-                                  fontFamily: 'monospace',
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 14,
-                                  color: AppColors.amber,
+                              // Streak has no meaning for a one-time web
+                              // visitor — already dropped from Home/Stats/
+                              // Progress; this completion banner had the
+                              // same text sitting right next to XP.
+                              if (!kIsWeb) ...[
+                                const SizedBox(width: 10),
+                                Text(
+                                  '${ProgressStore.instance.streakDays}-day streak',
+                                  style: const TextStyle(
+                                    fontFamily: 'monospace',
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 14,
+                                    color: AppColors.amber,
+                                  ),
                                 ),
-                              ),
+                              ],
                             ],
                           ),
                           const SizedBox(height: 28),

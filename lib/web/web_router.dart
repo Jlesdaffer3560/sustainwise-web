@@ -2,6 +2,7 @@ import 'package:go_router/go_router.dart';
 import '../screens/glossary_screen.dart';
 import '../screens/home_screen.dart';
 import '../screens/progress_screen.dart';
+import '../screens/regulatory_radar_screen.dart';
 import 'desktop_shell.dart';
 import 'page_title.dart';
 
@@ -9,14 +10,17 @@ const Map<String, String> _pageTitles = {
   '/home': 'Learning — SustainWise',
   '/glossary': 'Glossary — SustainWise',
   '/progress': 'Progress — SustainWise',
+  '/radar': 'Regulatory Radar — SustainWise',
 };
 
 /// Web-only: gives the three top-level tabs their own real URL (own
 /// browser-history entry, working back/forward/refresh) inside a shared
-/// [DesktopShell]. Deeper flows reached from within a tab — a lesson, the
-/// Expert Challenge, the Regulatory Radar — stay on the existing imperative
-/// Navigator pushes used by the native app; only the tab switcher itself
-/// needed a real router.
+/// [DesktopShell], plus a standalone route for the Regulatory Radar — pure
+/// reference content with no per-visitor state, and the one "deeper flow"
+/// worth being directly shareable/bookmarkable per external review. A
+/// lesson, quiz, or the Expert Challenge stay on the existing imperative
+/// Navigator pushes used by the native app: sequential, stateful flows a
+/// mid-flow deep link wouldn't make sense for anyway.
 GoRouter buildWebRouter() {
   return GoRouter(
     initialLocation: '/home',
@@ -32,7 +36,7 @@ GoRouter buildWebRouter() {
       // falling through to the generic unknown-path redirect below.
       final loc = state.matchedLocation;
       if (loc == '/stats' || loc == '/profile') return '/progress';
-      const known = {'/home', '/glossary', '/progress'};
+      const known = {'/home', '/glossary', '/progress', '/radar'};
       return known.contains(loc) ? null : '/home';
     },
     routes: [
@@ -72,6 +76,18 @@ GoRouter buildWebRouter() {
             builder: (context, state) => const ProgressScreen(),
           ),
         ],
+      ),
+      // Outside the ShellRoute deliberately — this is a drill-down from
+      // Home's own card (see home_screen.dart's regulatory radar tap), not
+      // a peer of the three sidebar tabs, so it keeps its existing
+      // full-screen AppBar-with-back-button treatment rather than gaining
+      // a persistent sidebar it was never designed to sit inside.
+      GoRoute(
+        path: '/radar',
+        builder: (context, state) {
+          setPageTitle(_pageTitles['/radar']!);
+          return const RegulatoryRadarScreen();
+        },
       ),
     ],
   );
