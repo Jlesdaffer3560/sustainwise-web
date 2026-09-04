@@ -1046,16 +1046,22 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
+          // A thin, small monospace label directly on the card's own
+          // white was too quiet to read as a section header at all —
+          // a dark bar (reusing the sidebar's own selected-item tone)
+          // gives every unit a clear, high-contrast divider instead.
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
+            color: LedgerColors.railSelectedBg,
             child: Text(
               unit.title.toUpperCase(),
               style: const TextStyle(
                 fontFamily: LedgerColors.fontMono,
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                letterSpacing: 0.4,
-                color: LedgerColors.ink,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.6,
+                color: Color(0xFFEDEAE3),
               ),
             ),
           ),
