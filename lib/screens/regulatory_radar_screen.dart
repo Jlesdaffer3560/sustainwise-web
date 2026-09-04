@@ -18,15 +18,20 @@ class RegulatoryRadarScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final milestones = MockData.radarMilestones()
       ..sort((a, b) => a.date.compareTo(b.date));
+    final bg = kIsWeb ? LedgerColors.contentBg : AppColors.bg;
     return Scaffold(
-      backgroundColor: AppColors.bg,
+      backgroundColor: bg,
       appBar: AppBar(
-        backgroundColor: AppColors.bg,
+        backgroundColor: bg,
         elevation: 0,
         foregroundColor: AppColors.ink,
-        title: const Text(
+        title: Text(
           'Regulatory Radar',
-          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18),
+          style: TextStyle(
+            fontFamily: kIsWeb ? LedgerColors.fontSans : null,
+            fontWeight: FontWeight.w800,
+            fontSize: 18,
+          ),
         ),
       ),
       body: SafeArea(

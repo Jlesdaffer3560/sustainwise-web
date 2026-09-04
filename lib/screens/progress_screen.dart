@@ -33,7 +33,9 @@ class ProgressScreen extends StatelessWidget {
       child: ListenableBuilder(
         listenable: ProgressStore.instance,
         builder: (context, _) => Scaffold(
-          backgroundColor: AppColors.bg,
+          backgroundColor: isDesktopWeb(context)
+              ? LedgerColors.contentBg
+              : AppColors.bg,
           body: SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),

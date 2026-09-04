@@ -45,11 +45,29 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
   List<Term> get _filtered {
     final q = _query.trim().toLowerCase();
     if (q.isEmpty) return MockData.allTerms;
-    return MockData.allTerms.where((t) {
+    final matches = MockData.allTerms.where((t) {
       return t.term.toLowerCase().contains(q) ||
           t.definition.toLowerCase().contains(q) ||
           (t.plainEnglish?.toLowerCase().contains(q) ?? false);
     }).toList();
+    // A hit in the term's own name ranks above one that only turns up
+    // inside its definition or plain-English text — otherwise a query like
+    // "sust" gets buried under every term that merely mentions
+    // "sustainability" in passing, instead of surfacing terms actually
+    // named for it (e.g. "Sustainable Development Goals").
+    int rank(Term t) {
+      final name = t.term.toLowerCase();
+      if (name.startsWith(q)) return 0;
+      if (name.contains(q)) return 1;
+      return 2;
+    }
+
+    matches.sort((a, b) {
+      final rankDiff = rank(a).compareTo(rank(b));
+      if (rankDiff != 0) return rankDiff;
+      return a.term.toLowerCase().compareTo(b.term.toLowerCase());
+    });
+    return matches;
   }
 
   // Terms don't all carry a stable id yet (migration is ongoing module by
@@ -76,7 +94,9 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
         statusBarBrightness: Brightness.light,
       ),
       child: Scaffold(
-        backgroundColor: AppColors.bg,
+        backgroundColor: isDesktopWeb(context)
+            ? LedgerColors.contentBg
+            : AppColors.bg,
         body: SafeArea(
           child: Column(
             children: [

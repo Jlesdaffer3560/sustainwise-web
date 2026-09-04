@@ -170,6 +170,42 @@ class UnitAccent {
   final Color deep;
 }
 
+/// Web-only design tokens for "The Ledger" — a deliberately different
+/// visual language from the rest of the app (dark rail, monospace data,
+/// gold/teal accents) chosen from a set of mockups. Only ever read from
+/// kIsWeb-gated code; native and its own [AppColors]/[UnitAccent] tokens
+/// are completely untouched.
+class LedgerColors {
+  LedgerColors._();
+
+  static const railBg = Color(0xFF14171B);
+  static const railBorder = Color(0xFF262B31);
+  static const railText = Color(0xFFB9BDC2);
+  static const railTextDim = Color(0xFF5B6066);
+  static const railSelectedBg = Color(0xFF1E2228);
+
+  static const contentBg = Color(0xFFF4F2ED);
+  static const topBarBg = Color(0xFFFBFAF7);
+  static const card = Color(0xFFFFFFFF);
+  static const border = Color(0xFFE1DED4);
+  static const borderSoft = Color(0xFFEEECE5);
+
+  static const ink = Color(0xFF1B1A17);
+  static const inkSoft = Color(0xFF8C8A82);
+
+  static const gold = Color(0xFFC9A227);
+  static const goldDeep = Color(0xFF8A6A16);
+  static const goldSoft = Color(0xFFFBF1D9);
+  static const teal = Color(0xFF2F6F62);
+  static const tealSoft = Color(0xFFE4EEEB);
+  static const neutralDot = Color(0xFFD2CFC5);
+  static const neutralSoft = Color(0xFFF1F0EB);
+  static const neutralText = Color(0xFF9B9890);
+
+  static const fontMono = 'IBM Plex Mono';
+  static const fontSans = 'IBM Plex Sans';
+}
+
 class AppTheme {
   AppTheme._();
 

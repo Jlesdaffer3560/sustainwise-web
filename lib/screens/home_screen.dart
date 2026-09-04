@@ -15,6 +15,7 @@ import '../widgets/animated_counter.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/app_route.dart';
 import '../widgets/confetti_burst.dart';
+import '../widgets/ledger_module_row.dart';
 import '../widgets/mascot.dart';
 import '../widgets/milestone_moment.dart';
 import '../widgets/moment_badge.dart';
@@ -304,54 +305,28 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  /// Desktop-web only, left pane: hero, a Glossary search bar (Glossary has
-  /// no presence at all in the mobile stack), the continue-learning card,
-  /// then the full learning path. Scrolls independently of
-  /// [_buildDesktopSidebar] — see [_buildDesktopScrollLayout] — so Daily
-  /// Goal/Radar stay in view while this side scrolls through 16 modules.
-  /// Every section is the exact same builder the native app uses; only
-  /// their arrangement differs here.
+  /// Desktop-web only, left pane: "The Ledger" — a top bar, a stat-grid
+  /// header, and the full learning path as hairline module tables grouped
+  /// by unit, instead of the hero/card-path design native and mobile web
+  /// still use. Scrolls independently of [_buildDesktopSidebar] — see
+  /// [_buildDesktopScrollLayout].
   Widget _buildDesktopMainColumn(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _buildHero(context),
-        Transform.translate(
-          offset: const Offset(0, -22),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: _buildIntroCard(),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-          child: _GlossarySearchBar(
-            // A real URL (/glossary?q=...) — shareable, bookmarkable, and
-            // restored correctly on refresh — rather than an imperative
-            // push that only exists for this browser tab's session.
-            onSubmit: (query) =>
-                context.go('/glossary?q=${Uri.encodeQueryComponent(query)}'),
-          ),
-        ),
-        // On a first-ever visit, the hero's own "Start first lesson"
-        // button already covers this exact moment — showing this card too
-        // right underneath it repeats the same invitation twice in a row.
-        // Once there's real progress, the card earns its place back: it
-        // names the specific next module, which the hero button doesn't.
-        if (!(kIsWeb && ProgressStore.instance.completedModulesCount == 0))
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
-            child: _buildContinueLearningCard(context),
-          ),
-        Column(
-          children: [
-            for (var i = 0; i < MockData.units.length; i++)
-              _buildUnitSection(context, MockData.units[i], i),
-          ],
-        ),
-        _buildExpertChallengeCard(context),
-        _buildCopyrightFooter(),
-      ],
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 20, 24, 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          _buildLedgerHeader(context),
+          const SizedBox(height: 24),
+          for (var i = 0; i < MockData.units.length; i++)
+            _buildLedgerUnitGroup(context, MockData.units[i], i),
+          const SizedBox(height: 8),
+          _buildExpertChallengeCard(context),
+          const SizedBox(height: 20),
+          _buildCopyrightFooter(),
+        ],
+      ),
     );
   }
 
@@ -362,101 +337,205 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildDesktopSidebar(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // No Daily Goal here — streak/daily-goal is a retention mechanic
-        // for a returning app user, not a website visitor. Mistakes is
-        // also progress-dependent (and empty for a first-time visitor),
-        // which would leave this whole column empty next to the long path
-        // column — the curriculum card below is the opposite: pure
-        // content, identical for every visitor, so there's always
-        // something substantial here, and it doubles as a scope/
-        // credibility signal ("this is a real 261-term curriculum").
-        _buildMistakesCard(context),
-        _buildRegulatoryRadarCard(context),
-        _buildCurriculumOverviewCard(),
+        _buildLedgerMistakesCard(context),
+        _buildLedgerRadarTicker(context),
+        _buildLedgerCurriculumCard(),
       ],
     );
   }
 
-  Widget _buildCurriculumOverviewCard() {
-    final totalModules = MockData.units.fold(
-      0,
-      (sum, u) => sum + u.modules.length,
-    );
-    // This card only ever renders inside the desktop web sidebar.
-    final accents = unitAccentsFor(kIsWeb);
+  Widget _ledgerSideCard({required String title, required Widget child}) {
     return Container(
-      key: const Key('curriculum-overview-card'),
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-      padding: const EdgeInsets.all(16),
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        color: LedgerColors.card,
+        border: Border.all(color: LedgerColors.border),
+        borderRadius: BorderRadius.circular(6),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'What\'s inside',
-            style: TextStyle(
-              fontWeight: FontWeight.w800,
-              fontSize: 14.5,
-              color: AppColors.ink,
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: const BoxDecoration(
+              color: LedgerColors.neutralSoft,
+              border: Border(
+                bottom: BorderSide(color: LedgerColors.border),
+              ),
+            ),
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontFamily: LedgerColors.fontMono,
+                fontSize: 10.5,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.5,
+                color: LedgerColors.inkSoft,
+              ),
             ),
           ),
-          const SizedBox(height: 3),
+          Padding(padding: const EdgeInsets.all(14), child: child),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLedgerMistakesCard(BuildContext context) {
+    final count = ProgressStore.instance.missedCount;
+    if (count == 0) return const SizedBox.shrink();
+    return _ledgerSideCard(
+      title: 'REVIEW QUEUE',
+      child: InkWell(
+        key: const Key('mistakes-card'),
+        onTap: () {
+          AppFeedback.tap();
+          Navigator.of(context).push(
+            appRoute(
+              ReviewScreen(
+                questions: MockData.reviewQuizFor(
+                  ProgressStore.instance.missedTermIds,
+                ),
+              ),
+            ),
+          );
+        },
+        child: Row(
+          children: [
+            Expanded(
+              child: Text(
+                '$count term${count == 1 ? '' : 's'} due for review',
+                style: const TextStyle(
+                  fontFamily: LedgerColors.fontSans,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: LedgerColors.ink,
+                ),
+              ),
+            ),
+            const Icon(
+              Icons.chevron_right,
+              size: 16,
+              color: LedgerColors.inkSoft,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLedgerRadarTicker(BuildContext context) {
+    final milestones = MockData.radarMilestones();
+    if (milestones.isEmpty) return const SizedBox.shrink();
+    final shown = milestones.take(4).toList();
+    return _ledgerSideCard(
+      title: 'REGULATORY WATCH',
+      child: InkWell(
+        key: const Key('regulatory-radar-card-tap'),
+        onTap: () {
+          AppFeedback.tap();
+          if (kIsWeb) {
+            context.push('/radar');
+          } else {
+            Navigator.of(
+              context,
+            ).push(appRoute(const RegulatoryRadarScreen()));
+          }
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (var i = 0; i < shown.length; i++)
+              Padding(
+                padding: EdgeInsets.only(
+                  bottom: i == shown.length - 1 ? 0 : 9,
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 58,
+                      child: Text(
+                        _radarTickerDate(shown[i].date),
+                        style: const TextStyle(
+                          fontFamily: LedgerColors.fontMono,
+                          fontSize: 10,
+                          color: LedgerColors.gold,
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        shown[i].title,
+                        style: const TextStyle(
+                          fontFamily: LedgerColors.fontSans,
+                          fontSize: 11.5,
+                          color: LedgerColors.ink,
+                          height: 1.35,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _radarTickerDate(DateTime date) {
+    const months = [
+      'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
+      'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC',
+    ];
+    return '${date.day.toString().padLeft(2, '0')} ${months[date.month - 1]}';
+  }
+
+  Widget _buildLedgerCurriculumCard() {
+    final totalModules = MockData.units.fold(
+      0,
+      (sum, u) => sum + u.modules.length,
+    );
+    return _ledgerSideCard(
+      title: "WHAT'S INSIDE",
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Text(
             '${MockData.allTerms.length} terms · $totalModules modules · '
             '${MockData.units.length} units',
             style: const TextStyle(
-              fontFamily: 'monospace',
-              fontSize: 11.5,
-              fontWeight: FontWeight.w700,
-              color: AppColors.inkSoft,
+              fontFamily: LedgerColors.fontMono,
+              fontSize: 10.5,
+              color: LedgerColors.inkSoft,
             ),
           ),
           const SizedBox(height: 12),
           for (var i = 0; i < MockData.units.length; i++)
             Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Row(
-                children: [
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: accents[i % accents.length].deep,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      MockData.units[i].title,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.inkSoft,
-                      ),
-                    ),
-                  ),
-                ],
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Text(
+                MockData.units[i].title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                  fontFamily: LedgerColors.fontSans,
+                  fontSize: 12,
+                  color: LedgerColors.ink,
+                ),
               ),
             ),
-          const Divider(height: 1, color: AppColors.border),
-          const SizedBox(height: 8),
-          // Sits outside every unit — unlocked only once all of them are
-          // done — so it was missing entirely from a summary that
-          // otherwise lists everything the curriculum contains.
+          const Divider(height: 16, color: LedgerColors.borderSoft),
           Row(
             children: [
               const Icon(
                 Icons.workspace_premium,
                 size: 14,
-                color: AppColors.amberDeep,
+                color: LedgerColors.goldDeep,
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -466,9 +545,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
+                    fontFamily: LedgerColors.fontSans,
                     fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.inkSoft,
+                    color: LedgerColors.inkSoft,
                   ),
                 ),
               ),
@@ -847,6 +926,151 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
     return null;
+  }
+
+  // ---- "The Ledger" (desktop web only) ------------------------------
+  // A deliberately different visual language chosen from a set of
+  // mockups — dark rail (see desktop_shell.dart), monospace data, a
+  // hairline table instead of rounded module cards. Everything below is
+  // only ever built from _buildDesktopMainColumn/_buildDesktopSidebar,
+  // which only run on desktop web. Native and narrow web keep the
+  // original hero/card-path design entirely untouched.
+
+  Widget _buildLedgerHeader(BuildContext context) {
+    final store = ProgressStore.instance;
+    final totalModules = store.totalModulesCount;
+    final completed = store.completedModulesCount;
+    final fluency = store.esgFluency;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.only(bottom: 14),
+          margin: const EdgeInsets.only(bottom: 20),
+          decoration: const BoxDecoration(
+            border: Border(bottom: BorderSide(color: LedgerColors.border)),
+          ),
+          child: Row(
+            children: [
+              const Text(
+                'LEARNING',
+                style: TextStyle(
+                  fontFamily: LedgerColors.fontMono,
+                  fontSize: 11,
+                  letterSpacing: 0.6,
+                  color: LedgerColors.inkSoft,
+                ),
+              ),
+              const Spacer(),
+              SizedBox(
+                width: 220,
+                height: 30,
+                child: _LedgerMiniSearch(
+                  onSubmit: (query) => context.go(
+                    '/glossary?q=${Uri.encodeQueryComponent(query)}',
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const Text(
+          'Your learning path',
+          style: TextStyle(
+            fontFamily: LedgerColors.fontSans,
+            fontSize: 22,
+            fontWeight: FontWeight.w600,
+            color: LedgerColors.ink,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          '${MockData.allTerms.length} TERMS · $totalModules MODULES · '
+          '${MockData.units.length} UNITS',
+          style: const TextStyle(
+            fontFamily: LedgerColors.fontMono,
+            fontSize: 11,
+            letterSpacing: 0.4,
+            color: LedgerColors.inkSoft,
+          ),
+        ),
+        const SizedBox(height: 18),
+        Row(
+          children: [
+            Expanded(
+              child: _LedgerStatTile(
+                value: '$completed/$totalModules',
+                label: 'Modules done',
+              ),
+            ),
+            const SizedBox(width: 1),
+            Expanded(
+              child: _LedgerStatTile(
+                value: fluency == null ? '—' : '${fluency.round()}%',
+                label: 'Fluency',
+              ),
+            ),
+            const SizedBox(width: 1),
+            Expanded(
+              child: _LedgerStatTile(
+                value: '${store.completedTermsCount}',
+                label: 'Terms learned',
+              ),
+            ),
+            const SizedBox(width: 1),
+            Expanded(
+              child: _LedgerStatTile(
+                value: '${store.missedCount}',
+                label: 'Due for review',
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLedgerUnitGroup(
+    BuildContext context,
+    LearningUnit unit,
+    int index,
+  ) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: LedgerColors.card,
+        border: Border.all(color: LedgerColors.border),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(14, 12, 14, 10),
+            child: Text(
+              unit.title.toUpperCase(),
+              style: const TextStyle(
+                fontFamily: LedgerColors.fontMono,
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                letterSpacing: 0.4,
+                color: LedgerColors.ink,
+              ),
+            ),
+          ),
+          const LedgerTableHeader(),
+          for (var i = 0; i < unit.modules.length; i++)
+            LedgerModuleRow(
+              module: unit.modules[i].copyWith(
+                status: ProgressStore.instance.statusFor(unit.modules[i].id),
+              ),
+              onTap: () => _onModuleTap(context, unit.modules[i]),
+              isLast: i == unit.modules.length - 1,
+            ),
+        ],
+      ),
+    );
   }
 
   /// Explains the product in the hero itself instead of a stats widget —
@@ -1692,6 +1916,131 @@ class _GlossarySearchBarState extends State<_GlossarySearchBar> {
   }
 }
 
+/// One of the four stat tiles in the Ledger header (modules done, fluency,
+/// terms learned, due for review) — plain, borderless, separated only by
+/// the 1px gaps the parent Row already inserts between tiles.
+class _LedgerStatTile extends StatelessWidget {
+  const _LedgerStatTile({required this.value, required this.label});
+
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+      decoration: const BoxDecoration(
+        color: LedgerColors.card,
+        border: Border.fromBorderSide(
+          BorderSide(color: LedgerColors.border),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            value,
+            style: const TextStyle(
+              fontFamily: LedgerColors.fontMono,
+              fontSize: 19,
+              fontWeight: FontWeight.w600,
+              color: LedgerColors.ink,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            style: const TextStyle(
+              fontFamily: LedgerColors.fontMono,
+              fontSize: 10,
+              letterSpacing: 0.3,
+              color: LedgerColors.inkSoft,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The Ledger header's compact search field — same destination as the
+/// pre-Ledger _GlossarySearchBar (Glossary, via a real /glossary?q= URL),
+/// styled as a plain utility field instead of a prominent marketing-style
+/// search bar.
+class _LedgerMiniSearch extends StatefulWidget {
+  const _LedgerMiniSearch({required this.onSubmit});
+
+  final ValueChanged<String> onSubmit;
+
+  @override
+  State<_LedgerMiniSearch> createState() => _LedgerMiniSearchState();
+}
+
+class _LedgerMiniSearchState extends State<_LedgerMiniSearch> {
+  final _controller = TextEditingController();
+  Timer? _debounce;
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _submit() {
+    _debounce?.cancel();
+    final q = _controller.text.trim();
+    if (q.isEmpty) return;
+    AppFeedback.tap();
+    widget.onSubmit(q);
+  }
+
+  void _onChanged(String value) {
+    _debounce?.cancel();
+    if (value.trim().isEmpty) return;
+    _debounce = Timer(const Duration(milliseconds: 500), _submit);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: LedgerColors.card,
+        border: Border.all(color: LedgerColors.border),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      child: TextField(
+        key: const Key('glossary-search-bar'),
+        controller: _controller,
+        onChanged: _onChanged,
+        onSubmitted: (_) => _submit(),
+        style: const TextStyle(
+          fontFamily: LedgerColors.fontMono,
+          fontSize: 12,
+          color: LedgerColors.ink,
+        ),
+        decoration: InputDecoration(
+          hintText: 'Search terms…',
+          hintStyle: const TextStyle(
+            fontFamily: LedgerColors.fontMono,
+            fontSize: 12,
+            color: LedgerColors.inkSoft,
+          ),
+          prefixIcon: const Icon(
+            Icons.search,
+            size: 15,
+            color: LedgerColors.inkSoft,
+          ),
+          prefixIconConstraints: const BoxConstraints(minWidth: 34),
+          isDense: true,
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(vertical: 6),
+        ),
+      ),
+    );
+  }
+}
+
 /// A collapsed-by-default explainer for how a lesson actually plays out —
 /// flashcards, then quiz, then confusable pairs — so a first-time user can
 /// check it without it permanently eating space on the hero.
@@ -1706,14 +2055,14 @@ class _HowItWorksSectionState extends State<_HowItWorksSection> {
   bool _expanded = false;
 
   static const _steps = [
-    'Flip each flashcard to reveal its definition, then rate yourself '
-        '"Still learning" or "Got it".',
-    'Answer the quiz — a wrong pick still shows the correct definition and why.',
-    'Tell the confusable pairs apart: a clue statement, you pick which of '
-        'two easily-mixed-up terms it actually describes.',
-    'Finish a lesson to grow your streak and XP — experience points that '
-        'track how much you\'ve practiced. Modules unlock one at a time, '
-        'in order.',
+    'Flip each card to see what the term means, then say whether you '
+        'already knew it or you\'re still learning it.',
+    'Answer a short quiz — get one wrong, and it shows you the right '
+        'answer and why.',
+    'Two similar-sounding terms, one clue — pick which term the clue is '
+        'actually describing.',
+    'Finish a lesson to build your streak and track how far you\'ve come. '
+        'Modules unlock one at a time, in order.',
   ];
 
   @override

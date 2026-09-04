@@ -41,7 +41,7 @@ class DesktopShell extends StatelessWidget {
 
     final location = GoRouterState.of(context).matchedLocation;
     return Scaffold(
-      backgroundColor: AppColors.bg,
+      backgroundColor: LedgerColors.contentBg,
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -85,31 +85,25 @@ class _Sidebar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Navy, matching the hero's own backdrop — a plain white sidebar next
-    // to the cream page background read as an empty white bar with
-    // nothing to anchor it. Reusing the hero's exact color instead of a
-    // new one keeps the "premium navy" identity consistent everywhere the
-    // chrome (as opposed to page content) shows through.
+    // "The Ledger" — a dark, monospace-driven rail chosen from a set of
+    // mockups over the plain-white/navy sidebars tried earlier this
+    // session, aiming for "internal compliance tool" rather than "app".
     return Container(
       width: 240,
-      decoration: BoxDecoration(
-        color: AppColors.heroDeep,
-        border: Border(
-          right: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
-        ),
+      decoration: const BoxDecoration(
+        color: LedgerColors.railBg,
+        border: Border(right: BorderSide(color: LedgerColors.railBorder)),
       ),
       child: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 28, 24, 22),
+              padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
               // The wordmark doubles as a "home" link, same as on any real
-              // website — from any tab, this is how you get back to Path.
-              // InkWell/Material, not a bare GestureDetector — matching
-              // _SidebarLink's already-working tap pattern exactly, on the
-              // chance the two behaved differently under some gesture-arena
-              // edge case that never showed up in an isolated test.
+              // website — from any tab, this is how you get back to
+              // Learning. InkWell/Material, not a bare GestureDetector —
+              // matching _SidebarLink's already-working tap pattern.
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
@@ -119,23 +113,23 @@ class _Sidebar extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.asset(
-                          'assets/icon/app_icon.png',
-                          width: 30,
-                          height: 30,
+                      Container(
+                        width: 20,
+                        height: 20,
+                        decoration: BoxDecoration(
+                          color: LedgerColors.gold,
+                          borderRadius: BorderRadius.circular(3),
                         ),
                       ),
                       const SizedBox(width: 10),
                       const Text(
-                        'SustainWise',
+                        'SUSTAINWISE',
                         style: TextStyle(
-                          fontFamily: 'LoraItalic',
-                          fontStyle: FontStyle.italic,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 18,
-                          color: Colors.white,
+                          fontFamily: LedgerColors.fontMono,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 13,
+                          letterSpacing: 0.6,
+                          color: Color(0xFFEDEAE3),
                         ),
                       ),
                     ],
@@ -143,41 +137,41 @@ class _Sidebar extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 18),
-              child: Text(
-                'Learn. Practice. Track.',
-                style: TextStyle(
-                  fontSize: 11.5,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.3,
-                  color: Colors.white.withValues(alpha: 0.55),
-                ),
-              ),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(20, 0, 20, 14),
+              child: Divider(height: 1, color: LedgerColors.railBorder),
             ),
             for (final tab in tabs)
               _SidebarLink(tab: tab, selected: location == tab.location),
             const Spacer(),
             // A visitor who arrived via a shared app.sustainwiseapp.com
-            // link has otherwise had no way to find the marketing site —
-            // this was previously plain, unclickable text.
+            // link has otherwise had no way to find the marketing site.
             Padding(
-              padding: const EdgeInsets.all(20),
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: InkWell(
-                  onTap: () =>
-                      launchUrl(Uri.parse('https://sustainwiseapp.com')),
-                  child: Text(
-                    'sustainwiseapp.com',
-                    style: TextStyle(
-                      fontSize: 11.5,
-                      color: Colors.white.withValues(alpha: 0.45),
-                      decoration: TextDecoration.underline,
-                      decorationColor: Colors.white.withValues(alpha: 0.45),
+              padding: const EdgeInsets.fromLTRB(20, 14, 20, 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Divider(height: 1, color: LedgerColors.railBorder),
+                  const SizedBox(height: 14),
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: InkWell(
+                      onTap: () =>
+                          launchUrl(Uri.parse('https://sustainwiseapp.com')),
+                      child: const Text(
+                        'sustainwiseapp.com',
+                        style: TextStyle(
+                          fontFamily: LedgerColors.fontMono,
+                          fontSize: 10.5,
+                          letterSpacing: 0.2,
+                          color: LedgerColors.railTextDim,
+                          decoration: TextDecoration.underline,
+                          decorationColor: LedgerColors.railTextDim,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
             ),
           ],
@@ -202,44 +196,37 @@ class _SidebarLinkState extends State<_SidebarLink> {
 
   @override
   Widget build(BuildContext context) {
-    // A bright mint against navy for the selected item — teal itself
-    // (the brand accent everywhere else) is too dark/saturated to read
-    // clearly on this background; unselected items sit at partial white.
-    final color = widget.selected
-        ? AppColors.accentSoft
-        : Colors.white.withValues(alpha: 0.65);
+    final color = widget.selected ? LedgerColors.gold : LedgerColors.railText;
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
       child: MouseRegion(
         cursor: SystemMouseCursors.click,
         onEnter: (_) => setState(() => _hovering = true),
         onExit: (_) => setState(() => _hovering = false),
         child: Material(
           color: widget.selected
-              ? AppColors.accentSoft.withValues(alpha: 0.14)
-              : (_hovering
-                    ? Colors.white.withValues(alpha: 0.06)
-                    : Colors.transparent),
-          borderRadius: BorderRadius.circular(12),
+              ? LedgerColors.railSelectedBg
+              : (_hovering ? LedgerColors.railSelectedBg : Colors.transparent),
+          borderRadius: BorderRadius.circular(5),
           child: InkWell(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(5),
             onTap: () => context.go(widget.tab.location),
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 11,
+                horizontal: 10,
+                vertical: 9,
               ),
               child: Row(
                 children: [
-                  Icon(widget.tab.icon, size: 20, color: color),
-                  const SizedBox(width: 12),
+                  Icon(widget.tab.icon, size: 15, color: color),
+                  const SizedBox(width: 10),
                   Text(
-                    widget.tab.label,
+                    widget.tab.label.toUpperCase(),
                     style: TextStyle(
-                      fontSize: 14.5,
-                      fontWeight: widget.selected
-                          ? FontWeight.w700
-                          : FontWeight.w600,
+                      fontFamily: LedgerColors.fontMono,
+                      fontSize: 11.5,
+                      letterSpacing: 0.6,
+                      fontWeight: FontWeight.w500,
                       color: color,
                     ),
                   ),
