@@ -102,6 +102,32 @@ flutter:
         - asset: assets/fonts/Lora-Italic-Variable.ttf
           weight: 600
           style: italic
+    # "The Ledger" web redesign — bundled as real assets rather than a
+    # web/index.html Google Fonts <link>, per the exact lesson in the
+    # comment above: CanvasKit renders to a single canvas and never
+    # discovers a page's own @font-face rules, so a CSS-only link left
+    # every LedgerColors.fontMono/fontSans TextStyle silently falling
+    # back to the platform default. Native never references either
+    # family name in any TextStyle, so bundling them has no visual
+    # effect there — same reasoning as Outfit/LoraItalic already above.
+    - family: IBM Plex Mono
+      fonts:
+        - asset: assets/fonts/IBMPlexMono-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/IBMPlexMono-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/IBMPlexMono-SemiBold.ttf
+          weight: 600
+    - family: IBM Plex Sans
+      fonts:
+        - asset: assets/fonts/IBMPlexSans-Variable.ttf
+          weight: 400
+        - asset: assets/fonts/IBMPlexSans-Variable.ttf
+          weight: 500
+        - asset: assets/fonts/IBMPlexSans-Variable.ttf
+          weight: 600
+        - asset: assets/fonts/IBMPlexSans-Variable.ttf
+          weight: 700
 
   # To add assets to your application, add an assets section, like this:
   # assets:
