@@ -129,7 +129,12 @@ class _HomeScreenState extends State<HomeScreen> {
       Future.delayed(const Duration(milliseconds: 1900), () {
         if (mounted) setState(() => _activeMilestone = null);
       });
-    } else if (hitDailyGoal) {
+    } else if (hitDailyGoal && !kIsWeb) {
+      // The Daily Goal card itself is already hidden on web (see
+      // _buildLedgerHeader) — celebrating it anyway with a full confetti
+      // burst was an inconsistency this review round caught: the
+      // underlying XP tracking doesn't know it's not shown, so it kept
+      // firing regardless.
       setState(() => _showDailyGoalConfetti = true);
       Future.delayed(const Duration(milliseconds: 1200), () {
         if (mounted) setState(() => _showDailyGoalConfetti = false);
@@ -216,7 +221,10 @@ class _HomeScreenState extends State<HomeScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          flex: 2,
+          // Was flex: 2 (a 2:1 split) — the module list is this page's
+          // actual content, not the status cards beside it; widened to
+          // give it more of the available width.
+          flex: 3,
           child: Scrollbar(
             thumbVisibility: true,
             child: SingleChildScrollView(
@@ -363,9 +371,7 @@ class _HomeScreenState extends State<HomeScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: const BoxDecoration(
               color: LedgerColors.neutralSoft,
-              border: Border(
-                bottom: BorderSide(color: LedgerColors.border),
-              ),
+              border: Border(bottom: BorderSide(color: LedgerColors.border)),
             ),
             child: Text(
               title,
@@ -440,9 +446,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if (kIsWeb) {
             context.push('/radar');
           } else {
-            Navigator.of(
-              context,
-            ).push(appRoute(const RegulatoryRadarScreen()));
+            Navigator.of(context).push(appRoute(const RegulatoryRadarScreen()));
           }
         },
         child: Column(
@@ -450,20 +454,21 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             for (var i = 0; i < shown.length; i++)
               Padding(
-                padding: EdgeInsets.only(
-                  bottom: i == shown.length - 1 ? 0 : 9,
-                ),
+                padding: EdgeInsets.only(bottom: i == shown.length - 1 ? 0 : 9),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: 58,
+                      width: 66,
+                      // goldDeep, not gold — plain gold is 2.42:1 on this
+                      // white card, well under WCAG AA's 4.5:1 minimum for
+                      // text; goldDeep clears it at 5.06:1.
                       child: Text(
                         _radarTickerDate(shown[i].date),
                         style: const TextStyle(
                           fontFamily: LedgerColors.fontMono,
                           fontSize: 10,
-                          color: LedgerColors.gold,
+                          color: LedgerColors.goldDeep,
                         ),
                       ),
                     ),
@@ -487,12 +492,28 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  // Day+month alone was ambiguous — the radar's own window spans milestones
+  // from different years (Omnibus I already passed in 2026, CSDDD doesn't
+  // apply until 2029), so a bare "27 SEP" understated how far out some of
+  // these actually are.
   String _radarTickerDate(DateTime date) {
     const months = [
-      'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
-      'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC',
+      'JAN',
+      'FEB',
+      'MAR',
+      'APR',
+      'MAY',
+      'JUN',
+      'JUL',
+      'AUG',
+      'SEP',
+      'OCT',
+      'NOV',
+      'DEC',
     ];
-    return '${date.day.toString().padLeft(2, '0')} ${months[date.month - 1]}';
+    final year = date.year.toString().substring(2);
+    return '${date.day.toString().padLeft(2, '0')} ${months[date.month - 1]} '
+        "'$year";
   }
 
   Widget _buildLedgerCurriculumCard() {
@@ -681,7 +702,11 @@ class _HomeScreenState extends State<HomeScreen> {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, size: 16, color: Colors.white.withValues(alpha: 0.85)),
+                Icon(
+                  icon,
+                  size: 16,
+                  color: Colors.white.withValues(alpha: 0.85),
+                ),
                 const SizedBox(width: 6),
                 Text(
                   label,
@@ -703,10 +728,7 @@ class _HomeScreenState extends State<HomeScreen> {
             style: FilledButton.styleFrom(
               backgroundColor: Colors.white,
               foregroundColor: AppColors.heroDeep,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 22,
-                vertical: 13,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 13),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -941,6 +963,13 @@ class _HomeScreenState extends State<HomeScreen> {
     final totalModules = store.totalModulesCount;
     final completed = store.completedModulesCount;
     final fluency = store.esgFluency;
+    // A first-time visitor landed on "Your learning path" with no context
+    // for what this even teaches — and a stat grid reading 0/16 modules,
+    // "—" fluency, 0 terms, 0 due isn't useful progress, it's just empty
+    // (same reasoning the streak/XP pills and Daily Goal card were dropped
+    // for earlier). A returning visitor with real progress gets the
+    // original heading and the stats those numbers now actually mean.
+    final isFirstVisit = completed == 0;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -974,15 +1003,37 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
-        const Text(
-          'Your learning path',
-          style: TextStyle(
-            fontFamily: LedgerColors.fontSans,
-            fontSize: 22,
-            fontWeight: FontWeight.w600,
-            color: LedgerColors.ink,
+        if (isFirstVisit) ...[
+          const Text(
+            'Understand ESG. Apply it at work.',
+            style: TextStyle(
+              fontFamily: LedgerColors.fontSans,
+              fontSize: 22,
+              fontWeight: FontWeight.w600,
+              color: LedgerColors.ink,
+            ),
           ),
-        ),
+          const SizedBox(height: 6),
+          const Text(
+            'Explore short lessons, look up unfamiliar terms, and follow '
+            'key EU regulatory dates.',
+            style: TextStyle(
+              fontFamily: LedgerColors.fontSans,
+              fontSize: 14,
+              color: LedgerColors.inkSoft,
+              height: 1.4,
+            ),
+          ),
+        ] else
+          const Text(
+            'Your learning path',
+            style: TextStyle(
+              fontFamily: LedgerColors.fontSans,
+              fontSize: 22,
+              fontWeight: FontWeight.w600,
+              color: LedgerColors.ink,
+            ),
+          ),
         const SizedBox(height: 4),
         Text(
           '${MockData.allTerms.length} TERMS · $totalModules MODULES · '
@@ -994,38 +1045,40 @@ class _HomeScreenState extends State<HomeScreen> {
             color: LedgerColors.inkSoft,
           ),
         ),
-        const SizedBox(height: 18),
-        Row(
-          children: [
-            Expanded(
-              child: _LedgerStatTile(
-                value: '$completed/$totalModules',
-                label: 'Modules done',
+        if (!isFirstVisit) ...[
+          const SizedBox(height: 18),
+          Row(
+            children: [
+              Expanded(
+                child: _LedgerStatTile(
+                  value: '$completed/$totalModules',
+                  label: 'Modules done',
+                ),
               ),
-            ),
-            const SizedBox(width: 1),
-            Expanded(
-              child: _LedgerStatTile(
-                value: fluency == null ? '—' : '${fluency.round()}%',
-                label: 'Fluency',
+              const SizedBox(width: 1),
+              Expanded(
+                child: _LedgerStatTile(
+                  value: fluency == null ? '—' : '${fluency.round()}%',
+                  label: 'Fluency',
+                ),
               ),
-            ),
-            const SizedBox(width: 1),
-            Expanded(
-              child: _LedgerStatTile(
-                value: '${store.completedTermsCount}',
-                label: 'Terms learned',
+              const SizedBox(width: 1),
+              Expanded(
+                child: _LedgerStatTile(
+                  value: '${store.completedTermsCount}',
+                  label: 'Terms learned',
+                ),
               ),
-            ),
-            const SizedBox(width: 1),
-            Expanded(
-              child: _LedgerStatTile(
-                value: '${store.missedCount}',
-                label: 'Due for review',
+              const SizedBox(width: 1),
+              Expanded(
+                child: _LedgerStatTile(
+                  value: '${store.missedCount}',
+                  label: 'Due for review',
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          ),
+        ],
       ],
     );
   }
@@ -1692,12 +1745,12 @@ class _HomeScreenState extends State<HomeScreen> {
           Navigator.of(context).push(appRoute(const GlossaryScreen())),
       // Web merges Stats+Profile into one ProgressScreen (see
       // app_bottom_nav.dart's web item list) — native keeps them separate.
-      onStatsTap: () => Navigator.of(context).push(
-        appRoute(kIsWeb ? const ProgressScreen() : const StatsScreen()),
-      ),
-      onProfileTap: () => Navigator.of(context).push(
-        appRoute(kIsWeb ? const ProgressScreen() : const ProfileScreen()),
-      ),
+      onStatsTap: () => Navigator.of(
+        context,
+      ).push(appRoute(kIsWeb ? const ProgressScreen() : const StatsScreen())),
+      onProfileTap: () => Navigator.of(
+        context,
+      ).push(appRoute(kIsWeb ? const ProgressScreen() : const ProfileScreen())),
     );
   }
 
@@ -1937,9 +1990,7 @@ class _LedgerStatTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 14),
       decoration: const BoxDecoration(
         color: LedgerColors.card,
-        border: Border.fromBorderSide(
-          BorderSide(color: LedgerColors.border),
-        ),
+        border: Border.fromBorderSide(BorderSide(color: LedgerColors.border)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

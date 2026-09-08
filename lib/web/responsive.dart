@@ -12,8 +12,10 @@ const double kDesktopBreakpoint = 900;
 /// Below this width, a desktop-shell (sidebar) view still gets a single
 /// content column — [kDesktopBreakpoint] is only enough room for the
 /// sidebar itself, not also for Home's second column of status cards
-/// alongside a comfortably wide module list.
-const double kWideDesktopBreakpoint = 1150;
+/// alongside a comfortably wide module list. Raised from 1150 — that left
+/// only ~910px of actual content width once the 240px sidebar was
+/// subtracted, still cramped for the module table plus a side column.
+const double kWideDesktopBreakpoint = 1280;
 
 bool isDesktopWeb(BuildContext context) =>
     kIsWeb && MediaQuery.of(context).size.width >= kDesktopBreakpoint;

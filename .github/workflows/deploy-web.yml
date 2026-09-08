@@ -17,8 +17,14 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          # Pinned rather than "latest stable" — an unrelated SDK bump
+          # landing between two pushes shouldn't be what breaks a deploy.
+          # Bump deliberately alongside a local `flutter upgrade`.
+          flutter-version: 3.44.8
 
       - run: flutter pub get
+      - run: flutter analyze --no-fatal-infos
+      - run: flutter test
       - run: flutter build web --release --base-href /
 
       # GitHub Pages serves this for any path with no matching file (e.g. a

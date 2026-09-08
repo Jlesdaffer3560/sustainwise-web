@@ -64,16 +64,24 @@
     }
   </style>
 
+  <!--
+    flutter_bootstrap.js (auto-generated at build time) already calls
+    _flutter.loader.load() itself with the default init->runApp sequence —
+    a second manual call here (the previous approach) was a silent no-op:
+    FlutterLoader only ever services the first load() call it receives, so
+    this file's own onEntrypointLoaded callback never actually ran and the
+    #loading div was never removed via that path. It stayed invisible only
+    because Flutter's canvas happens to paint over it, not because the
+    intended cleanup worked.
+
+    flutter-first-frame is the documented, renderer-agnostic hook for
+    exactly this "remove my custom loading indicator" case — it fires once
+    real content is genuinely on screen, not "right before runApp()".
+  -->
   <script>
-    window.addEventListener('load', function () {
-      _flutter.loader.load({
-        onEntrypointLoaded: async function (engineInitializer) {
-          const appRunner = await engineInitializer.initializeEngine();
-          const loading = document.getElementById('loading');
-          if (loading) loading.remove();
-          await appRunner.runApp();
-        },
-      });
+    window.addEventListener('flutter-first-frame', function () {
+      const loading = document.getElementById('loading');
+      if (loading) loading.remove();
     });
   </script>
   <script src="flutter_bootstrap.js" async></script>

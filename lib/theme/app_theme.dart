@@ -181,7 +181,9 @@ class LedgerColors {
   static const railBg = Color(0xFF14171B);
   static const railBorder = Color(0xFF262B31);
   static const railText = Color(0xFFB9BDC2);
-  static const railTextDim = Color(0xFF5B6066);
+  // Was 0xFF5B6066 (2.83:1 against railBg — fails WCAG AA's 4.5:1 minimum
+  // for small text). Lightened to clear it; verified 6.02:1.
+  static const railTextDim = Color(0xFF90969C);
   static const railSelectedBg = Color(0xFF1E2228);
 
   static const contentBg = Color(0xFFF4F2ED);
@@ -191,7 +193,9 @@ class LedgerColors {
   static const borderSoft = Color(0xFFEEECE5);
 
   static const ink = Color(0xFF1B1A17);
-  static const inkSoft = Color(0xFF8C8A82);
+  // Was 0xFF8C8A82 (3.09:1 against contentBg — fails WCAG AA). Darkened;
+  // verified 5.29:1 against contentBg, 5.18:1 against neutralSoft.
+  static const inkSoft = Color(0xFF66645E);
 
   static const gold = Color(0xFFC9A227);
   static const goldDeep = Color(0xFF8A6A16);
@@ -200,7 +204,10 @@ class LedgerColors {
   static const tealSoft = Color(0xFFE4EEEB);
   static const neutralDot = Color(0xFFD2CFC5);
   static const neutralSoft = Color(0xFFF1F0EB);
-  static const neutralText = Color(0xFF9B9890);
+  // Was 0xFF9B9890 (2.53:1 — fails WCAG AA, and read as "disabled" for a
+  // module that's actually one click away). Same tone as inkSoft now —
+  // "not started" no longer looks singled-out as muted/inactive.
+  static const neutralText = Color(0xFF66645E);
 
   static const fontMono = 'IBM Plex Mono';
   static const fontSans = 'IBM Plex Sans';

@@ -32,7 +32,10 @@ class LedgerModuleRow extends StatelessWidget {
         'Completed',
       ),
       ModuleStatus.current => (
-        LedgerColors.gold,
+        // goldDeep, not gold — plain gold is only 2.42:1 against this
+        // white card, under WCAG's 3:1 minimum for a graphical status
+        // indicator (goldDeep clears it at 5.06:1).
+        LedgerColors.goldDeep,
         LedgerColors.goldSoft,
         LedgerColors.goldDeep,
         'In progress',
@@ -44,6 +47,9 @@ class LedgerModuleRow extends StatelessWidget {
         'Not started',
       ),
     };
+    // A rough estimate from term count alone — a module also has a quiz and
+    // confusable pairs a term count doesn't capture — so this reads as an
+    // approximation ("~X min"), not a precise duration.
     final minutes = (module.termCount * 0.5).ceil();
 
     return Material(
@@ -57,7 +63,7 @@ class LedgerModuleRow extends StatelessWidget {
                 onTap!();
               },
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           decoration: BoxDecoration(
             border: isLast
                 ? null
@@ -70,24 +76,30 @@ class LedgerModuleRow extends StatelessWidget {
               Expanded(
                 flex: 5,
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: BoxDecoration(
-                        color: dotColor,
-                        shape: BoxShape.circle,
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6),
+                      child: Container(
+                        width: 6,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          color: dotColor,
+                          shape: BoxShape.circle,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 10),
                     Flexible(
                       child: Text(
                         module.title,
+                        maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
                           fontFamily: LedgerColors.fontSans,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          height: 1.3,
                           color: LedgerColors.ink,
                         ),
                       ),
@@ -101,8 +113,8 @@ class LedgerModuleRow extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 2,
+                      horizontal: 9,
+                      vertical: 3,
                     ),
                     decoration: BoxDecoration(
                       color: pillBg,
@@ -112,7 +124,7 @@ class LedgerModuleRow extends StatelessWidget {
                       pillLabel,
                       style: TextStyle(
                         fontFamily: LedgerColors.fontMono,
-                        fontSize: 10,
+                        fontSize: 11,
                         letterSpacing: 0.2,
                         color: pillFg,
                       ),
@@ -126,7 +138,7 @@ class LedgerModuleRow extends StatelessWidget {
                   '${module.termCount}',
                   style: const TextStyle(
                     fontFamily: LedgerColors.fontMono,
-                    fontSize: 12,
+                    fontSize: 13,
                     color: LedgerColors.inkSoft,
                   ),
                 ),
@@ -134,13 +146,22 @@ class LedgerModuleRow extends StatelessWidget {
               Expanded(
                 flex: 2,
                 child: Text(
-                  status == ModuleStatus.done ? '—' : '$minutes min',
+                  status == ModuleStatus.done ? '—' : '~$minutes min',
                   style: const TextStyle(
                     fontFamily: LedgerColors.fontMono,
-                    fontSize: 12,
+                    fontSize: 13,
                     color: LedgerColors.inkSoft,
                   ),
                 ),
+              ),
+              // A row full of plain text columns gave no visual cue that
+              // tapping it does anything — this chevron is the only "open
+              // this" affordance, matching the chevron ModulePathNode uses
+              // for the same purpose elsewhere.
+              const Icon(
+                Icons.chevron_right,
+                size: 18,
+                color: LedgerColors.inkSoft,
               ),
             ],
           ),

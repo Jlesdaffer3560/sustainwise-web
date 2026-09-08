@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 import '../data/models.dart';
 import '../services/app_feedback.dart';
 import '../theme/app_theme.dart';
@@ -35,11 +38,45 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
   );
   late String _query = widget.initialQuery ?? '';
   final Set<String> _expanded = {};
+  Timer? _urlSyncDebounce;
 
   @override
   void dispose() {
+    _urlSyncDebounce?.cancel();
     _searchController.dispose();
     super.dispose();
+  }
+
+  // Browser back/forward between two /glossary?q=... URLs reuses this same
+  // State object rather than recreating it (same route, same widget slot)
+  // — without this, the search field and results would keep showing
+  // whatever query was active when the screen was first built, ignoring
+  // the URL the user just navigated back to.
+  @override
+  void didUpdateWidget(covariant GlossaryScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final incoming = widget.initialQuery ?? '';
+    if (incoming != oldWidget.initialQuery && incoming != _query) {
+      _query = incoming;
+      _searchController.text = incoming;
+    }
+  }
+
+  // Keeps the address bar in sync while typing — a query someone shares or
+  // bookmarks, or gets back via the browser's back button, actually
+  // restores what they were searching for. Debounced and via replace (not
+  // push), so it doesn't flood browser history with one entry per
+  // keystroke. Native never calls this (no go_router there).
+  void _scheduleUrlSync(String value) {
+    if (!kIsWeb) return;
+    _urlSyncDebounce?.cancel();
+    _urlSyncDebounce = Timer(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+      final q = value.trim();
+      GoRouter.of(context).replace(
+        q.isEmpty ? '/glossary' : '/glossary?q=${Uri.encodeQueryComponent(q)}',
+      );
+    });
   }
 
   List<Term> get _filtered {
@@ -179,7 +216,10 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
       child: TextField(
         key: const Key('glossary-search-field'),
         controller: _searchController,
-        onChanged: (value) => setState(() => _query = value),
+        onChanged: (value) {
+          setState(() => _query = value);
+          _scheduleUrlSync(value);
+        },
         style: const TextStyle(fontSize: 14.5, color: AppColors.ink),
         decoration: InputDecoration(
           hintText: 'Search DNSH, Scope 3, materiality...',
@@ -201,6 +241,7 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                     AppFeedback.tap();
                     _searchController.clear();
                     setState(() => _query = '');
+                    _scheduleUrlSync('');
                   },
                 ),
           border: InputBorder.none,

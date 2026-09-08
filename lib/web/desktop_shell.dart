@@ -53,7 +53,10 @@ class DesktopShell extends StatelessWidget {
             child: ScaffoldMessenger(
               child: Center(
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 1000),
+                  // Widened from 1000 alongside the wider main-content-vs-
+                  // sidebar split on Home — otherwise the extra flex share
+                  // just had less overall width to actually claim.
+                  constraints: const BoxConstraints(maxWidth: 1120),
                   child: child,
                 ),
               ),
