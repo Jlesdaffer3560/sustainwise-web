@@ -102,6 +102,12 @@ class _QuizScreenState extends State<QuizScreen> {
         return;
       }
       // No confusable pairs for this module — the quiz is the whole lesson.
+      // XP only actually pays out on a module's first completion (see
+      // completeLesson) — check that before calling it, so the completion
+      // screen doesn't claim "+15 XP" on a replay that earned none.
+      final alreadyDone =
+          ProgressStore.instance.statusFor(widget.moduleId) ==
+          ModuleStatus.done;
       ProgressStore.instance.completeLesson(
         moduleId: widget.moduleId,
         correct: _correctCount,
@@ -112,6 +118,7 @@ class _QuizScreenState extends State<QuizScreen> {
           LessonCompleteScreen(
             correct: _correctCount,
             total: widget.questions.length,
+            xpEarned: alreadyDone ? 0 : 15,
           ),
         ),
       );

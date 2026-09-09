@@ -307,17 +307,21 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                       children: [
                         Row(
                           children: [
-                            if (term.theme != null) ...[
-                              Container(
-                                width: 8,
-                                height: 8,
-                                margin: const EdgeInsets.only(right: 7),
-                                decoration: BoxDecoration(
-                                  color: term.theme!.color,
-                                  shape: BoxShape.circle,
-                                ),
+                            Container(
+                              width: 8,
+                              height: 8,
+                              margin: const EdgeInsets.only(right: 7),
+                              decoration: BoxDecoration(
+                                // A handful of foundational terms (e.g. "ESG"
+                                // itself, "Stakeholder") deliberately carry no
+                                // single E/S/G/Finance/Regulation theme — a
+                                // neutral dot keeps every row visually
+                                // consistent instead of some rows silently
+                                // missing one.
+                                color: term.theme?.color ?? AppColors.inkSoft,
+                                shape: BoxShape.circle,
                               ),
-                            ],
+                            ),
                             Flexible(
                               child: Text(
                                 term.term,

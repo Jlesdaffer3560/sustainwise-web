@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data/models.dart';
+import '../data/progress_store.dart';
 import '../services/app_feedback.dart';
 import '../theme/app_theme.dart';
 import '../web/unload_guard.dart';
@@ -55,6 +56,11 @@ class _LessonScreenState extends State<LessonScreen>
 
   void _rate(bool gotIt) {
     AppFeedback.tapSilent();
+    // A "Still learning" self-rating queues the term for spaced review
+    // right away, the same as a wrong quiz answer would — otherwise a
+    // learner honestly flagging "I don't know this" had no actual effect,
+    // which contradicted what the button claims to do.
+    if (!gotIt) ProgressStore.instance.recordMiss(_current.id);
     if (_index >= widget.deck.length - 1) {
       // Flashcards done — move straight into the quiz on the same terms,
       // replacing this screen so its own back button returns to Home.

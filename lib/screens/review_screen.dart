@@ -76,6 +76,11 @@ class _ReviewScreenState extends State<ReviewScreen> {
       _selected = null;
       _justMastered = false;
     });
+    // Working through the due reviews is real practice — it just doesn't
+    // award XP (see recordReviewSession), unlike a lesson.
+    if (_index >= widget.questions.length) {
+      ProgressStore.instance.recordReviewSession();
+    }
   }
 
   @override

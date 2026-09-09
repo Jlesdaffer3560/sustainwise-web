@@ -80,7 +80,19 @@ class ProgressStore extends ChangeNotifier {
   int _notificationHour = 18;
   int _notificationMinute = 0;
 
-  int get streakDays => _streakDays;
+  // A streak stored from a week-long absence would otherwise keep reading
+  // as "active" until the learner's next lesson finally recalculates it —
+  // this derives whether it's actually still alive from the last practice
+  // date every time it's read, the same way statusFor derives "current".
+  // Still relevant on web: the streak-milestone celebration in
+  // home_screen.dart reads this directly, and a returning web visitor's
+  // progress genuinely persists across days via the same browser storage.
+  int get streakDays {
+    if (_lastPracticeDate == null) return 0;
+    final gap = _daysBetween(_dateOnly(_lastPracticeDate!), _dateOnly(DateTime.now()));
+    return gap > 1 ? 0 : _streakDays;
+  }
+
   int get longestStreak => _longestStreak;
   int get totalXp => _totalXp;
   bool get expertChallengeCompleted => _expertChallengeCompleted;
@@ -119,9 +131,7 @@ class ProgressStore extends ChangeNotifier {
     if (termId == null) return;
     _reviewSchedule[termId] = _ReviewEntry(
       stage: 0,
-      dueDate: _dateOnly(
-        DateTime.now(),
-      ).add(Duration(days: _reviewIntervalDays[0])),
+      dueDate: _addCalendarDays(_dateOnly(DateTime.now()), _reviewIntervalDays[0]),
     );
     notifyListeners();
     await _save();
@@ -135,15 +145,23 @@ class ProgressStore extends ChangeNotifier {
     if (termId == null) return;
     final entry = _reviewSchedule[termId];
     if (entry == null) return;
+    // Only a review that's actually due should advance the schedule — web
+    // lets an already-done module be reopened and re-quizzed (see
+    // statusFor), so without this guard, replaying it before a term's next
+    // interval is up would let a correct answer skip ahead through the
+    // spacing early. A no-op here just leaves the entry as already
+    // scheduled; it isn't recorded as a miss either.
+    if (entry.dueDate.isAfter(_dateOnly(DateTime.now()))) return;
     final nextStage = entry.stage + 1;
     if (nextStage >= _reviewIntervalDays.length) {
       _reviewSchedule.remove(termId);
     } else {
       _reviewSchedule[termId] = _ReviewEntry(
         stage: nextStage,
-        dueDate: _dateOnly(
-          DateTime.now(),
-        ).add(Duration(days: _reviewIntervalDays[nextStage])),
+        dueDate: _addCalendarDays(
+          _dateOnly(DateTime.now()),
+          _reviewIntervalDays[nextStage],
+        ),
       );
     }
     notifyListeners();
@@ -196,10 +214,10 @@ class ProgressStore extends ChangeNotifier {
   /// fabricated shape to it either way.
   List<int> get thisWeekXp {
     final today = _dateOnly(DateTime.now());
-    final monday = today.subtract(Duration(days: today.weekday - 1));
+    final monday = _addCalendarDays(today, -(today.weekday - 1));
     return [
       for (var i = 0; i < 7; i++)
-        _dailyXpHistory[_dateKey(monday.add(Duration(days: i)))] ?? 0,
+        _dailyXpHistory[_dateKey(_addCalendarDays(monday, i))] ?? 0,
     ];
   }
 
@@ -332,69 +350,85 @@ class ProgressStore extends ChangeNotifier {
     if (_loaded) return;
     final prefs = await SharedPreferences.getInstance();
 
+    var restored = false;
     if (prefs.containsKey(_keyXp)) {
-      _streakDays = prefs.getInt(_keyStreak) ?? 0;
-      _longestStreak = prefs.getInt(_keyLongestStreak) ?? 0;
-      _totalXp = prefs.getInt(_keyXp) ?? 0;
-      final lastPracticeIso = prefs.getString(_keyLastPractice);
-      _lastPracticeDate = lastPracticeIso == null
-          ? null
-          : DateTime.tryParse(lastPracticeIso);
-
-      final statusesJson = prefs.getString(_keyStatuses);
-      if (statusesJson != null) {
-        final decoded = jsonDecode(statusesJson) as Map<String, dynamic>;
-        decoded.forEach(
-          (id, value) =>
-              _statuses[id] = ModuleStatus.values.byName(value as String),
-        );
+      try {
+        _restoreFrom(prefs);
+        restored = true;
+      } catch (_) {
+        // Corrupted or unrecognized persisted state (a future format
+        // change with no migration, or rare storage corruption — browser
+        // localStorage is if anything more exposed to this than native's
+        // sandboxed storage: devtools tampering, another tab, a browser
+        // extension) would otherwise throw here uncaught — and main()
+        // awaits load() before runApp(), so that would leave the app
+        // permanently stuck on a blank screen on every future launch.
+        // Falling back to a fresh start is annoying but recoverable; that
+        // is not. Any fields a partial decode already touched below get
+        // reset by _seedFreshState() right after.
       }
-      final accuracyJson = prefs.getString(_keyAccuracy);
-      if (accuracyJson != null) {
-        final decoded = jsonDecode(accuracyJson) as Map<String, dynamic>;
-        decoded.forEach(
-          (id, value) => _accuracy[id] = (value as num).toDouble(),
-        );
-      }
-      final scheduleJson = prefs.getString(_keyReviewSchedule);
-      if (scheduleJson != null) {
-        final decoded = jsonDecode(scheduleJson) as Map<String, dynamic>;
-        decoded.forEach((id, value) {
-          final entry = value as Map<String, dynamic>;
-          _reviewSchedule[id] = _ReviewEntry(
-            stage: entry['stage'] as int,
-            dueDate: DateTime.parse(entry['dueDate'] as String),
-          );
-        });
-      }
-      _expertChallengeCompleted = prefs.getBool(_keyExpertDone) ?? false;
-      _todayXpRaw = prefs.getInt(_keyTodayXp) ?? 0;
-      final todayXpIso = prefs.getString(_keyTodayXpDate);
-      _todayXpDate = todayXpIso == null ? null : DateTime.tryParse(todayXpIso);
-      _soundEnabled = prefs.getBool(_keySoundEnabled) ?? true;
-      _notificationsEnabled = prefs.getBool(_keyNotificationsEnabled) ?? false;
-      _notificationHour = prefs.getInt(_keyNotificationHour) ?? 18;
-      _notificationMinute = prefs.getInt(_keyNotificationMinute) ?? 0;
-
-      final historyJson = prefs.getString(_keyDailyXpHistory);
-      if (historyJson != null) {
-        final decoded = jsonDecode(historyJson) as Map<String, dynamic>;
-        decoded.forEach(
-          (day, xp) => _dailyXpHistory[day] = (xp as num).toInt(),
-        );
-      } else if (_todayXpDate != null && _todayXpRaw > 0) {
-        // Upgrading from a version that only ever tracked a single day's XP
-        // — seed today's entry from that so it isn't lost outright, even
-        // though the days before it were never recorded.
-        _dailyXpHistory[_dateKey(_dateOnly(_todayXpDate!))] = _todayXpRaw;
-      }
-    } else {
+    }
+    if (!restored) {
       _seedFreshState();
       await _save();
     }
 
     _loaded = true;
     notifyListeners();
+  }
+
+  void _restoreFrom(SharedPreferences prefs) {
+    _streakDays = prefs.getInt(_keyStreak) ?? 0;
+    _longestStreak = prefs.getInt(_keyLongestStreak) ?? 0;
+    _totalXp = prefs.getInt(_keyXp) ?? 0;
+    final lastPracticeIso = prefs.getString(_keyLastPractice);
+    _lastPracticeDate = lastPracticeIso == null
+        ? null
+        : DateTime.tryParse(lastPracticeIso);
+
+    final statusesJson = prefs.getString(_keyStatuses);
+    if (statusesJson != null) {
+      final decoded = jsonDecode(statusesJson) as Map<String, dynamic>;
+      decoded.forEach(
+        (id, value) =>
+            _statuses[id] = ModuleStatus.values.byName(value as String),
+      );
+    }
+    final accuracyJson = prefs.getString(_keyAccuracy);
+    if (accuracyJson != null) {
+      final decoded = jsonDecode(accuracyJson) as Map<String, dynamic>;
+      decoded.forEach((id, value) => _accuracy[id] = (value as num).toDouble());
+    }
+    final scheduleJson = prefs.getString(_keyReviewSchedule);
+    if (scheduleJson != null) {
+      final decoded = jsonDecode(scheduleJson) as Map<String, dynamic>;
+      decoded.forEach((id, value) {
+        final entry = value as Map<String, dynamic>;
+        _reviewSchedule[id] = _ReviewEntry(
+          stage: entry['stage'] as int,
+          dueDate: DateTime.parse(entry['dueDate'] as String),
+        );
+      });
+    }
+    _expertChallengeCompleted = prefs.getBool(_keyExpertDone) ?? false;
+    _todayXpRaw = prefs.getInt(_keyTodayXp) ?? 0;
+    final todayXpIso = prefs.getString(_keyTodayXpDate);
+    _todayXpDate = todayXpIso == null ? null : DateTime.tryParse(todayXpIso);
+    _soundEnabled = prefs.getBool(_keySoundEnabled) ?? true;
+    _notificationsEnabled = prefs.getBool(_keyNotificationsEnabled) ?? false;
+    _notificationHour = prefs.getInt(_keyNotificationHour) ?? 18;
+    _notificationMinute = prefs.getInt(_keyNotificationMinute) ?? 0;
+
+    final historyJson = prefs.getString(_keyDailyXpHistory);
+    if (historyJson != null) {
+      final decoded = jsonDecode(historyJson) as Map<String, dynamic>;
+      decoded.forEach((day, xp) => _dailyXpHistory[day] = (xp as num).toInt());
+    } else if (_todayXpDate != null && _todayXpRaw > 0) {
+      // Upgrading from a version that only ever tracked a single day's XP
+      // — seed today's entry from that so it isn't lost outright, even
+      // though the days before it were never recorded.
+      _dailyXpHistory[_dateKey(_dateOnly(_todayXpDate!))] = _todayXpRaw;
+    }
   }
 
   // A genuinely blank slate — no XP, no streak, nothing pre-completed. Only
@@ -473,6 +507,16 @@ class ProgressStore extends ChangeNotifier {
     await _save();
   }
 
+  /// Working through "Mistakes to revisit" counts as real practice for the
+  /// streak, even though — unlike a lesson — it deliberately awards no XP:
+  /// there's no new module to unlock, and letting a learner farm free XP
+  /// by repeatedly revisiting already-scheduled reviews isn't the goal.
+  Future<void> recordReviewSession() async {
+    _recordPracticeToday();
+    notifyListeners();
+    await _save();
+  }
+
   void _addXp(int amount) {
     final today = _dateOnly(DateTime.now());
     if (_todayXpDate == null || _dateOnly(_todayXpDate!) != today) {
@@ -490,9 +534,10 @@ class ProgressStore extends ChangeNotifier {
     final last = _lastPracticeDate == null
         ? null
         : _dateOnly(_lastPracticeDate!);
-    if (last == null || today.difference(last).inDays > 1) {
+    final gap = last == null ? null : _daysBetween(last, today);
+    if (gap == null || gap > 1) {
       _streakDays = 1;
-    } else if (today.difference(last).inDays == 1) {
+    } else if (gap == 1) {
       _streakDays += 1;
     }
     // Same-day repeat practice leaves the streak unchanged.
@@ -501,6 +546,24 @@ class ProgressStore extends ChangeNotifier {
   }
 
   DateTime _dateOnly(DateTime d) => DateTime(d.year, d.month, d.day);
+
+  // A whole-calendar-day count between two local dates, computed via their
+  // UTC-anchored equivalents so a DST transition between them — which can
+  // make the real elapsed duration 23 or 25 hours — never throws off
+  // Duration.inDays' truncation (e.g. a genuine consecutive day could
+  // otherwise compute as 0 days apart and fail to advance the streak).
+  int _daysBetween(DateTime a, DateTime b) {
+    final utcA = DateTime.utc(a.year, a.month, a.day);
+    final utcB = DateTime.utc(b.year, b.month, b.day);
+    return utcB.difference(utcA).inDays;
+  }
+
+  // "N calendar days from d", via calendar-field arithmetic rather than
+  // adding a fixed Duration — the latter can land on the wrong wall-clock
+  // date entirely across a DST transition (e.g. local midnight + 24h can
+  // resolve to 1am the "right" day, or 11pm the day before).
+  DateTime _addCalendarDays(DateTime d, int days) =>
+      DateTime(d.year, d.month, d.day + days);
 
   String _dateKey(DateTime d) =>
       '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
@@ -554,7 +617,7 @@ class ProgressStore extends ChangeNotifier {
     // Keep a rolling ~5 weeks of history — enough for the weekly chart
     // plus headroom — rather than growing this map forever over months of
     // real use.
-    final cutoff = _dateOnly(DateTime.now()).subtract(const Duration(days: 34));
+    final cutoff = _addCalendarDays(_dateOnly(DateTime.now()), -34);
     _dailyXpHistory.removeWhere((key, _) {
       final d = DateTime.tryParse(key);
       return d == null || d.isBefore(cutoff);

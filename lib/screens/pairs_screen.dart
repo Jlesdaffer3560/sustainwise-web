@@ -67,6 +67,12 @@ class _PairsScreenState extends State<PairsScreen> {
     if (_index >= widget.pairs.length - 1) {
       final totalCorrect = widget.priorCorrect + _correctCount;
       final totalQuestions = widget.priorTotal + widget.pairs.length;
+      // XP only actually pays out on a module's first completion (see
+      // completeLesson) — check that before calling it, so the completion
+      // screen doesn't claim "+15 XP" on a replay that earned none.
+      final alreadyDone =
+          ProgressStore.instance.statusFor(widget.moduleId) ==
+          ModuleStatus.done;
       ProgressStore.instance.completeLesson(
         moduleId: widget.moduleId,
         correct: totalCorrect,
@@ -74,7 +80,11 @@ class _PairsScreenState extends State<PairsScreen> {
       );
       Navigator.of(context).pushReplacement(
         appRoute(
-          LessonCompleteScreen(correct: totalCorrect, total: totalQuestions),
+          LessonCompleteScreen(
+            correct: totalCorrect,
+            total: totalQuestions,
+            xpEarned: alreadyDone ? 0 : 15,
+          ),
         ),
       );
       return;
