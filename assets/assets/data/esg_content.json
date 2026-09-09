@@ -3821,6 +3821,24 @@
    "moduleId": "social-issues-human-rights",
    "type": "applicable",
    "sourceUrl": "https://transition-pathways.europa.eu/retail/legislation/forced-labour-regulation"
+  },
+  {
+   "id": "milestone_010",
+   "date": "2026-01-01",
+   "title": "CBAM definitive period begins",
+   "description": "The transitional reporting-only phase ends and the real obligation starts: importers must declare embedded emissions on covered goods and buy CBAM certificates, with the first certificate sales opening 1 February 2027.",
+   "moduleId": "climate-carbon-accounting",
+   "type": "applicable",
+   "sourceUrl": "https://trade.ec.europa.eu/access-to-markets/en/news/start-definitive-period-cbam-eu"
+  },
+  {
+   "id": "milestone_011",
+   "date": "2026-12-30",
+   "title": "EUDR applies to large and medium operators",
+   "description": "The EU Deforestation Regulation starts applying — twice postponed from its original 30 December 2024 date. Micro and small enterprises get until 30 June 2027.",
+   "moduleId": "circular-economy-biodiversity",
+   "type": "applicable",
+   "sourceUrl": "https://www.consilium.europa.eu/en/press/press-releases/"
   }
  ]
 }
