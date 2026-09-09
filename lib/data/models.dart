@@ -452,20 +452,28 @@ class MockData {
   /// module id that doesn't exist).
   static ModuleProgress? moduleById(String id) => _moduleById[id];
 
-  /// Every curated milestone, nearest-to-today first (past or future). No
-  /// day-window cutoff — this list is hand-picked and small (each entry
-  /// requires real research to add, see the milestone-adding convention),
-  /// so there's no "too much clutter" risk a filter would need to guard
-  /// against. A previous 200-day window silently hid 3 of the 8 curated
-  /// milestones, including the EU Forced Labour Regulation's 2027
-  /// application date — removed entirely rather than just widened, so a
-  /// future far-out milestone can't quietly vanish the same way again.
+  /// Every curated milestone — every still-upcoming one first, soonest to
+  /// take effect at the very top, then already-past ones, most recent
+  /// first. Deliberately not "nearest to today in either direction": that
+  /// let an old past milestone (e.g. 251 days ago) rank ahead of a
+  /// closer-but-still-future one, when what actually belongs at the top of
+  /// a *radar* is whatever's coming up next. No day-window cutoff either —
+  /// this list is hand-picked and small (each entry requires real research
+  /// to add, see the milestone-adding convention), so there's no "too much
+  /// clutter" risk a filter would need to guard against. A previous
+  /// 200-day window silently hid 3 of the 8 curated milestones, including
+  /// the EU Forced Labour Regulation's 2027 application date — removed
+  /// entirely rather than just widened, so a future far-out milestone
+  /// can't quietly vanish the same way again.
   static List<RegulatoryMilestone> radarMilestones() {
     final now = DateTime.now();
-    return [...regulatoryMilestones]..sort(
-      (a, b) =>
-          a.date.difference(now).abs().compareTo(b.date.difference(now).abs()),
-    );
+    return [...regulatoryMilestones]..sort((a, b) {
+      final aUpcoming = !a.date.isBefore(now);
+      final bUpcoming = !b.date.isBefore(now);
+      if (aUpcoming != bUpcoming) return aUpcoming ? -1 : 1;
+      // Both upcoming: soonest first. Both past: most recent first.
+      return aUpcoming ? a.date.compareTo(b.date) : b.date.compareTo(a.date);
+    });
   }
 
   /// The full flashcard deck for a module — every real term it has.

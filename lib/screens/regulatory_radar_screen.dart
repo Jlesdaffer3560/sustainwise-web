@@ -16,8 +16,11 @@ class RegulatoryRadarScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final milestones = MockData.radarMilestones()
-      ..sort((a, b) => a.date.compareTo(b.date));
+    // radarMilestones() already orders soonest-upcoming first, then
+    // most-recent-past — re-sorting here by plain date.compareTo() would
+    // put the oldest past milestone at the very top instead, which is
+    // exactly the ordering bug this screen was showing.
+    final milestones = MockData.radarMilestones();
     final bg = kIsWeb ? LedgerColors.contentBg : AppColors.bg;
     return Scaffold(
       backgroundColor: bg,
