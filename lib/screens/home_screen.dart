@@ -1365,8 +1365,8 @@ class _HomeScreenState extends State<HomeScreen> {
   /// [DateTime.now()] on every open rather than baked into a fixed lesson.
   /// No push notifications/background scheduler needed for this: the same
   /// bundled dates just read differently depending on when you look.
-  /// Renders nothing once nothing is in the ~200-day window either side of
-  /// today, rather than showing a permanently-empty card.
+  /// Renders nothing only if the curated list itself is ever empty — every
+  /// milestone shows regardless of how far off it is (see radarMilestones).
   Widget _buildRegulatoryRadarCard(BuildContext context) {
     final milestones = MockData.radarMilestones();
     if (milestones.isEmpty) return const SizedBox.shrink();
@@ -1411,28 +1411,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          const Text(
-                            'REGULATORY RADAR',
-                            style: TextStyle(
-                              fontFamily: 'monospace',
-                              fontSize: 10.5,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 0.5,
-                              color: AppColors.violetDeep,
-                            ),
-                          ),
-                          const SizedBox(width: 6),
-                          Text(
-                            _radarRelativeLabel(nearest.date),
-                            style: const TextStyle(
-                              fontSize: 10.5,
-                              fontWeight: FontWeight.w700,
-                              color: AppColors.violetDeep,
-                            ),
-                          ),
-                        ],
+                      const Text(
+                        'REGULATORY RADAR',
+                        style: TextStyle(
+                          fontFamily: 'monospace',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: 0.5,
+                          color: AppColors.violetDeep,
+                        ),
                       ),
                       const SizedBox(height: 3),
                       Text(
@@ -1492,12 +1479,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
-  }
-
-  String _radarRelativeLabel(DateTime date) {
-    final days = date.difference(DateTime.now()).inDays;
-    if (days == 0) return 'TODAY';
-    return days > 0 ? 'IN ${days}D' : '${-days}D AGO';
   }
 
   /// Each unit is a floating card on the same neutral background as the
