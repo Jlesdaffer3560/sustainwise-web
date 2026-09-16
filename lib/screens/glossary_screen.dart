@@ -124,6 +124,10 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
   @override
   Widget build(BuildContext context) {
     final results = _filtered;
+    // "The Ledger" tokens only ever apply at the desktop-web breakpoint —
+    // narrow web keeps the exact same look as native, per the standing
+    // requirement that a small screen should still feel like the app.
+    final ledger = isDesktopWeb(context);
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -131,9 +135,7 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
         statusBarBrightness: Brightness.light,
       ),
       child: Scaffold(
-        backgroundColor: isDesktopWeb(context)
-            ? LedgerColors.contentBg
-            : AppColors.bg,
+        backgroundColor: ledger ? LedgerColors.contentBg : AppColors.bg,
         body: SafeArea(
           child: Column(
             children: [
@@ -142,30 +144,62 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Glossary',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 22,
-                        color: AppColors.ink,
+                    if (ledger) ...[
+                      Container(
+                        padding: const EdgeInsets.only(bottom: 14),
+                        margin: const EdgeInsets.only(bottom: 6),
+                        decoration: const BoxDecoration(
+                          border: Border(
+                            bottom: BorderSide(color: LedgerColors.border),
+                          ),
+                        ),
+                        child: const Text(
+                          'GLOSSARY',
+                          style: TextStyle(
+                            fontFamily: LedgerColors.fontMono,
+                            fontSize: 11,
+                            letterSpacing: 0.6,
+                            color: LedgerColors.inkSoft,
+                          ),
+                        ),
                       ),
-                    ),
+                      const Text(
+                        'Look up a term',
+                        style: TextStyle(
+                          fontFamily: LedgerColors.fontSans,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w600,
+                          color: LedgerColors.ink,
+                        ),
+                      ),
+                    ] else
+                      const Text(
+                        'Glossary',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 22,
+                          color: AppColors.ink,
+                        ),
+                      ),
                     const SizedBox(height: 4),
                     Text(
                       '${MockData.allTerms.length} terms — search any of them, any time.',
-                      style: const TextStyle(
+                      style: TextStyle(
+                        fontFamily: ledger ? LedgerColors.fontSans : null,
                         fontSize: 13,
-                        color: AppColors.inkSoft,
+                        color: ledger
+                            ? LedgerColors.inkSoft
+                            : AppColors.inkSoft,
                       ),
                     ),
                     const SizedBox(height: 14),
-                    _buildSearchField(),
+                    _buildSearchField(ledger),
                   ],
                 ),
               ),
               Expanded(
                 child: results.isEmpty
-                    ? _buildEmptyState()
+                    ? _buildEmptyState(ledger)
                     : _maybeSelectable(
                         ListView.separated(
                           key: const Key('glossary-list'),
@@ -174,7 +208,7 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                           separatorBuilder: (_, _) =>
                               const SizedBox(height: 10),
                           itemBuilder: (context, index) =>
-                              _buildTermCard(results[index]),
+                              _buildTermCard(results[index], ledger),
                         ),
                       ),
               ),
@@ -206,12 +240,14 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
     );
   }
 
-  Widget _buildSearchField() {
+  Widget _buildSearchField(bool ledger) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.border),
+        color: ledger ? LedgerColors.card : AppColors.surface,
+        borderRadius: BorderRadius.circular(ledger ? 6 : 14),
+        border: Border.all(
+          color: ledger ? LedgerColors.border : AppColors.border,
+        ),
       ),
       child: TextField(
         key: const Key('glossary-search-field'),
@@ -220,21 +256,29 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
           setState(() => _query = value);
           _scheduleUrlSync(value);
         },
-        style: const TextStyle(fontSize: 14.5, color: AppColors.ink),
+        style: TextStyle(
+          fontFamily: ledger ? LedgerColors.fontSans : null,
+          fontSize: 14.5,
+          color: ledger ? LedgerColors.ink : AppColors.ink,
+        ),
         decoration: InputDecoration(
           hintText: 'Search DNSH, Scope 3, materiality...',
-          hintStyle: const TextStyle(fontSize: 14.5, color: AppColors.inkSoft),
-          prefixIcon: const Icon(
+          hintStyle: TextStyle(
+            fontFamily: ledger ? LedgerColors.fontSans : null,
+            fontSize: 14.5,
+            color: ledger ? LedgerColors.inkSoft : AppColors.inkSoft,
+          ),
+          prefixIcon: Icon(
             Icons.search,
-            color: AppColors.inkSoft,
+            color: ledger ? LedgerColors.inkSoft : AppColors.inkSoft,
             size: 20,
           ),
           suffixIcon: _query.isEmpty
               ? null
               : IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.close,
-                    color: AppColors.inkSoft,
+                    color: ledger ? LedgerColors.inkSoft : AppColors.inkSoft,
                     size: 18,
                   ),
                   onPressed: () {
@@ -251,19 +295,24 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(bool ledger) {
+    final soft = ledger ? LedgerColors.inkSoft : AppColors.inkSoft;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.search_off, color: AppColors.inkSoft, size: 36),
+            Icon(Icons.search_off, color: soft, size: 36),
             const SizedBox(height: 10),
             Text(
               'No terms match "$_query"',
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 14, color: AppColors.inkSoft),
+              style: TextStyle(
+                fontFamily: ledger ? LedgerColors.fontSans : null,
+                fontSize: 14,
+                color: soft,
+              ),
             ),
           ],
         ),
@@ -271,15 +320,23 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
     );
   }
 
-  Widget _buildTermCard(Term term) {
+  Widget _buildTermCard(Term term, bool ledger) {
     final key = _keyFor(term);
     final isExpanded = _expanded.contains(key);
+    final cardColor = ledger ? LedgerColors.card : AppColors.surface;
+    final borderColor = ledger ? LedgerColors.border : AppColors.border;
+    final radius = ledger ? 6.0 : 16.0;
+    final ink = ledger ? LedgerColors.ink : AppColors.ink;
+    final inkSoft = ledger ? LedgerColors.inkSoft : AppColors.inkSoft;
+    final moduleColor = ledger ? LedgerColors.teal : AppColors.tealDeep;
+    final sansFont = ledger ? LedgerColors.fontSans : null;
+    final monoFont = ledger ? LedgerColors.fontMono : 'monospace';
     return Material(
-      color: AppColors.surface,
-      borderRadius: BorderRadius.circular(16),
+      color: cardColor,
+      borderRadius: BorderRadius.circular(radius),
       child: InkWell(
         key: Key('glossary-term-${term.term}'),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(radius),
         onTap: () {
           AppFeedback.tap();
           setState(() {
@@ -293,8 +350,8 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.border),
+            borderRadius: BorderRadius.circular(radius),
+            border: Border.all(color: borderColor),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -318,17 +375,20 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                                 // neutral dot keeps every row visually
                                 // consistent instead of some rows silently
                                 // missing one.
-                                color: term.theme?.color ?? AppColors.inkSoft,
+                                color: term.theme?.color ?? inkSoft,
                                 shape: BoxShape.circle,
                               ),
                             ),
                             Flexible(
                               child: Text(
                                 term.term,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w800,
+                                style: TextStyle(
+                                  fontFamily: sansFont,
+                                  fontWeight: ledger
+                                      ? FontWeight.w700
+                                      : FontWeight.w800,
                                   fontSize: 15.5,
-                                  color: AppColors.ink,
+                                  color: ink,
                                 ),
                               ),
                             ),
@@ -342,27 +402,24 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                                 term.moduleLabel,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                  fontFamily: 'monospace',
+                                style: TextStyle(
+                                  fontFamily: monoFont,
                                   fontSize: 10.5,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.3,
-                                  color: AppColors.tealDeep,
+                                  color: moduleColor,
                                 ),
                               ),
                             ),
                             if (term.theme != null) ...[
-                              const Text(
+                              Text(
                                 ' · ',
-                                style: TextStyle(
-                                  fontSize: 10.5,
-                                  color: AppColors.inkSoft,
-                                ),
+                                style: TextStyle(fontSize: 10.5, color: inkSoft),
                               ),
                               Text(
                                 term.theme!.label,
                                 style: TextStyle(
-                                  fontFamily: 'monospace',
+                                  fontFamily: monoFont,
                                   fontSize: 10.5,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: 0.3,
@@ -378,9 +435,9 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                   AnimatedRotation(
                     turns: isExpanded ? 0.5 : 0,
                     duration: const Duration(milliseconds: 200),
-                    child: const Icon(
+                    child: Icon(
                       Icons.keyboard_arrow_down,
-                      color: AppColors.inkSoft,
+                      color: inkSoft,
                       size: 22,
                     ),
                   ),
@@ -390,7 +447,7 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                 firstChild: const SizedBox(width: double.infinity),
                 secondChild: Padding(
                   padding: const EdgeInsets.only(top: 12),
-                  child: _buildDetail(term),
+                  child: _buildDetail(term, ledger),
                 ),
                 crossFadeState: isExpanded
                     ? CrossFadeState.showSecond
@@ -404,13 +461,17 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
     );
   }
 
-  Widget _buildDetail(Term term) {
+  Widget _buildDetail(Term term, bool ledger) {
+    final ink = ledger ? LedgerColors.ink : AppColors.ink;
+    final teal = ledger ? LedgerColors.teal : AppColors.tealDeep;
+    final gold = ledger ? LedgerColors.goldDeep : AppColors.amberDeep;
     if (!term.hasRichFormat) {
       return Text(
         term.definition,
-        style: const TextStyle(
+        style: TextStyle(
+          fontFamily: ledger ? LedgerColors.fontSans : null,
           fontSize: 13.5,
-          color: AppColors.ink,
+          color: ink,
           height: 1.4,
         ),
       );
@@ -418,35 +479,32 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _section('IN PLAIN ENGLISH', term.plainEnglish!, AppColors.tealDeep),
+        _section('IN PLAIN ENGLISH', term.plainEnglish!, teal, ledger),
         if (term.whyItMatters != null) ...[
           const SizedBox(height: 10),
-          _section('WHY IT MATTERS', term.whyItMatters!, AppColors.tealDeep),
+          _section('WHY IT MATTERS', term.whyItMatters!, teal, ledger),
         ],
         if (term.example != null) ...[
           const SizedBox(height: 10),
-          _section('EXAMPLE', term.example!, AppColors.tealDeep),
+          _section('EXAMPLE', term.example!, teal, ledger),
         ],
         if (term.dontConfuseWith != null) ...[
           const SizedBox(height: 10),
-          _section(
-            "DON'T CONFUSE WITH",
-            term.dontConfuseWith!,
-            AppColors.amberDeep,
-          ),
+          _section("DON'T CONFUSE WITH", term.dontConfuseWith!, gold, ledger),
         ],
       ],
     );
   }
 
-  Widget _section(String label, String body, Color labelColor) {
+  Widget _section(String label, String body, Color labelColor, bool ledger) {
+    final ink = ledger ? LedgerColors.ink : AppColors.ink;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
           style: TextStyle(
-            fontFamily: 'monospace',
+            fontFamily: ledger ? LedgerColors.fontMono : 'monospace',
             fontSize: 10,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.5,
@@ -456,9 +514,10 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
         const SizedBox(height: 3),
         Text(
           body,
-          style: const TextStyle(
+          style: TextStyle(
+            fontFamily: ledger ? LedgerColors.fontSans : null,
             fontSize: 13.5,
-            color: AppColors.ink,
+            color: ink,
             height: 1.4,
           ),
         ),

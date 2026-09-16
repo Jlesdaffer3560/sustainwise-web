@@ -14,6 +14,7 @@ class ProgressRing extends StatefulWidget {
     required this.centerLabel,
     this.size = 80,
     this.fillColor = AppColors.teal,
+    this.centerValueColor = AppColors.tealDeep,
   });
 
   final double percent; // 0-100
@@ -21,6 +22,11 @@ class ProgressRing extends StatefulWidget {
   final String centerLabel;
   final double size;
   final Color fillColor;
+  // Web's Ledger design reads this ring on a hairline-bordered card rather
+  // than a rounded one, and wants the center number tied to the same accent
+  // as the fill — defaults to the original fixed tealDeep so every existing
+  // (native and non-Ledger web) call site is unaffected.
+  final Color centerValueColor;
 
   @override
   State<ProgressRing> createState() => _ProgressRingState();
@@ -69,7 +75,7 @@ class _ProgressRingState extends State<ProgressRing> {
                 style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: widget.size >= 100 ? 20 : 15,
-                  color: AppColors.tealDeep,
+                  color: widget.centerValueColor,
                 ),
               ),
               Text(
