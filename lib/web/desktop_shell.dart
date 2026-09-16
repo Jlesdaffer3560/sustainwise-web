@@ -147,6 +147,58 @@ class _Sidebar extends StatelessWidget {
             ),
             for (final tab in tabs)
               _SidebarLink(tab: tab, selected: location == tab.location),
+            // Directly under the nav, not buried in the footer below the
+            // Spacer — a muted footer link at the very bottom of a tall
+            // sidebar read as easy to miss entirely. Gold, not the plain
+            // railText every other footer link uses, so it reads as its
+            // own call-to-action rather than another quiet utility link;
+            // gold clears 7.6:1 against this dark rail (unlike against a
+            // white card elsewhere, where it fails WCAG and goldDeep is
+            // used instead — see LedgerModuleRow).
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: InkWell(
+                  key: const Key('play-store-button'),
+                  borderRadius: BorderRadius.circular(6),
+                  onTap: () => showComingSoon(context, 'Google Play'),
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 9,
+                      horizontal: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: LedgerColors.gold),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.android,
+                          size: 15,
+                          color: LedgerColors.gold,
+                        ),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            'Download on Google Play',
+                            style: TextStyle(
+                              fontFamily: LedgerColors.fontMono,
+                              fontSize: 10.5,
+                              letterSpacing: 0.2,
+                              color: LedgerColors.gold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
             const Spacer(),
             // A visitor who arrived via a shared app.sustainwiseapp.com
             // link has otherwise had no way to find the marketing site.
@@ -157,53 +209,6 @@ class _Sidebar extends StatelessWidget {
                 children: [
                   const Divider(height: 1, color: LedgerColors.railBorder),
                   const SizedBox(height: 14),
-                  // The real Play Store link once that listing is public —
-                  // it's in closed testing right now, and linking to a
-                  // non-public listing would deny access for most
-                  // visitors. Same "coming soon" pattern Profile/Progress
-                  // already use elsewhere for a not-yet-available setting.
-                  MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: InkWell(
-                      key: const Key('play-store-button'),
-                      borderRadius: BorderRadius.circular(6),
-                      onTap: () => showComingSoon(context, 'Google Play'),
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 9,
-                          horizontal: 10,
-                        ),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: LedgerColors.railBorder),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(
-                              Icons.android,
-                              size: 15,
-                              color: LedgerColors.railText,
-                            ),
-                            const SizedBox(width: 8),
-                            Flexible(
-                              child: Text(
-                                'Download on Google Play',
-                                style: TextStyle(
-                                  fontFamily: LedgerColors.fontMono,
-                                  fontSize: 10.5,
-                                  letterSpacing: 0.2,
-                                  color: LedgerColors.railText,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
                   MouseRegion(
                     cursor: SystemMouseCursors.click,
                     child: InkWell(
