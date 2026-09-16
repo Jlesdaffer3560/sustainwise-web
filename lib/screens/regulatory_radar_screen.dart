@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../data/models.dart';
 import '../theme/app_theme.dart';
+import '../web/responsive.dart';
 
 /// "Living content instead of static content" — the one screen in the app
 /// that reads differently depending on when you open it. Every date here is
@@ -38,20 +39,35 @@ class RegulatoryRadarScreen extends StatelessWidget {
         ),
       ),
       body: SafeArea(
-        child: milestones.isEmpty
-            ? const _EmptyRadar()
-            : ListView.builder(
-                padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-                itemCount: milestones.length + 1,
-                itemBuilder: (context, i) {
-                  if (i == 0) return const _RadarIntro();
-                  final milestone = milestones[i - 1];
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: _MilestoneCard(milestone: milestone),
-                  );
-                },
-              ),
+        // This screen sits outside DesktopShell entirely (see
+        // home_screen.dart — it's a drill-down, not a sidebar peer), so it
+        // never got the same max-width constraint every other desktop-web
+        // page has. Without it, cards stretched edge-to-edge across the
+        // full browser width, with description text wrapping into single
+        // lines far past a comfortable reading width. Native and narrow
+        // web are untouched — this list was always meant to fill a phone
+        // screen's width.
+        child: Center(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              maxWidth: isDesktopWeb(context) ? 640 : double.infinity,
+            ),
+            child: milestones.isEmpty
+                ? const _EmptyRadar()
+                : ListView.builder(
+                    padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
+                    itemCount: milestones.length + 1,
+                    itemBuilder: (context, i) {
+                      if (i == 0) return const _RadarIntro();
+                      final milestone = milestones[i - 1];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _MilestoneCard(milestone: milestone),
+                      );
+                    },
+                  ),
+          ),
+        ),
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart';
+import '../widgets/app_bottom_nav.dart' show showComingSoon;
 import 'responsive.dart';
 
 /// The web build's persistent frame around the three top-level tabs — a
@@ -156,6 +157,53 @@ class _Sidebar extends StatelessWidget {
                 children: [
                   const Divider(height: 1, color: LedgerColors.railBorder),
                   const SizedBox(height: 14),
+                  // The real Play Store link once that listing is public —
+                  // it's in closed testing right now, and linking to a
+                  // non-public listing would deny access for most
+                  // visitors. Same "coming soon" pattern Profile/Progress
+                  // already use elsewhere for a not-yet-available setting.
+                  MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: InkWell(
+                      key: const Key('play-store-button'),
+                      borderRadius: BorderRadius.circular(6),
+                      onTap: () => showComingSoon(context, 'Google Play'),
+                      child: Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 9,
+                          horizontal: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: LedgerColors.railBorder),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.android,
+                              size: 15,
+                              color: LedgerColors.railText,
+                            ),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                'Download on Google Play',
+                                style: TextStyle(
+                                  fontFamily: LedgerColors.fontMono,
+                                  fontSize: 10.5,
+                                  letterSpacing: 0.2,
+                                  color: LedgerColors.railText,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
                   MouseRegion(
                     cursor: SystemMouseCursors.click,
                     child: InkWell(

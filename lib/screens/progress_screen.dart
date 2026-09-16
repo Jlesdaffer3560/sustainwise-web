@@ -532,6 +532,12 @@ class ProgressScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
+          // The real Play Store link once that listing is public — it's
+          // in closed testing right now, and linking to a non-public
+          // listing would deny access for most visitors. Reuses
+          // _settingsRow's existing "coming soon" tap, same as every
+          // other not-yet-available setting here.
+          _settingsRow(context, 'Get the app', 'Google Play'),
           _settingsRow(context, 'Language', 'English'),
           _buildResetProgressRow(context),
         ],
