@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../data/models.dart';
 import '../data/progress_store.dart';
 import '../services/app_feedback.dart';
@@ -629,18 +630,28 @@ class ProgressScreen extends StatelessWidget {
     );
   }
 
+  // regulingo.app's own package id — the listing went public, so this now
+  // links out for real instead of the "coming soon" toast every other
+  // not-yet-available setting still uses.
+  static const _playStoreUrl =
+      'https://play.google.com/store/apps/details?id=com.regulingo.app';
+
   Widget _buildSettingsList(BuildContext context, bool ledger) {
     final border = ledger ? LedgerColors.border : AppColors.border;
     return Container(
       decoration: BoxDecoration(border: Border(top: BorderSide(color: border))),
       child: Column(
         children: [
-          // The real Play Store link once that listing is public — it's
-          // in closed testing right now, and linking to a non-public
-          // listing would deny access for most visitors. Reuses
-          // _settingsRow's existing "coming soon" tap, same as every
-          // other not-yet-available setting here.
-          _settingsRow(context, 'Get the app', 'Google Play', ledger),
+          _settingsRow(
+            context,
+            'Get the app',
+            'Google Play',
+            ledger,
+            onTap: () => launchUrl(
+              Uri.parse(_playStoreUrl),
+              mode: LaunchMode.externalApplication,
+            ),
+          ),
           _settingsRow(context, 'Language', 'English', ledger),
           _buildResetProgressRow(context, ledger),
         ],
@@ -683,13 +694,14 @@ class ProgressScreen extends StatelessWidget {
     BuildContext context,
     String label,
     String value,
-    bool ledger,
-  ) {
+    bool ledger, {
+    VoidCallback? onTap,
+  }) {
     final border = ledger ? LedgerColors.border : AppColors.border;
     return InkWell(
       onTap: () {
         AppFeedback.tap();
-        showComingSoon(context, label);
+        (onTap ?? () => showComingSoon(context, label))();
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 2),

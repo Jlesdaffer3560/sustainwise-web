@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../theme/app_theme.dart';
-import '../widgets/app_bottom_nav.dart' show showComingSoon;
 import 'responsive.dart';
 
 /// The web build's persistent frame around the three top-level tabs — a
@@ -162,7 +161,14 @@ class _Sidebar extends StatelessWidget {
                 child: InkWell(
                   key: const Key('play-store-button'),
                   borderRadius: BorderRadius.circular(6),
-                  onTap: () => showComingSoon(context, 'Google Play'),
+                  // regulingo.app's own package id — the listing is public
+                  // now, so this opens the real store page.
+                  onTap: () => launchUrl(
+                    Uri.parse(
+                      'https://play.google.com/store/apps/details?id=com.regulingo.app',
+                    ),
+                    mode: LaunchMode.externalApplication,
+                  ),
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.symmetric(
