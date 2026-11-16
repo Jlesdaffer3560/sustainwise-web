@@ -11,6 +11,7 @@ import '../widgets/app_bottom_nav.dart';
 import '../widgets/app_route.dart';
 import '../widgets/progress_ring.dart';
 import '../widgets/reset_progress_dialog.dart';
+import '../widgets/weak_spots_card.dart';
 import 'glossary_screen.dart';
 
 /// Web-only merged view of what native splits across Stats and Profile —
@@ -55,6 +56,7 @@ class ProgressScreen extends StatelessWidget {
                   _buildChartsCard(ledger),
                   const SizedBox(height: 16),
                   _buildFluencyCard(ledger),
+                  WeakSpotsCard(ledger: ledger),
                   const SizedBox(height: 16),
                   _buildStatGrid(ledger),
                   const SizedBox(height: 24),
@@ -142,28 +144,32 @@ class ProgressScreen extends StatelessWidget {
           child: const Icon(Icons.eco, color: Colors.white, size: 28),
         ),
         const SizedBox(width: 14),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Your progress',
-              style: TextStyle(
-                fontFamily: ledger ? LedgerColors.fontSans : null,
-                fontSize: 18,
-                fontWeight: ledger ? FontWeight.w600 : FontWeight.w800,
-                color: ledger ? LedgerColors.ink : AppColors.ink,
+        // Expanded so a small phone with large text wraps the level line
+        // instead of overflowing the row.
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Your progress',
+                style: TextStyle(
+                  fontFamily: ledger ? LedgerColors.fontSans : null,
+                  fontSize: 18,
+                  fontWeight: ledger ? FontWeight.w600 : FontWeight.w800,
+                  color: ledger ? LedgerColors.ink : AppColors.ink,
+                ),
               ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              'Level ${ProgressStore.instance.level} · Sustainability Learner',
-              style: TextStyle(
-                fontFamily: ledger ? LedgerColors.fontMono : null,
-                fontSize: 12.5,
-                color: ledger ? LedgerColors.inkSoft : AppColors.inkSoft,
+              const SizedBox(height: 2),
+              Text(
+                'Level ${ProgressStore.instance.level} · Sustainability Learner',
+                style: TextStyle(
+                  fontFamily: ledger ? LedgerColors.fontMono : null,
+                  fontSize: 12.5,
+                  color: ledger ? LedgerColors.inkSoft : AppColors.inkSoft,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -257,9 +263,7 @@ class ProgressScreen extends StatelessWidget {
             centerValue: '$completed/$total',
             centerLabel: 'modules',
             fillColor: ledger ? LedgerColors.teal : AppColors.teal,
-            centerValueColor: ledger
-                ? LedgerColors.teal
-                : AppColors.tealDeep,
+            centerValueColor: ledger ? LedgerColors.teal : AppColors.tealDeep,
           ),
           const SizedBox(width: 18),
           // A week-activity chart is near-empty for a one-time web visitor
@@ -471,7 +475,8 @@ class ProgressScreen extends StatelessWidget {
               : progress > 0
               ? LedgerColors.goldDeep
               : LedgerColors.neutralDot)
-        : AppColors.unitAccentsWeb[index % AppColors.unitAccentsWeb.length]
+        : AppColors
+              .unitAccentsWeb[index % AppColors.unitAccentsWeb.length]
               .fill;
 
     return Container(
@@ -536,7 +541,7 @@ class ProgressScreen extends StatelessWidget {
         ? '${(accuracy! * MockData.expertChallenge.length).round()}/${MockData.expertChallenge.length} correct — ${(accuracy * 100).round()}% accuracy'
         : unlocked
         ? 'Unlocked — not attempted yet'
-        : 'Complete every module above to unlock';
+        : 'Complete every module to unlock';
     final gold = ledger ? LedgerColors.goldDeep : AppColors.amberDeep;
 
     return Container(
@@ -639,7 +644,9 @@ class ProgressScreen extends StatelessWidget {
   Widget _buildSettingsList(BuildContext context, bool ledger) {
     final border = ledger ? LedgerColors.border : AppColors.border;
     return Container(
-      decoration: BoxDecoration(border: Border(top: BorderSide(color: border))),
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: border)),
+      ),
       child: Column(
         children: [
           _settingsRow(
@@ -670,7 +677,9 @@ class ProgressScreen extends StatelessWidget {
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 2),
-        decoration: BoxDecoration(border: Border(top: BorderSide(color: border))),
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: border)),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -705,7 +714,9 @@ class ProgressScreen extends StatelessWidget {
       },
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 2),
-        decoration: BoxDecoration(border: Border(top: BorderSide(color: border))),
+        decoration: BoxDecoration(
+          border: Border(top: BorderSide(color: border)),
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -739,8 +750,9 @@ class ProgressScreen extends StatelessWidget {
         style: TextStyle(
           fontFamily: ledger ? LedgerColors.fontMono : null,
           fontSize: 11,
-          color: (ledger ? LedgerColors.inkSoft : AppColors.inkSoft)
-              .withValues(alpha: 0.75),
+          color: (ledger ? LedgerColors.inkSoft : AppColors.inkSoft).withValues(
+            alpha: 0.75,
+          ),
         ),
       ),
     );

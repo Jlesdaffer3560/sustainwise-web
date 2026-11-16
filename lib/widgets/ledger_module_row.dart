@@ -15,11 +15,16 @@ class LedgerModuleRow extends StatelessWidget {
     required this.module,
     required this.onTap,
     this.isLast = false,
+    this.mastery = 0,
   });
 
   final ModuleProgress module;
   final VoidCallback? onTap;
   final bool isLast;
+
+  /// 0-3, from ProgressStore.masteryFor: how well a completed module was
+  /// answered. Shown as stars in place of the est. time once it is done.
+  final int mastery;
 
   @override
   Widget build(BuildContext context) {
@@ -145,14 +150,32 @@ class LedgerModuleRow extends StatelessWidget {
               ),
               Expanded(
                 flex: 2,
-                child: Text(
-                  status == ModuleStatus.done ? '—' : '~$minutes min',
-                  style: const TextStyle(
-                    fontFamily: LedgerColors.fontMono,
-                    fontSize: 13,
-                    color: LedgerColors.inkSoft,
-                  ),
-                ),
+                child: status == ModuleStatus.done && mastery > 0
+                    ? Row(
+                        key: Key('module-mastery-${module.id}'),
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          for (var i = 1; i <= 3; i++)
+                            Icon(
+                              i <= mastery
+                                  ? Icons.star_rounded
+                                  : Icons.star_outline_rounded,
+                              size: 15,
+                              color: LedgerColors.goldDeep,
+                              semanticLabel: i == 1
+                                  ? 'Mastery $mastery of 3 stars'
+                                  : null,
+                            ),
+                        ],
+                      )
+                    : Text(
+                        status == ModuleStatus.done ? '—' : '~$minutes min',
+                        style: const TextStyle(
+                          fontFamily: LedgerColors.fontMono,
+                          fontSize: 13,
+                          color: LedgerColors.inkSoft,
+                        ),
+                      ),
               ),
               // A row full of plain text columns gave no visual cue that
               // tapping it does anything — this chevron is the only "open

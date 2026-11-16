@@ -22,8 +22,8 @@ void showResetProgressDialog(
       // this session. Native keeps "XP".
       content: Text(
         'This clears your streak, ${kIsWeb ? 'points' : 'XP'}, completed '
-        'modules, and mistakes queue, and starts you back at the very '
-        'first module. This cannot be undone.',
+        'modules, and mistakes queue, and starts you again from the '
+        'beginning. This cannot be undone.',
       ),
       actions: [
         TextButton(

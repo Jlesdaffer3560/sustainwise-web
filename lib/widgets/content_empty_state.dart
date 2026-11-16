@@ -48,9 +48,7 @@ class ContentEmptyState extends StatelessWidget {
               const SizedBox(height: 18),
               FilledButton(
                 onPressed: () => Navigator.of(context).pop(),
-                style: FilledButton.styleFrom(
-                  backgroundColor: AppColors.teal,
-                ),
+                style: FilledButton.styleFrom(backgroundColor: AppColors.teal),
                 child: const Text('Back'),
               ),
             ],

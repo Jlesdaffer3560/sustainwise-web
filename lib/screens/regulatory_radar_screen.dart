@@ -4,6 +4,9 @@ import 'package:url_launcher/url_launcher.dart';
 import '../data/models.dart';
 import '../theme/app_theme.dart';
 import '../web/responsive.dart';
+import '../widgets/share_card.dart';
+
+enum _RadarFilter { all, upcoming, past }
 
 /// "Living content instead of static content" — the one screen in the app
 /// that reads differently depending on when you open it. Every date here is
@@ -12,8 +15,70 @@ import '../web/responsive.dart';
 /// evaluated fresh against [DateTime.now()] rather than stated as a fixed
 /// fact — so it stays accurate without a content update every time a date
 /// passes.
-class RegulatoryRadarScreen extends StatelessWidget {
+///
+/// The app's "Following" filter and reminder bells are left out on web:
+/// they need local notifications, which a browser build does not have.
+class RegulatoryRadarScreen extends StatefulWidget {
   const RegulatoryRadarScreen({super.key});
+
+  @override
+  State<RegulatoryRadarScreen> createState() => _RegulatoryRadarScreenState();
+}
+
+class _RegulatoryRadarScreenState extends State<RegulatoryRadarScreen> {
+  _RadarFilter _filter = _RadarFilter.all;
+
+  bool _matches(RegulatoryMilestone m) => switch (_filter) {
+    _RadarFilter.all => true,
+    _RadarFilter.upcoming => !m.isPast,
+    _RadarFilter.past => m.isPast,
+  };
+
+  Widget _filterChips(bool ledger) {
+    String label(_RadarFilter f) => switch (f) {
+      _RadarFilter.all => 'All',
+      _RadarFilter.upcoming => 'Upcoming',
+      _RadarFilter.past => 'Past',
+    };
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 4,
+        children: [
+          for (final f in _RadarFilter.values)
+            ChoiceChip(
+              key: Key('radar-filter-${f.name}'),
+              label: Text(label(f)),
+              selected: _filter == f,
+              onSelected: (_) => setState(() => _filter = f),
+              selectedColor: ledger ? LedgerColors.goldSoft : null,
+              backgroundColor: ledger ? LedgerColors.card : null,
+              side: ledger
+                  ? const BorderSide(color: LedgerColors.border)
+                  : null,
+              shape: ledger
+                  ? RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(99),
+                    )
+                  : null,
+              labelStyle: ledger
+                  ? TextStyle(
+                      fontFamily: LedgerColors.fontSans,
+                      fontSize: 12.5,
+                      color: _filter == f
+                          ? LedgerColors.goldDeep
+                          : LedgerColors.inkSoft,
+                      fontWeight: _filter == f
+                          ? FontWeight.w600
+                          : FontWeight.w500,
+                    )
+                  : null,
+            ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +87,7 @@ class RegulatoryRadarScreen extends StatelessWidget {
     // put the oldest past milestone at the very top instead, which is
     // exactly the ordering bug this screen was showing.
     final milestones = MockData.radarMilestones();
+    final shown = milestones.where(_matches).toList();
     // Desktop-web only, matching Glossary/Progress — narrow web keeps the
     // exact same look as native (see the "small screen should feel like
     // the app" requirement), so only the >=900px breakpoint switches to
@@ -56,15 +122,41 @@ class RegulatoryRadarScreen extends StatelessWidget {
         // screen's width.
         child: Center(
           child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: ledger ? 640 : double.infinity),
+            constraints: BoxConstraints(
+              maxWidth: ledger ? 640 : double.infinity,
+            ),
             child: milestones.isEmpty
                 ? _EmptyRadar(ledger: ledger)
                 : ListView.builder(
                     padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
-                    itemCount: milestones.length + 1,
+                    itemCount: shown.isEmpty ? 2 : shown.length + 1,
                     itemBuilder: (context, i) {
-                      if (i == 0) return _RadarIntro(ledger: ledger);
-                      final milestone = milestones[i - 1];
+                      if (i == 0) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _RadarIntro(ledger: ledger),
+                            _filterChips(ledger),
+                          ],
+                        );
+                      }
+                      if (shown.isEmpty) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 24),
+                          child: Text(
+                            'No dates match this filter.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: ledger ? LedgerColors.fontSans : null,
+                              fontSize: 13.5,
+                              color: ledger
+                                  ? LedgerColors.inkSoft
+                                  : AppColors.inkSoft,
+                            ),
+                          ),
+                        );
+                      }
+                      final milestone = shown[i - 1];
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
                         child: _MilestoneCard(
@@ -91,8 +183,8 @@ class _RadarIntro extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: 14),
       child: Text(
-        'Real EU sustainability-regulation dates, close to today — shown as '
-        'they approach or just took effect.',
+        'Real EU sustainability-regulation dates that are coming up or just '
+        'took effect.',
         style: TextStyle(
           fontFamily: ledger ? LedgerColors.fontSans : null,
           fontSize: 13,
@@ -132,8 +224,8 @@ class _EmptyRadar extends StatelessWidget {
             ),
             const SizedBox(height: 6),
             Text(
-              'No tracked regulatory date falls within the next or last '
-              'few months. Check back closer to a milestone.',
+              'No regulatory date falls within the coming or past few '
+              'months. Check back closer to the next milestone.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontFamily: ledger ? LedgerColors.fontSans : null,
@@ -173,6 +265,12 @@ class _MilestoneCard extends StatelessWidget {
   String _formatDate(DateTime d) =>
       '${d.day} ${_months[d.month - 1]} ${d.year}';
 
+  String _relativeLabel(int days, bool isPast) {
+    if (days == 0) return 'today';
+    final unit = days == 1 ? 'day' : 'days';
+    return isPast ? '$days $unit ago' : 'in $days $unit';
+  }
+
   Future<void> _openSource(BuildContext context, String url) async {
     final uri = Uri.parse(url);
     final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -187,7 +285,7 @@ class _MilestoneCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final module = MockData.moduleById(milestone.moduleId);
     final isPast = milestone.isPast;
-    final days = milestone.date.difference(DateTime.now()).inDays.abs();
+    final days = milestone.calendarDaysFrom(DateTime.now()).abs();
 
     // Ledger status color: goldDeep for what's still ahead (same tone
     // LedgerModuleRow uses for "in progress"), a plain neutral for what's
@@ -251,7 +349,7 @@ class _MilestoneCard extends StatelessWidget {
                 ),
               ),
               Text(
-                isPast ? '$days d ago' : 'in $days d',
+                _relativeLabel(days, isPast),
                 style: TextStyle(
                   fontFamily: sansFont,
                   fontSize: 11.5,
@@ -281,10 +379,10 @@ class _MilestoneCard extends StatelessWidget {
               height: 1.4,
             ),
           ),
-          if (module != null) ...[
-            const SizedBox(height: 10),
-            Row(
-              children: [
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              if (module != null) ...[
                 Icon(
                   Icons.menu_book_outlined,
                   size: 14,
@@ -304,9 +402,26 @@ class _MilestoneCard extends StatelessWidget {
                     ),
                   ),
                 ),
-              ],
-            ),
-          ],
+              ] else
+                const Spacer(),
+              // On web the share sheet downloads the card where the browser
+              // cannot share files, so the icon says "image", not "send".
+              IconButton(
+                key: Key('milestone-${milestone.id}-share'),
+                tooltip: 'Share as image',
+                onPressed: () => shareMilestoneCard(
+                  context,
+                  milestone,
+                  _formatDate(milestone.date),
+                ),
+                icon: Icon(
+                  kIsWeb ? Icons.image_outlined : Icons.ios_share,
+                  size: 21,
+                  color: ledger ? LedgerColors.teal : AppColors.violetDeep,
+                ),
+              ),
+            ],
+          ),
           // Web only: source/jurisdiction/status/last-reviewed detail, per
           // direct request for the Radar to "look more credible" to an
           // ESG/regulatory audience — this is real metadata the app
@@ -382,13 +497,10 @@ class _RegulatoryMetaRow extends StatelessWidget {
         children: [
           for (final (icon, label) in chips)
             Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8,
-                vertical: 4,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
                 color: chipBg,
-                borderRadius: BorderRadius.circular(99),
+                borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: chipBorder),
               ),
               child: Row(
@@ -396,13 +508,18 @@ class _RegulatoryMetaRow extends StatelessWidget {
                 children: [
                   Icon(icon, size: 12, color: chipText),
                   const SizedBox(width: 4),
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontFamily: ledger ? LedgerColors.fontSans : null,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: chipText,
+                  // Flexible so a long label (a status or version line can
+                  // run to a full sentence) wraps inside the card instead of
+                  // running off its right edge.
+                  Flexible(
+                    child: Text(
+                      label,
+                      style: TextStyle(
+                        fontFamily: ledger ? LedgerColors.fontSans : null,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: chipText,
+                      ),
                     ),
                   ),
                 ],

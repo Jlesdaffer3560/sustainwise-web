@@ -32,9 +32,7 @@ class AppBottomNav extends StatelessWidget {
       padding: EdgeInsets.zero,
       child: SizedBox(
         height: 60,
-        child: Row(
-          children: kIsWeb ? _webItems() : _nativeItems(),
-        ),
+        child: Row(children: kIsWeb ? _webItems() : _nativeItems()),
       ),
     );
   }

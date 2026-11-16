@@ -9,6 +9,7 @@ import '../widgets/animated_counter.dart';
 import '../widgets/app_route.dart';
 import '../widgets/content_empty_state.dart';
 import '../widgets/moment_badge.dart';
+import '../widgets/term_insight.dart';
 import 'lesson_complete_screen.dart';
 import 'pairs_screen.dart';
 
@@ -266,6 +267,7 @@ class _QuizScreenState extends State<QuizScreen> {
                           ),
                         ),
                       ),
+                      TermInsight(termKey: _current.termId),
                       const SizedBox(height: 18),
                       SizedBox(
                         width: double.infinity,

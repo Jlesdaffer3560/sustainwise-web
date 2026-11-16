@@ -249,6 +249,16 @@ class RegulatoryMilestone {
 
   bool get isPast => date.isBefore(DateTime.now());
 
+  /// Whole calendar days from [now]'s date to this milestone's date
+  /// (negative = in the past, 0 = today). Counting calendar days, not
+  /// 24-hour periods, so a milestone dated tomorrow never reads "today"
+  /// in the afternoon, and daylight-saving changes cannot shift the count.
+  int calendarDaysFrom(DateTime now) {
+    final today = DateTime.utc(now.year, now.month, now.day);
+    final target = DateTime.utc(date.year, date.month, date.day);
+    return target.difference(today).inDays;
+  }
+
   // The status badge label a learner actually needs — legally correct per
   // [type] rather than a blanket "IN FORCE" for any date in the past.
   String get statusLabel {
@@ -293,7 +303,7 @@ const _iconByKey = <String, IconData>{
   'campaign_outlined': Icons.campaign_outlined,
 };
 
-/// The real term database (261 terms / 16 modules / 30 confusable pairs),
+/// The real term database (275 terms / 17 modules / 33 confusable pairs),
 /// bundled as a JSON asset and loaded once at startup. [ProgressStore]
 /// layers the learner's actual progress on top of the static content held
 /// here.
@@ -475,6 +485,55 @@ class MockData {
       return aUpcoming ? a.date.compareTo(b.date) : b.date.compareTo(a.date);
     });
   }
+
+  /// The term whose progress key is [key] — its id, or its name for a term
+  /// that has no id yet (the same key the review schedule uses).
+  static Term? termByKey(String? key) {
+    if (key == null) return null;
+    for (final list in _termsByModule.values) {
+      for (final t in list) {
+        if ((t.id ?? t.term) == key) return t;
+      }
+    }
+    return null;
+  }
+
+  /// The glossary term a "Don't confuse with" entry points at: [name] is the
+  /// text before the dash ("DNSH", "CSR (Corporate Social Responsibility)").
+  /// Matches the exact term name first; failing that, the name followed by a
+  /// parenthetical, or a term that starts with the name ("Scope 2" finds
+  /// "Scope 2 emissions").
+  static Term? relatedTermNamed(String name, {Term? except}) {
+    final wanted = name.trim().toLowerCase();
+    if (wanted.isEmpty) return null;
+    final candidates = [
+      for (final t in allTerms)
+        if (except == null || t.term != except.term) t,
+    ];
+    // An exact name always wins, whatever order the terms are in.
+    for (final t in candidates) {
+      if (t.term.trim().toLowerCase() == wanted) return t;
+    }
+    // Otherwise a term that starts with the name; if several do, the
+    // shortest (the most general one), and the alphabet breaks ties, so the
+    // answer never depends on how the content file happens to be ordered.
+    final partial = [
+      for (final t in candidates)
+        if (t.term.toLowerCase().startsWith('$wanted (') ||
+            t.term.toLowerCase().startsWith('$wanted ') ||
+            wanted.startsWith('${t.term.toLowerCase()} ('))
+          t,
+    ];
+    if (partial.isEmpty) return null;
+    partial.sort((a, b) {
+      final byLength = a.term.length.compareTo(b.term.length);
+      return byLength != 0 ? byLength : a.term.compareTo(b.term);
+    });
+    return partial.first;
+  }
+
+  /// The stable key for a term: its id, or its name when it has none.
+  static String keyOf(Term t) => t.id ?? t.term;
 
   /// The full flashcard deck for a module — every real term it has.
   static List<Term> lessonFor(String moduleId) =>

@@ -6,6 +6,7 @@ import '../theme/app_theme.dart';
 import '../web/unload_guard.dart';
 import '../widgets/animated_counter.dart';
 import '../widgets/moment_badge.dart';
+import '../widgets/term_insight.dart';
 
 /// The "Mistakes to revisit" queue, re-quizzed — every question here is a
 /// term due for review under the spaced-repetition schedule (1/3/7-day
@@ -199,6 +200,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                       ),
                     ),
                   ),
+                  TermInsight(termKey: _current.termId),
                   const SizedBox(height: 18),
                   SizedBox(
                     width: double.infinity,

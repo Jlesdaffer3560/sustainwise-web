@@ -119,7 +119,7 @@ Future<void> answerAllPairs(WidgetTester tester) async {
 
 void main() {
   testWidgets(
-    'Home screen shows only the first module unlocked, everything else locked',
+    'Home screen highlights the first not-yet-done module as current',
     (WidgetTester tester) async {
       await pumpFreshApp(tester);
 
@@ -136,7 +136,7 @@ void main() {
     },
   );
 
-  testWidgets('Tapping a locked module shows a snackbar, not a crash', (
+  testWidgets('Tapping a not-yet-done module opens its lesson directly', (
     WidgetTester tester,
   ) async {
     await pumpFreshApp(tester);
@@ -151,13 +151,99 @@ void main() {
       ),
     );
     await tester.tap(sfdrNode);
-    await tester.pump();
+    await _pumpSettleBounded(tester);
 
-    expect(
-      find.text('Locked — finish the module above to unlock "SFDR"'),
-      findsOneWidget,
-    );
+    // Modules are no longer gated by curriculum order — SFDR opens its
+    // lesson directly, the same as the current module would, instead of
+    // showing a "locked" snackbar. Checking the module label on the card
+    // itself (not just that *a* flashcard screen opened) catches a wrong
+    // module/deck being wired up by _onModuleTap.
+    expect(find.byKey(const Key('flashcard')), findsOneWidget);
+    expect(find.textContaining('SFDR'), findsWidgets);
   });
+
+  testWidgets(
+    'Completing a module out of curriculum order does not disturb the '
+    'suggested next module or the Expert Challenge gate',
+    (WidgetTester tester) async {
+      await pumpFreshApp(tester);
+
+      // SFDR (module 05) completed before ESG Fundamentals (module 01) —
+      // directly via ProgressStore, the same established pattern as
+      // completeAllModulesForTest(), since driving SFDR's own quiz/pairs
+      // through the UI would need its own seeded answer key.
+      await ProgressStore.instance.completeLesson(
+        moduleId: 'sfdr',
+        correct: 8,
+        total: 10,
+      );
+      expect(ProgressStore.instance.statusFor('sfdr'), ModuleStatus.done);
+
+      await tester.pumpWidget(const EsgJargonApp());
+      await tester.pump(const Duration(milliseconds: 1400));
+      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pump(const Duration(milliseconds: 600));
+
+      // ESG Fundamentals is still the first not-done module in curriculum
+      // order, so it's still the one and only suggested "current" module —
+      // finishing SFDR out of order didn't shift that.
+      expect(find.text('ESG Fundamentals'), findsNWidgets(2));
+      expect(find.byIcon(Icons.play_circle_fill), findsOneWidget);
+
+      // Expert Challenge stays locked — only one of 17 modules is done.
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('expert-challenge-card')),
+        200,
+        scrollable: find.descendant(
+          of: find.byKey(const Key('module-path-scroll')),
+          matching: find.byType(Scrollable),
+        ),
+      );
+      await tapAndEnsureVisible(tester, const Key('expert-challenge-card'));
+      await tester.pump();
+      expect(find.text('Locked — finish every module first.'), findsWidgets);
+    },
+  );
+
+  testWidgets(
+    'Completing an already-done module again does not award XP twice',
+    (WidgetTester tester) async {
+      // No widget tree needed for this one — it exercises the alreadyDone
+      // guard in ProgressStore.completeLesson directly. The guarantee that
+      // a replay never double-pays XP is a data-layer invariant,
+      // independent of which platform's UI allows reopening a done module
+      // (native redirects to Glossary instead; only web lets a learner
+      // reopen and replay one — see home_screen.dart's _onModuleTap). Still
+      // needs MockData loaded first, since completeLesson/_allModuleIds
+      // reads MockData.units.
+      SharedPreferences.setMockInitialValues({});
+      await tester.runAsync(() => MockData.load());
+      ProgressStore.instance.resetForTest();
+      await ProgressStore.instance.load();
+
+      await ProgressStore.instance.completeLesson(
+        moduleId: 'sfdr',
+        correct: 8,
+        total: 10,
+      );
+      expect(ProgressStore.instance.totalXp, 15);
+
+      await ProgressStore.instance.completeLesson(
+        moduleId: 'sfdr',
+        correct: 10,
+        total: 10,
+      );
+      expect(
+        ProgressStore.instance.totalXp,
+        15,
+        reason: 'Re-completing the same module must not pay out XP again',
+      );
+      // The replay's own accuracy is still recorded, though — most recent
+      // attempt is the honest signal, not the first one (see _accuracy's
+      // doc comment in progress_store.dart).
+      expect(ProgressStore.instance.esgFluency, 100.0);
+    },
+  );
 
   testWidgets('Flashcard rating buttons are inert until the card is flipped', (
     WidgetTester tester,
@@ -293,9 +379,9 @@ void main() {
       expect(find.text('10/10'), findsOneWidget); // correct (9 quiz + 1 pair)
       expect(find.text('14'), findsOneWidget); // cumulative terms learned
       expect(
-        find.text('1/16'),
+        find.text('1/17'),
         findsOneWidget,
-      ); // modules done, out of the full 16-module curriculum
+      ); // modules done, out of the full 17-module curriculum
       // A genuinely fresh install has no prior practice, so the first-ever
       // lesson starts the streak at 1, not extending an existing one.
       expect(find.textContaining('1-day streak'), findsOneWidget);
@@ -505,15 +591,12 @@ void main() {
       await scrollToExpertCard();
       await tapAndEnsureVisible(tester, const Key('expert-challenge-card'));
       await tester.pump();
-      expect(
-        find.text('Locked — complete every module above first'),
-        findsWidgets,
-      );
+      expect(find.text('Locked — finish every module first.'), findsWidgets);
       // Let the snackbar fully dismiss — still on-screen, it would otherwise
       // intercept the next tap on the card underneath it.
       await tester.pump(const Duration(seconds: 3));
 
-      // Skip straight to "every module done" rather than playing through 16
+      // Skip straight to "every module done" rather than playing through 17
       // lessons — the unlock condition itself is what's under test here.
       ProgressStore.instance.completeAllModulesForTest();
       await tester.pumpAndSettle();

@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../data/models.dart';
+import '../data/progress_store.dart';
 import '../services/app_feedback.dart';
 import '../theme/app_theme.dart';
 import '../web/responsive.dart';
 import '../widgets/app_bottom_nav.dart';
 import '../widgets/app_route.dart';
+import '../widgets/share_card.dart';
 import 'profile_screen.dart';
 import 'progress_screen.dart';
 import 'stats_screen.dart';
@@ -38,12 +40,15 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
   );
   late String _query = widget.initialQuery ?? '';
   final Set<String> _expanded = {};
+  bool _onlyFavorites = false;
+  final _listController = ScrollController();
   Timer? _urlSyncDebounce;
 
   @override
   void dispose() {
     _urlSyncDebounce?.cancel();
     _searchController.dispose();
+    _listController.dispose();
     super.dispose();
   }
 
@@ -81,8 +86,13 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
 
   List<Term> get _filtered {
     final q = _query.trim().toLowerCase();
-    if (q.isEmpty) return MockData.allTerms;
-    final matches = MockData.allTerms.where((t) {
+    final pool = _onlyFavorites
+        ? MockData.allTerms
+              .where((t) => ProgressStore.instance.isFavorite(_keyFor(t)))
+              .toList()
+        : MockData.allTerms;
+    if (q.isEmpty) return pool;
+    final matches = pool.where((t) {
       return t.term.toLowerCase().contains(q) ||
           t.definition.toLowerCase().contains(q) ||
           (t.plainEnglish?.toLowerCase().contains(q) ?? false);
@@ -194,6 +204,8 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                     ),
                     const SizedBox(height: 14),
                     _buildSearchField(ledger),
+                    const SizedBox(height: 10),
+                    _buildFilterChips(ledger),
                   ],
                 ),
               ),
@@ -203,6 +215,7 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                     : _maybeSelectable(
                         ListView.separated(
                           key: const Key('glossary-list'),
+                          controller: _listController,
                           padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
                           itemCount: results.length,
                           separatorBuilder: (_, _) =>
@@ -262,7 +275,7 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
           color: ledger ? LedgerColors.ink : AppColors.ink,
         ),
         decoration: InputDecoration(
-          hintText: 'Search DNSH, Scope 3, materiality...',
+          hintText: 'Search DNSH, Scope 3, materiality…',
           hintStyle: TextStyle(
             fontFamily: ledger ? LedgerColors.fontSans : null,
             fontSize: 14.5,
@@ -276,6 +289,7 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
           suffixIcon: _query.isEmpty
               ? null
               : IconButton(
+                  tooltip: 'Clear search',
                   icon: Icon(
                     Icons.close,
                     color: ledger ? LedgerColors.inkSoft : AppColors.inkSoft,
@@ -295,10 +309,94 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
     );
   }
 
+  Widget _buildFilterChips(bool ledger) {
+    final favoriteCount = ProgressStore.instance.favoriteTermKeys.length;
+    // Plain Material chips on native-style layouts (identical to the app);
+    // "The Ledger" gets flat, hairline chips in its own tokens.
+    ChoiceChip chip({
+      required Key key,
+      required String label,
+      required bool selected,
+      required VoidCallback onTap,
+      Widget? avatar,
+    }) => ChoiceChip(
+      key: key,
+      avatar: avatar,
+      showCheckmark: avatar == null,
+      label: Text(label),
+      selected: selected,
+      onSelected: (_) => onTap(),
+      selectedColor: ledger ? LedgerColors.tealSoft : null,
+      backgroundColor: ledger ? LedgerColors.card : null,
+      side: ledger ? const BorderSide(color: LedgerColors.border) : null,
+      shape: ledger
+          ? RoundedRectangleBorder(borderRadius: BorderRadius.circular(99))
+          : null,
+      labelStyle: ledger
+          ? TextStyle(
+              fontFamily: LedgerColors.fontSans,
+              fontSize: 12.5,
+              color: selected ? LedgerColors.teal : LedgerColors.inkSoft,
+              fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+            )
+          : null,
+    );
+    return Wrap(
+      spacing: 8,
+      runSpacing: 4,
+      children: [
+        chip(
+          key: const Key('glossary-filter-all'),
+          label: 'All terms',
+          selected: !_onlyFavorites,
+          onTap: () => setState(() => _onlyFavorites = false),
+        ),
+        chip(
+          key: const Key('glossary-filter-favorites'),
+          avatar: Icon(
+            Icons.star_rounded,
+            size: 16,
+            color: ledger ? LedgerColors.goldDeep : null,
+          ),
+          label: 'Favourites ($favoriteCount)',
+          selected: _onlyFavorites,
+          onTap: () => setState(() => _onlyFavorites = true),
+        ),
+      ],
+    );
+  }
+
+  /// Centres [child] in the space left under the header, and lets it scroll
+  /// when that space is too short for it (a landscape phone, large text).
+  Widget _centeredScroll(Widget child) => LayoutBuilder(
+    builder: (context, box) => SingleChildScrollView(
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: box.maxHeight),
+        child: Center(child: child),
+      ),
+    ),
+  );
+
   Widget _buildEmptyState(bool ledger) {
     final soft = ledger ? LedgerColors.inkSoft : AppColors.inkSoft;
-    return Center(
-      child: Padding(
+    if (_onlyFavorites && _query.trim().isEmpty) {
+      return _centeredScroll(
+        Padding(
+          padding: const EdgeInsets.all(32),
+          child: Text(
+            'No favourites yet. Tap the star on a term to keep it here.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontFamily: ledger ? LedgerColors.fontSans : null,
+              fontSize: 14,
+              color: soft,
+            ),
+          ),
+        ),
+      );
+    }
+    return _centeredScroll(
+      Padding(
         padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -414,7 +512,10 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                             if (term.theme != null) ...[
                               Text(
                                 ' · ',
-                                style: TextStyle(fontSize: 10.5, color: inkSoft),
+                                style: TextStyle(
+                                  fontSize: 10.5,
+                                  color: inkSoft,
+                                ),
                               ),
                               Text(
                                 term.theme!.label,
@@ -431,6 +532,25 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                         ),
                       ],
                     ),
+                  ),
+                  IconButton(
+                    key: Key('glossary-favorite-${term.term}'),
+                    tooltip: ProgressStore.instance.isFavorite(key)
+                        ? 'Remove from favourites'
+                        : 'Add to favourites',
+                    icon: Icon(
+                      ProgressStore.instance.isFavorite(key)
+                          ? Icons.star_rounded
+                          : Icons.star_outline_rounded,
+                      color: ProgressStore.instance.isFavorite(key)
+                          ? (ledger ? LedgerColors.goldDeep : AppColors.amber)
+                          : inkSoft,
+                    ),
+                    onPressed: () {
+                      AppFeedback.tap();
+                      ProgressStore.instance.toggleFavorite(key);
+                      setState(() {});
+                    },
                   ),
                   AnimatedRotation(
                     turns: isExpanded ? 0.5 : 0,
@@ -461,19 +581,78 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
     );
   }
 
+  /// The term named at the start of "Don't confuse with" ("DNSH — the ...")
+  /// when it exists in the glossary, so the learner can jump straight to it.
+  Term? _relatedTerm(Term term) {
+    final raw = term.dontConfuseWith;
+    if (raw == null) return null;
+    final i = raw.indexOf(' — ');
+    if (i <= 0) return null;
+    return MockData.relatedTermNamed(raw.substring(0, i), except: term);
+  }
+
+  void _openTerm(Term term) {
+    AppFeedback.tap();
+    setState(() {
+      _onlyFavorites = false;
+      _searchController.text = term.term;
+      _query = term.term;
+      _expanded.add(_keyFor(term));
+    });
+    _scheduleUrlSync(term.term);
+    // The previous term's list position would otherwise leave the new card
+    // half scrolled out of view.
+    if (_listController.hasClients) _listController.jumpTo(0);
+  }
+
   Widget _buildDetail(Term term, bool ledger) {
     final ink = ledger ? LedgerColors.ink : AppColors.ink;
     final teal = ledger ? LedgerColors.teal : AppColors.tealDeep;
     final gold = ledger ? LedgerColors.goldDeep : AppColors.amberDeep;
-    if (!term.hasRichFormat) {
-      return Text(
-        term.definition,
-        style: TextStyle(
-          fontFamily: ledger ? LedgerColors.fontSans : null,
-          fontSize: 13.5,
-          color: ink,
-          height: 1.4,
+    final related = _relatedTerm(term);
+    // On web the share sheet downloads the image where the browser cannot
+    // share files, so its icon says "image" rather than the phone share
+    // glyph (same choice the app makes).
+    final actions = Wrap(
+      spacing: 4,
+      children: [
+        if (related != null)
+          TextButton.icon(
+            key: Key('glossary-related-${term.term}'),
+            onPressed: () => _openTerm(related),
+            icon: const Icon(Icons.compare_arrows, size: 18),
+            label: Text('Open ${related.term}'),
+            style: ledger
+                ? TextButton.styleFrom(foregroundColor: LedgerColors.teal)
+                : null,
+          ),
+        TextButton.icon(
+          key: Key('glossary-share-${term.term}'),
+          onPressed: () => shareTermCard(context, term),
+          icon: Icon(kIsWeb ? Icons.image_outlined : Icons.ios_share, size: 18),
+          label: const Text('Share as image'),
+          style: ledger
+              ? TextButton.styleFrom(foregroundColor: LedgerColors.teal)
+              : null,
         ),
+      ],
+    );
+    if (!term.hasRichFormat) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            term.definition,
+            style: TextStyle(
+              fontFamily: ledger ? LedgerColors.fontSans : null,
+              fontSize: 13.5,
+              color: ink,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 6),
+          actions,
+        ],
       );
     }
     return Column(
@@ -492,6 +671,8 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
           const SizedBox(height: 10),
           _section("DON'T CONFUSE WITH", term.dontConfuseWith!, gold, ledger),
         ],
+        const SizedBox(height: 6),
+        actions,
       ],
     );
   }

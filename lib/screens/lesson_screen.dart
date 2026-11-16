@@ -5,10 +5,12 @@ import '../data/models.dart';
 import '../data/progress_store.dart';
 import '../services/app_feedback.dart';
 import '../theme/app_theme.dart';
+import '../web/responsive.dart';
 import '../web/unload_guard.dart';
 import '../widgets/animated_counter.dart';
 import '../widgets/app_route.dart';
 import '../widgets/content_empty_state.dart';
+import '../widgets/share_card.dart';
 import 'quiz_screen.dart';
 
 /// The flashcard study screen — flip to reveal the definition, then
@@ -52,6 +54,28 @@ class _LessonScreenState extends State<LessonScreen>
     popUnloadGuard();
     _pulseController.dispose();
     super.dispose();
+  }
+
+  // A horizontal flick on a flipped card rates it: right = "Got it", left =
+  // "Still learning". Ignored while the card is face-down, so a stray swipe
+  // can never rate a term the learner has not seen the answer to.
+  //
+  // A swipe counts when it travels far enough (a slow, deliberate drag) or is
+  // flicked fast (a short, quick one). The direction comes from where the
+  // finger actually went, not from the final velocity.
+  double _dragDx = 0;
+  static const _swipeDistance = 56.0;
+  static const _swipeVelocity = 500.0;
+
+  void _onSwipe(DragEndDetails details) {
+    final dx = _dragDx;
+    _dragDx = 0;
+    if (!_flipped) return;
+    final velocity = details.primaryVelocity ?? 0;
+    if (dx.abs() < _swipeDistance && velocity.abs() < _swipeVelocity) return;
+    final right = dx != 0 ? dx > 0 : velocity > 0;
+    HapticFeedback.lightImpact();
+    _rate(right);
   }
 
   void _rate(bool gotIt) {
@@ -113,6 +137,7 @@ class _LessonScreenState extends State<LessonScreen>
             Row(
               children: [
                 IconButton(
+                  tooltip: 'Close',
                   icon: const Icon(Icons.close, color: AppColors.inkSoft),
                   onPressed: () {
                     AppFeedback.tapSilent();
@@ -136,35 +161,95 @@ class _LessonScreenState extends State<LessonScreen>
             Padding(
               padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'FLASHCARDS',
-                    style: TextStyle(
-                      fontFamily: 'monospace',
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.6,
-                      color: AppColors.tealDeep,
+                  // Takes whatever the card counter and share icon leave, and
+                  // gives way first on a narrow screen with large text.
+                  const Expanded(
+                    child: Text(
+                      'FLASHCARDS',
+                      maxLines: 1,
+                      overflow: TextOverflow.clip,
+                      style: TextStyle(
+                        fontFamily: 'monospace',
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.6,
+                        color: AppColors.tealDeep,
+                      ),
                     ),
                   ),
-                  Text(
-                    'Card ${_index + 1} of ${widget.deck.length}',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.inkSoft,
-                    ),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Card ${_index + 1} of ${widget.deck.length}',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.inkSoft,
+                        ),
+                      ),
+                      // Always laid out (so the header never jumps), but only
+                      // visible and tappable once the answer is showing.
+                      Opacity(
+                        opacity: _flipped ? 1 : 0,
+                        child: IgnorePointer(
+                          ignoring: !_flipped,
+                          child: IconButton(
+                            key: const Key('flashcard-share'),
+                            tooltip: 'Share as image',
+                            icon: Icon(
+                              kIsWeb ? Icons.image_outlined : Icons.ios_share,
+                              size: 19,
+                              color: AppColors.tealDeep,
+                            ),
+                            onPressed: () => shareTermCard(context, _current),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [_buildCard(), _buildAssessRow()],
+              // Scrolls only when a small screen cannot fit the card, the
+              // buttons and the swipe tip at once; otherwise the content
+              // stays vertically centred exactly as before.
+              child: LayoutBuilder(
+                builder: (context, constraints) => SingleChildScrollView(
+                  padding: const EdgeInsets.all(20),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight - 40,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildCard(),
+                        _buildAssessRow(),
+                        // Only worth saying once there is something to swipe,
+                        // and not to a desktop visitor with a mouse (the
+                        // swipe still works there, but nobody expects it).
+                        AnimatedOpacity(
+                          opacity: _flipped && !isDesktopWeb(context) ? 1 : 0,
+                          duration: const Duration(milliseconds: 200),
+                          child: const Padding(
+                            padding: EdgeInsets.only(top: 10),
+                            child: Text(
+                              'Tip: swipe the card right for Got it, left '
+                              'for Still learning.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: AppColors.inkSoft,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -181,6 +266,10 @@ class _LessonScreenState extends State<LessonScreen>
         AppFeedback.tapSilent();
         setState(() => _flipped = !_flipped);
       },
+      onHorizontalDragStart: (_) => _dragDx = 0,
+      onHorizontalDragUpdate: (d) => _dragDx += d.delta.dx,
+      onHorizontalDragCancel: () => _dragDx = 0,
+      onHorizontalDragEnd: _onSwipe,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 26, horizontal: 20),
@@ -271,12 +360,15 @@ class _LessonScreenState extends State<LessonScreen>
                         color: AppColors.tealDeep,
                       ),
                       SizedBox(width: 6),
-                      Text(
-                        'Tap to reveal the definition',
-                        style: TextStyle(
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.tealDeep,
+                      Flexible(
+                        child: Text(
+                          'Tap to reveal the definition',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 13.5,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.tealDeep,
+                          ),
                         ),
                       ),
                     ],

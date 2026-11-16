@@ -35,6 +35,16 @@ class ProgressStore extends ChangeNotifier {
   static const _keyNotificationsEnabled = 'notifications_enabled';
   static const _keyNotificationHour = 'notification_hour';
   static const _keyNotificationMinute = 'notification_minute';
+  static const _keyFreezeUsedOn = 'streak_freeze_used_on';
+  static const _keyFavorites = 'favorite_term_keys';
+  static const _keyFollowedMilestones = 'followed_milestone_ids';
+  static const _keyLearnerRole = 'learner_role';
+
+  /// The store's notion of "now". Always [DateTime.now] in the app; tests
+  /// swap it to walk through several days without waiting.
+  @visibleForTesting
+  DateTime Function() clock = DateTime.now;
+  DateTime _now() => clock();
 
   // Not a real module id — a sentinel key so the Expert Challenge's own
   // accuracy can share the existing per-module [_accuracy] map (and its
@@ -79,18 +89,51 @@ class ProgressStore extends ChangeNotifier {
   bool _notificationsEnabled = false;
   int _notificationHour = 18;
   int _notificationMinute = 0;
+  // The day a streak freeze last saved the streak (null = never). One
+  // freeze is available per rolling 7 days — see [streakFreezeAvailable].
+  DateTime? _freezeUsedOn;
+  // Preferences rather than progress: a "Reset all progress" leaves these
+  // alone, like the sound setting.
+  final Set<String> _favoriteTermKeys = {};
+  final Set<String> _followedMilestoneIds = {};
+  String? _learnerRole;
+
+  /// Whether a freeze may be spent on [saved], the day it would cover. The
+  /// 7-day gap is measured between the *days saved*, not between the day it
+  /// is spent and the day saved: a freeze spent on day 10 for a missed day 9
+  /// is only 6 days after one that saved day 3, so it is refused.
+  bool _canFreezeOn(DateTime saved) {
+    final used = _freezeUsedOn;
+    if (used == null) return true;
+    return _daysBetween(_dateOnly(used), _dateOnly(saved)) >= 7;
+  }
+
+  /// For the UI: whether a freeze could cover a day missed from today on.
+  bool get streakFreezeAvailable => _canFreezeOn(_dateOnly(_now()));
 
   // A streak stored from a week-long absence would otherwise keep reading
   // as "active" until the learner's next lesson finally recalculates it —
   // this derives whether it's actually still alive from the last practice
   // date every time it's read, the same way statusFor derives "current".
-  // Still relevant on web: the streak-milestone celebration in
-  // home_screen.dart reads this directly, and a returning web visitor's
-  // progress genuinely persists across days via the same browser storage.
+  // A gap of exactly two days (one missed day, yesterday) is bridged by the
+  // streak freeze when one may be spent on that day.
+  bool _freezeBridges(int gap) =>
+      gap == 2 && _canFreezeOn(_addCalendarDays(_dateOnly(_now()), -1));
+
   int get streakDays {
     if (_lastPracticeDate == null) return 0;
-    final gap = _daysBetween(_dateOnly(_lastPracticeDate!), _dateOnly(DateTime.now()));
-    return gap > 1 ? 0 : _streakDays;
+    final gap = _daysBetween(_dateOnly(_lastPracticeDate!), _dateOnly(_now()));
+    if (gap <= 1) return _streakDays;
+    if (_freezeBridges(gap)) return _streakDays;
+    return 0;
+  }
+
+  /// True while the streak is only alive because a freeze will cover the
+  /// missed day — lets the UI say "practise today to keep it".
+  bool get streakAtRisk {
+    if (_lastPracticeDate == null || _streakDays == 0) return false;
+    final gap = _daysBetween(_dateOnly(_lastPracticeDate!), _dateOnly(_now()));
+    return _freezeBridges(gap);
   }
 
   int get longestStreak => _longestStreak;
@@ -108,7 +151,7 @@ class ProgressStore extends ChangeNotifier {
   // yesterday and is scheduled to come back in 3 days doesn't show up here
   // in the meantime, by design.
   Set<String> get missedTermIds {
-    final today = _dateOnly(DateTime.now());
+    final today = _dateOnly(_now());
     return _reviewSchedule.entries
         .where((e) => !e.value.dueDate.isAfter(today))
         .map((e) => e.key)
@@ -131,7 +174,7 @@ class ProgressStore extends ChangeNotifier {
     if (termId == null) return;
     _reviewSchedule[termId] = _ReviewEntry(
       stage: 0,
-      dueDate: _addCalendarDays(_dateOnly(DateTime.now()), _reviewIntervalDays[0]),
+      dueDate: _addCalendarDays(_dateOnly(_now()), _reviewIntervalDays[0]),
     );
     notifyListeners();
     await _save();
@@ -151,7 +194,7 @@ class ProgressStore extends ChangeNotifier {
     // interval is up would let a correct answer skip ahead through the
     // spacing early. A no-op here just leaves the entry as already
     // scheduled; it isn't recorded as a miss either.
-    if (entry.dueDate.isAfter(_dateOnly(DateTime.now()))) return;
+    if (entry.dueDate.isAfter(_dateOnly(_now()))) return;
     final nextStage = entry.stage + 1;
     if (nextStage >= _reviewIntervalDays.length) {
       _reviewSchedule.remove(termId);
@@ -159,7 +202,7 @@ class ProgressStore extends ChangeNotifier {
       _reviewSchedule[termId] = _ReviewEntry(
         stage: nextStage,
         dueDate: _addCalendarDays(
-          _dateOnly(DateTime.now()),
+          _dateOnly(_now()),
           _reviewIntervalDays[nextStage],
         ),
       );
@@ -200,7 +243,7 @@ class ProgressStore extends ChangeNotifier {
   // a new day before any practice correctly reads as 0 without needing an
   // explicit reset step.
   int get todayXp {
-    final today = _dateOnly(DateTime.now());
+    final today = _dateOnly(_now());
     if (_todayXpDate == null || _dateOnly(_todayXpDate!) != today) return 0;
     return _todayXpRaw;
   }
@@ -213,7 +256,7 @@ class ProgressStore extends ChangeNotifier {
   /// reads as 0, exactly like a day with no practice; there's no
   /// fabricated shape to it either way.
   List<int> get thisWeekXp {
-    final today = _dateOnly(DateTime.now());
+    final today = _dateOnly(_now());
     final monday = _addCalendarDays(today, -(today.weekday - 1));
     return [
       for (var i = 0; i < 7; i++)
@@ -221,8 +264,83 @@ class ProgressStore extends ChangeNotifier {
     ];
   }
 
+  /// Total XP earned in the previous calendar week (Monday-Sunday).
+  int get xpLastWeek {
+    final today = _dateOnly(_now());
+    final monday = _addCalendarDays(today, -(today.weekday - 1));
+    var sum = 0;
+    for (var i = 1; i <= 7; i++) {
+      sum += _dailyXpHistory[_dateKey(_addCalendarDays(monday, -i))] ?? 0;
+    }
+    return sum;
+  }
+
+  /// Number of days this week (Monday up to today) with any XP earned.
+  int get activeDaysThisWeek => thisWeekXp.where((xp) => xp > 0).length;
+
+  // ---- Mastery -----------------------------------------------------------
+
+  /// The accuracy (0.0-1.0) of the most recent completion of a module, or
+  /// null if it has never been completed.
+  double? accuracyFor(String moduleId) => _accuracy[moduleId];
+
+  /// 0 = not completed, 1 = completed, 2 = completed with at least 75% of
+  /// the quiz and pairs right, 3 = at least 90%. Derived, never stored.
+  int masteryFor(String moduleId) {
+    if (_statuses[moduleId] != ModuleStatus.done) return 0;
+    final accuracy = _accuracy[moduleId];
+    if (accuracy == null) return 1;
+    if (accuracy >= 0.9) return 3;
+    if (accuracy >= 0.75) return 2;
+    return 1;
+  }
+
+  /// Completed modules whose latest accuracy is below [below], weakest
+  /// first — the "where am I still weak" list.
+  List<String> weakModuleIds({double below = 0.85}) {
+    final ids = [
+      for (final id in _allModuleIds)
+        if (_statuses[id] == ModuleStatus.done &&
+            _accuracy[id] != null &&
+            _accuracy[id]! < below)
+          id,
+    ];
+    ids.sort((a, b) => _accuracy[a]!.compareTo(_accuracy[b]!));
+    return ids;
+  }
+
+  // ---- Favourite terms, followed milestones, learner role -----------------
+
+  Set<String> get favoriteTermKeys => Set.unmodifiable(_favoriteTermKeys);
+  bool isFavorite(String termKey) => _favoriteTermKeys.contains(termKey);
+
+  Future<void> toggleFavorite(String termKey) async {
+    if (!_favoriteTermKeys.remove(termKey)) _favoriteTermKeys.add(termKey);
+    notifyListeners();
+    await _save();
+  }
+
+  Set<String> get followedMilestoneIds =>
+      Set.unmodifiable(_followedMilestoneIds);
+  bool isFollowingMilestone(String id) => _followedMilestoneIds.contains(id);
+
+  Future<void> setMilestoneFollowed(String id, bool follow) async {
+    follow ? _followedMilestoneIds.add(id) : _followedMilestoneIds.remove(id);
+    notifyListeners();
+    await _save();
+  }
+
+  /// 'pro', 'finance' or 'curious' — null until the learner picks one.
+  String? get learnerRole => _learnerRole;
+
+  Future<void> setLearnerRole(String? role) async {
+    _learnerRole = role;
+    notifyListeners();
+    await _save();
+  }
+
   /// 0 = Monday .. 6 = Sunday, for highlighting "today" in the weekly chart.
-  int get todayWeekdayIndex => DateTime.now().weekday - 1;
+  int get todayWeekdayIndex => _now().weekday - 1;
 
   // Only worth attempting once every real module has actually been learned
   // — this is meant to reward mastery, not gate content behind a paywall.
@@ -357,15 +475,13 @@ class ProgressStore extends ChangeNotifier {
         restored = true;
       } catch (_) {
         // Corrupted or unrecognized persisted state (a future format
-        // change with no migration, or rare storage corruption — browser
-        // localStorage is if anything more exposed to this than native's
-        // sandboxed storage: devtools tampering, another tab, a browser
-        // extension) would otherwise throw here uncaught — and main()
-        // awaits load() before runApp(), so that would leave the app
-        // permanently stuck on a blank screen on every future launch.
-        // Falling back to a fresh start is annoying but recoverable; that
-        // is not. Any fields a partial decode already touched below get
-        // reset by _seedFreshState() right after.
+        // change with no migration, or rare storage corruption) would
+        // otherwise throw here uncaught — and main() awaits load() before
+        // runApp(), so that would leave the app permanently stuck on a
+        // blank screen on every future launch. Falling back to a fresh
+        // start is annoying but recoverable; that is not. Any fields a
+        // partial decode already touched below get reset by
+        // _seedFreshState() right after.
       }
     }
     if (!restored) {
@@ -377,58 +493,123 @@ class ProgressStore extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Restores each stored section on its own. One damaged value (say the
+  /// XP history) must not throw away the learner's XP, streak and module
+  /// progress, so a section that cannot be read is skipped and left at its
+  /// default, and everything else is kept.
   void _restoreFrom(SharedPreferences prefs) {
-    _streakDays = prefs.getInt(_keyStreak) ?? 0;
-    _longestStreak = prefs.getInt(_keyLongestStreak) ?? 0;
-    _totalXp = prefs.getInt(_keyXp) ?? 0;
-    final lastPracticeIso = prefs.getString(_keyLastPractice);
-    _lastPracticeDate = lastPracticeIso == null
-        ? null
-        : DateTime.tryParse(lastPracticeIso);
+    void section(String name, void Function() body) {
+      try {
+        body();
+      } catch (error) {
+        debugPrint('ProgressStore: could not restore "$name": $error');
+      }
+    }
 
-    final statusesJson = prefs.getString(_keyStatuses);
-    if (statusesJson != null) {
-      final decoded = jsonDecode(statusesJson) as Map<String, dynamic>;
-      decoded.forEach(
-        (id, value) =>
-            _statuses[id] = ModuleStatus.values.byName(value as String),
-      );
-    }
-    final accuracyJson = prefs.getString(_keyAccuracy);
-    if (accuracyJson != null) {
-      final decoded = jsonDecode(accuracyJson) as Map<String, dynamic>;
-      decoded.forEach((id, value) => _accuracy[id] = (value as num).toDouble());
-    }
-    final scheduleJson = prefs.getString(_keyReviewSchedule);
-    if (scheduleJson != null) {
-      final decoded = jsonDecode(scheduleJson) as Map<String, dynamic>;
-      decoded.forEach((id, value) {
-        final entry = value as Map<String, dynamic>;
-        _reviewSchedule[id] = _ReviewEntry(
-          stage: entry['stage'] as int,
-          dueDate: DateTime.parse(entry['dueDate'] as String),
-        );
-      });
-    }
-    _expertChallengeCompleted = prefs.getBool(_keyExpertDone) ?? false;
-    _todayXpRaw = prefs.getInt(_keyTodayXp) ?? 0;
-    final todayXpIso = prefs.getString(_keyTodayXpDate);
-    _todayXpDate = todayXpIso == null ? null : DateTime.tryParse(todayXpIso);
-    _soundEnabled = prefs.getBool(_keySoundEnabled) ?? true;
-    _notificationsEnabled = prefs.getBool(_keyNotificationsEnabled) ?? false;
-    _notificationHour = prefs.getInt(_keyNotificationHour) ?? 18;
-    _notificationMinute = prefs.getInt(_keyNotificationMinute) ?? 0;
-
-    final historyJson = prefs.getString(_keyDailyXpHistory);
-    if (historyJson != null) {
-      final decoded = jsonDecode(historyJson) as Map<String, dynamic>;
-      decoded.forEach((day, xp) => _dailyXpHistory[day] = (xp as num).toInt());
-    } else if (_todayXpDate != null && _todayXpRaw > 0) {
-      // Upgrading from a version that only ever tracked a single day's XP
-      // — seed today's entry from that so it isn't lost outright, even
-      // though the days before it were never recorded.
-      _dailyXpHistory[_dateKey(_dateOnly(_todayXpDate!))] = _todayXpRaw;
-    }
+    section('streak and xp', () {
+      final streak = prefs.getInt(_keyStreak) ?? 0;
+      final longest = prefs.getInt(_keyLongestStreak) ?? 0;
+      final xp = prefs.getInt(_keyXp) ?? 0;
+      final lastIso = prefs.getString(_keyLastPractice);
+      _streakDays = streak;
+      _longestStreak = longest;
+      _totalXp = xp;
+      _lastPracticeDate = lastIso == null ? null : DateTime.tryParse(lastIso);
+    });
+    section('module statuses', () {
+      final json = prefs.getString(_keyStatuses);
+      if (json == null) return;
+      final decoded = jsonDecode(json) as Map<String, dynamic>;
+      final parsed = {
+        for (final e in decoded.entries)
+          e.key: ModuleStatus.values.byName(e.value as String),
+      };
+      _statuses
+        ..clear()
+        ..addAll(parsed);
+    });
+    section('module accuracy', () {
+      final json = prefs.getString(_keyAccuracy);
+      if (json == null) return;
+      final decoded = jsonDecode(json) as Map<String, dynamic>;
+      final parsed = {
+        for (final e in decoded.entries) e.key: (e.value as num).toDouble(),
+      };
+      _accuracy
+        ..clear()
+        ..addAll(parsed);
+    });
+    section('review schedule', () {
+      final json = prefs.getString(_keyReviewSchedule);
+      if (json == null) return;
+      final decoded = jsonDecode(json) as Map<String, dynamic>;
+      final parsed = {
+        for (final e in decoded.entries)
+          e.key: _ReviewEntry(
+            stage: (e.value as Map<String, dynamic>)['stage'] as int,
+            dueDate: DateTime.parse(
+              (e.value as Map<String, dynamic>)['dueDate'] as String,
+            ),
+          ),
+      };
+      _reviewSchedule
+        ..clear()
+        ..addAll(parsed);
+    });
+    section('expert challenge', () {
+      _expertChallengeCompleted = prefs.getBool(_keyExpertDone) ?? false;
+    });
+    section('today xp', () {
+      final raw = prefs.getInt(_keyTodayXp) ?? 0;
+      final iso = prefs.getString(_keyTodayXpDate);
+      _todayXpRaw = raw;
+      _todayXpDate = iso == null ? null : DateTime.tryParse(iso);
+    });
+    section('settings', () {
+      _soundEnabled = prefs.getBool(_keySoundEnabled) ?? true;
+      _notificationsEnabled = prefs.getBool(_keyNotificationsEnabled) ?? false;
+      _notificationHour = prefs.getInt(_keyNotificationHour) ?? 18;
+      _notificationMinute = prefs.getInt(_keyNotificationMinute) ?? 0;
+    });
+    section('streak freeze', () {
+      final iso = prefs.getString(_keyFreezeUsedOn);
+      _freezeUsedOn = iso == null ? null : DateTime.tryParse(iso);
+    });
+    section('favourites', () {
+      final list = prefs.getStringList(_keyFavorites) ?? const <String>[];
+      _favoriteTermKeys
+        ..clear()
+        ..addAll(list);
+    });
+    section('followed milestones', () {
+      final list =
+          prefs.getStringList(_keyFollowedMilestones) ?? const <String>[];
+      _followedMilestoneIds
+        ..clear()
+        ..addAll(list);
+    });
+    section('learner role', () {
+      _learnerRole = prefs.getString(_keyLearnerRole);
+    });
+    section('xp history', () {
+      final json = prefs.getString(_keyDailyXpHistory);
+      if (json != null) {
+        final decoded = jsonDecode(json) as Map<String, dynamic>;
+        final parsed = <String, int>{};
+        for (final e in decoded.entries) {
+          final v = e.value;
+          if (v is num && v >= 0) parsed[e.key] = v.toInt();
+        }
+        _dailyXpHistory
+          ..clear()
+          ..addAll(parsed);
+      } else if (_todayXpDate != null && _todayXpRaw > 0) {
+        // Upgrading from a version that only ever tracked a single day's XP
+        // — seed today's entry from that so it isn't lost outright, even
+        // though the days before it were never recorded.
+        _dailyXpHistory[_dateKey(_dateOnly(_todayXpDate!))] = _todayXpRaw;
+      }
+    });
   }
 
   // A genuinely blank slate — no XP, no streak, nothing pre-completed. Only
@@ -447,6 +628,7 @@ class ProgressStore extends ChangeNotifier {
     _expertChallengeCompleted = false;
     _todayXpRaw = 0;
     _todayXpDate = null;
+    _freezeUsedOn = null;
     _dailyXpHistory.clear();
     // No explicit "current" to seed — with an empty _statuses, the first
     // module is already the derived current one (see statusFor).
@@ -518,7 +700,7 @@ class ProgressStore extends ChangeNotifier {
   }
 
   void _addXp(int amount) {
-    final today = _dateOnly(DateTime.now());
+    final today = _dateOnly(_now());
     if (_todayXpDate == null || _dateOnly(_todayXpDate!) != today) {
       _todayXpRaw = 0;
       _todayXpDate = today;
@@ -530,12 +712,19 @@ class ProgressStore extends ChangeNotifier {
   }
 
   void _recordPracticeToday() {
-    final today = _dateOnly(DateTime.now());
+    final today = _dateOnly(_now());
     final last = _lastPracticeDate == null
         ? null
         : _dateOnly(_lastPracticeDate!);
     final gap = last == null ? null : _daysBetween(last, today);
-    if (gap == null || gap > 1) {
+    if (gap == null) {
+      _streakDays = 1;
+    } else if (_streakDays > 0 && _freezeBridges(gap)) {
+      // Exactly one day was missed and a freeze covers it: the streak
+      // carries on and the freeze is spent (dated to the day it saved).
+      _streakDays += 1;
+      _freezeUsedOn = _addCalendarDays(today, -1);
+    } else if (gap > 1) {
       _streakDays = 1;
     } else if (gap == 1) {
       _streakDays += 1;
@@ -568,7 +757,19 @@ class ProgressStore extends ChangeNotifier {
   String _dateKey(DateTime d) =>
       '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
 
-  Future<void> _save() async {
+  // Saves run strictly one after another. Several actions can happen within
+  // a moment (a favourite tapped while a lesson completes), and two saves
+  // interleaving their per-key writes could leave a mixture on disk. Each
+  // save writes the state as it is when it runs, so the last one wins.
+  Future<void> _saveTail = Future<void>.value();
+
+  Future<void> _save() {
+    final next = _saveTail.then((_) => _saveNow());
+    _saveTail = next.catchError((Object _) {});
+    return next;
+  }
+
+  Future<void> _saveNow() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt(_keyStreak, _streakDays);
     await prefs.setInt(_keyLongestStreak, _longestStreak);
@@ -613,11 +814,26 @@ class ProgressStore extends ChangeNotifier {
     await prefs.setBool(_keyNotificationsEnabled, _notificationsEnabled);
     await prefs.setInt(_keyNotificationHour, _notificationHour);
     await prefs.setInt(_keyNotificationMinute, _notificationMinute);
+    if (_freezeUsedOn != null) {
+      await prefs.setString(_keyFreezeUsedOn, _freezeUsedOn!.toIso8601String());
+    } else {
+      await prefs.remove(_keyFreezeUsedOn);
+    }
+    await prefs.setStringList(_keyFavorites, _favoriteTermKeys.toList());
+    await prefs.setStringList(
+      _keyFollowedMilestones,
+      _followedMilestoneIds.toList(),
+    );
+    if (_learnerRole != null) {
+      await prefs.setString(_keyLearnerRole, _learnerRole!);
+    } else {
+      await prefs.remove(_keyLearnerRole);
+    }
 
     // Keep a rolling ~5 weeks of history — enough for the weekly chart
     // plus headroom — rather than growing this map forever over months of
     // real use.
-    final cutoff = _addCalendarDays(_dateOnly(DateTime.now()), -34);
+    final cutoff = _addCalendarDays(_dateOnly(_now()), -34);
     _dailyXpHistory.removeWhere((key, _) {
       final d = DateTime.tryParse(key);
       return d == null || d.isBefore(cutoff);
@@ -626,7 +842,7 @@ class ProgressStore extends ChangeNotifier {
   }
 
   /// Test-only: marks every module done, to reach the expert-challenge-
-  /// unlocked state without literally completing 16 lessons through the UI.
+  /// unlocked state without literally completing 17 lessons through the UI.
   @visibleForTesting
   void completeAllModulesForTest() {
     for (final id in _allModuleIds) {
@@ -640,7 +856,7 @@ class ProgressStore extends ChangeNotifier {
   /// waiting for a real day (or several) to pass.
   @visibleForTesting
   void makeAllReviewsDueForTest() {
-    final today = _dateOnly(DateTime.now());
+    final today = _dateOnly(_now());
     for (final entry in _reviewSchedule.values) {
       entry.dueDate = today;
     }
@@ -666,6 +882,14 @@ class ProgressStore extends ChangeNotifier {
     _notificationsEnabled = false;
     _notificationHour = 18;
     _notificationMinute = 0;
+    _freezeUsedOn = null;
+    _favoriteTermKeys.clear();
+    _followedMilestoneIds.clear();
+    _learnerRole = null;
+    clock = DateTime.now;
+    // A save queued by an earlier test belongs to that test's finished
+    // timer zone and would never complete; start a fresh queue.
+    _saveTail = Future<void>.value();
   }
 }
 

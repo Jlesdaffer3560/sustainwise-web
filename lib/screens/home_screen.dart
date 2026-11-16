@@ -20,6 +20,7 @@ import '../widgets/mascot.dart';
 import '../widgets/milestone_moment.dart';
 import '../widgets/moment_badge.dart';
 import '../widgets/module_path_node.dart';
+import '../widgets/personal_path.dart';
 import '../widgets/reset_progress_dialog.dart';
 import 'expert_challenge_screen.dart';
 import 'glossary_screen.dart';
@@ -299,6 +300,9 @@ class _HomeScreenState extends State<HomeScreen> {
         // desktop one). Native keeps it exactly as it always was.
         if (!kIsWeb) _buildDailyGoalCard(context),
         _buildMistakesCard(context),
+        PersonalPathCard(
+          onOpenModule: (module) => _onModuleTap(context, module),
+        ),
         _buildRegulatoryRadarCard(context),
         const _ScrollHint(),
         Column(
@@ -348,6 +352,7 @@ class _HomeScreenState extends State<HomeScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         _buildLedgerMistakesCard(context),
+        _buildLedgerPersonalPath(context),
         _buildLedgerRadarTicker(context),
         _buildLedgerCurriculumCard(),
       ],
@@ -429,6 +434,20 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// "Picked for you": asks once what describes the visitor, then suggests
+  /// the next few modules for that role. Only suggestions: every module
+  /// stays open.
+  Widget _buildLedgerPersonalPath(BuildContext context) {
+    final picked = ProgressStore.instance.learnerRole != null;
+    return _ledgerSideCard(
+      title: picked ? 'PICKED FOR YOU' : 'WHERE TO START',
+      child: PersonalPathCard(
+        ledger: true,
+        onOpenModule: (module) => _onModuleTap(context, module),
       ),
     );
   }
@@ -1125,6 +1144,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 status: ProgressStore.instance.statusFor(unit.modules[i].id),
               ),
               onTap: () => _onModuleTap(context, unit.modules[i]),
+              mastery: ProgressStore.instance.masteryFor(unit.modules[i].id),
               isLast: i == unit.modules.length - 1,
             ),
         ],
@@ -1170,7 +1190,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 6),
             const Text(
               'Duolingo taught the world Spanish. This teaches you to '
-              'survive a CSRD meeting. Fifteen minutes a day, real '
+              'survive a CSRD meeting. A few minutes a day, real '
               "definitions — and yes, it actually sticks.",
               style: TextStyle(
                 fontSize: 13.5,
@@ -1552,6 +1572,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 status: ProgressStore.instance.statusFor(unit.modules[i].id),
               ),
               onTap: () => _onModuleTap(context, unit.modules[i]),
+              mastery: ProgressStore.instance.masteryFor(unit.modules[i].id),
               doneFill: palette.fill,
               doneRim: palette.deep,
               lockedFill: palette.soft,
@@ -1641,7 +1662,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       Text(
                         unlocked
                             ? '${MockData.expertChallenge.length} very hard questions across every topic — thresholds, edge cases, the fine print.'
-                            : 'Complete every module above to unlock ${MockData.expertChallenge.length} expert-level questions.',
+                            : 'Complete every module to unlock ${MockData.expertChallenge.length} expert-level questions.',
                         style: const TextStyle(
                           fontSize: 13.5,
                           color: AppColors.inkSoft,
@@ -1709,7 +1730,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!ProgressStore.instance.expertChallengeUnlocked) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Locked — complete every module above first'),
+          content: Text('Locked — finish every module first.'),
           duration: Duration(seconds: 2),
         ),
       );
@@ -1737,21 +1758,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _onModuleTap(BuildContext context, ModuleProgress module) {
     final status = ProgressStore.instance.statusFor(module.id);
-    // On web, a visitor is typically here once for a specific topic, not
-    // working through the app's day-by-day unlock progression — so every
-    // module opens directly, regardless of status. The native app keeps
-    // the real gate.
-    if (!kIsWeb && status == ModuleStatus.available) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Locked — finish the module above to unlock "${module.title}"',
-          ),
-          duration: const Duration(seconds: 2),
-        ),
-      );
-      return;
-    }
+    // Every not-yet-done module is directly reachable, on every platform —
+    // a learner may already know some topics and want to jump straight to
+    // what they don't, rather than work through the curriculum in a fixed
+    // order. Only the Expert Challenge stays gated, behind completing
+    // everything else (see ProgressStore.expertChallengeUnlocked).
+    //
     // A completed module isn't a second "continue here" — only the single
     // current module opens a lesson directly. Tapping a done one points to
     // the Glossary instead, which is the actual tool for revisiting terms.
@@ -2093,14 +2105,14 @@ class _HowItWorksSectionState extends State<_HowItWorksSection> {
   bool _expanded = false;
 
   static const _steps = [
-    'Flip each card to see what the term means, then say whether you '
-        'already knew it or you\'re still learning it.',
-    'Answer a short quiz — get one wrong, and it shows you the right '
-        'answer and why.',
-    'Two similar-sounding terms, one clue — pick which term the clue is '
-        'actually describing.',
+    'Flip each card to see what a term means, then tap \'Got it\' or '
+        '\'Still learning\'.',
+    'Take a short quiz. After each question you see the right answer and a '
+        'short explanation.',
+    'Two similar-sounding terms and one clue: pick the term the clue '
+        'describes.',
     'Finish a lesson to build your streak and track how far you\'ve come. '
-        'Modules unlock one at a time, in order.',
+        'Pick any module you like, in any order.',
   ];
 
   @override

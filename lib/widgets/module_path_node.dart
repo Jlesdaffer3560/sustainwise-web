@@ -9,8 +9,11 @@ import '../web/responsive.dart';
 /// row (icon + title + status) rather than a circular "path dot" — a
 /// clearly different shape/paradigm, not a variation on the same button.
 /// Done/current rows get a solid color fill with a darker "rim" beneath,
-/// so it still reads as pressable, chunky and game-like; available rows
-/// stay flat and quiet to read as locked/inactive.
+/// so it still reads as pressable, chunky and game-like; a not-yet-done
+/// row gets its own unit's light accent tint on native/mobile-web (a flat
+/// neutral card on desktop web only). Every module is actually open and
+/// tappable regardless of this styling — see home_screen.dart's
+/// _onModuleTap — the colors signal progress, not whether it's reachable.
 class ModulePathNode extends StatefulWidget {
   const ModulePathNode({
     super.key,
@@ -20,14 +23,19 @@ class ModulePathNode extends StatefulWidget {
     this.doneFill,
     this.doneRim,
     this.lockedFill,
+    this.mastery = 0,
   });
+
+  /// 0-3, from ProgressStore.masteryFor: how well a completed module was
+  /// answered. Shown as stars on a done row; ignored for other statuses.
+  final int mastery;
 
   final ModuleProgress module;
   final double horizontalOffset;
   final VoidCallback? onTap;
 
   // The unit's own accent — a saturated fill for a "done" row, and (via
-  // [lockedFill]) a light tint for a still-locked one, so every module
+  // [lockedFill]) a light tint for a not-yet-started one, so every module
   // reads as belonging to its topic's color from the very first open, not
   // just once it's completed. Current rows keep the fixed amber highlight
   // treatment regardless of topic, since that signals state, not identity.
@@ -113,12 +121,13 @@ class _ModulePathNodeState extends State<ModulePathNode>
     // of a solid fill, and no pressable-rim depth effect. The native app
     // and narrow web keep the exact original treatment untouched.
     final desktop = isDesktopWeb(context);
-    // On web every module is actually tappable (see home_screen.dart's
-    // _onModuleTap) — an "available" row rendered in the same dim,
-    // low-contrast ink native uses for a module you genuinely can't reach
-    // yet would still read as locked even with the padlock icon gone.
-    // Reads as a plain not-started item instead, on both narrow and
-    // desktop web. Native keeps the original muted treatment.
+    // On web, a visitor is typically here once for a specific topic, not
+    // working through the app's progression — the flat, neutral "open"
+    // treatment below is a web-only styling choice. Native and narrow web
+    // keep their original colored-tint-per-unit look for a not-yet-done
+    // row; every module is tappable everywhere regardless (see
+    // home_screen.dart's _onModuleTap) — these colors signal progress, not
+    // reachability.
     final openOnWeb = kIsWeb && status == ModuleStatus.available;
     // Plain white for every status read as too pale/uniform in practice —
     // done and current rows now get a faint tint of their own accent
@@ -239,9 +248,7 @@ class _ModulePathNodeState extends State<ModulePathNode>
                       widget.module.title,
                       style: TextStyle(
                         fontSize: 15,
-                        fontWeight: desktop
-                            ? FontWeight.w700
-                            : FontWeight.w800,
+                        fontWeight: desktop ? FontWeight.w700 : FontWeight.w800,
                         color: cardFg,
                       ),
                     ),
@@ -275,15 +282,33 @@ class _ModulePathNodeState extends State<ModulePathNode>
                 ),
               ),
               const SizedBox(width: 8),
+              if (status == ModuleStatus.done && widget.mastery > 0) ...[
+                Row(
+                  key: Key('module-mastery-${widget.module.id}'),
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    for (var i = 1; i <= 3; i++)
+                      Icon(
+                        i <= widget.mastery
+                            ? Icons.star_rounded
+                            : Icons.star_outline_rounded,
+                        size: 15,
+                        color: cardIconAccent,
+                        semanticLabel: i == 1
+                            ? 'Mastery ${widget.mastery} of 3 stars'
+                            : null,
+                      ),
+                  ],
+                ),
+                const SizedBox(width: 8),
+              ],
               Icon(
                 switch (status) {
-                  // On web every module is actually reachable (see
+                  // Every module is actually reachable (see
                   // home_screen.dart's _onModuleTap), so a padlock would be
                   // a lie — use the same "open" chevron as the current
                   // module instead.
-                  ModuleStatus.available => kIsWeb
-                      ? Icons.chevron_right
-                      : Icons.lock_outline,
+                  ModuleStatus.available => Icons.chevron_right,
                   // A forward-pointing chevron is reserved for the one
                   // truly "next" module — a done row gets a checkmark
                   // instead, so it can never be mistaken for "continue
@@ -339,7 +364,7 @@ class _ModulePathNodeState extends State<ModulePathNode>
   }
 
   /// A distinct glyph per module (keyed by its stable id, not its display
-  /// title) so every single one of the 16 modules reads as a different
+  /// title) so every single one of the 17 modules reads as a different
   /// destination on the path — not just the handful that used to get a
   /// specific icon before every other module fell back to a bare circle.
   static const _topicIconById = <String, IconData>{
@@ -358,6 +383,7 @@ class _ModulePathNodeState extends State<ModulePathNode>
     'governance-anti-corruption': Icons.verified_user_outlined,
     'greenwashing-empco-ucpd': Icons.report_problem_outlined,
     'key-players-institutions': Icons.corporate_fare_outlined,
+    'esg-ratings-data-providers': Icons.leaderboard_outlined,
     'timeline-milestones': Icons.timeline_outlined,
   };
 
