@@ -983,7 +983,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final completed = store.completedModulesCount;
     final fluency = store.esgFluency;
     // A first-time visitor landed on "Your learning path" with no context
-    // for what this even teaches — and a stat grid reading 0/16 modules,
+    // for what this even teaches — and a stat grid reading 0 modules done,
     // "—" fluency, 0 terms, 0 due isn't useful progress, it's just empty
     // (same reasoning the streak/XP pills and Daily Goal card were dropped
     // for earlier). A returning visitor with real progress gets the
@@ -1835,7 +1835,7 @@ class _ScrollHint extends StatelessWidget {
   }
 }
 
-/// Desktop-web only: Glossary (always-unlocked, 261 terms, doesn't require
+/// Desktop-web only: Glossary (always-unlocked, every term, doesn't require
 /// finishing any module) is the fastest real value for a visitor who just
 /// wants to know what one term means — this puts that ahead of the path
 /// itself, right under the hero, instead of a small link buried in a row.
