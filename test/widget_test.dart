@@ -13,7 +13,7 @@ import 'package:sustainwise/main.dart';
 // "which definition matches X" questions with this module's 2 hand-authored
 // scenario questions (9 total) — see MockData.quizFor.
 const _esgFundamentalsTermCount = 14;
-const _quizCorrectIndices = [2, 2, 2, 2, 1, 1, 3, 2, 0]; // Q0..Q8
+const _quizCorrectIndices = [0, 2, 1, 0, 0, 1, 2, 0, 2]; // Q0..Q8
 const _pairsCorrectIndices = [1]; // Materiality-vs-Double materiality
 
 Future<void> pumpFreshApp(WidgetTester tester) async {
@@ -106,6 +106,22 @@ Future<void> tapOptionContaining(
     }
   }
   fail('No option found containing "$textSubstring"');
+}
+
+/// The visible text of option [i] (the longest text in its tile; the badge
+/// holds only a letter or a mark).
+String optionTextOf(WidgetTester tester, String keyPrefix, int i) {
+  final texts = tester
+      .widgetList<Text>(
+        find.descendant(
+          of: find.byKey(Key('$keyPrefix$i')),
+          matching: find.byType(Text),
+        ),
+      )
+      .map((t) => t.data ?? '')
+      .toList();
+  texts.sort((a, b) => b.length.compareTo(a.length));
+  return texts.first;
 }
 
 Future<void> answerAllPairs(WidgetTester tester) async {
@@ -292,24 +308,25 @@ void main() {
       await completeFlashcards(tester);
 
       expect(
-        find.text("Which definition matches 'Non-financial reporting'?"),
+        find.text("Which definition matches 'Social license to operate'?"),
         findsOneWidget,
       );
 
       // Tap the correct (deterministically shuffled) answer and confirm
-      // feedback + explanation appear.
+      // feedback appears.
       await tester.tap(
         find.byKey(Key('quiz-option-${_quizCorrectIndices[0]}')),
       );
       await tester.pump();
-      // The explanation is prefixed with the term name in quotes, unlike the
-      // option tile itself — a substring that's unique to it.
-      expect(find.textContaining("'Non-financial reporting':"), findsOneWidget);
+      // The answer is not repeated in a grey box: feedback goes straight to
+      // why the term matters.
+      expect(find.textContaining("'Social license to operate':"), findsNothing);
+      expect(find.byKey(const Key('term-insight')), findsOneWidget);
 
       await tapAndEnsureVisible(tester, const Key('quiz-continue-button'));
       await tester.pumpAndSettle();
       expect(
-        find.text("Which definition matches 'Stakeholder'?"),
+        find.textContaining('Your CFO says a sustainability issue'),
         findsOneWidget,
       );
     },
@@ -326,13 +343,13 @@ void main() {
       final wrongIndex = (_quizCorrectIndices[0] + 1) % 4;
       await tester.tap(find.byKey(Key('quiz-option-$wrongIndex')));
       await tester.pump();
-      expect(find.textContaining("'Non-financial reporting':"), findsOneWidget);
+      expect(find.byKey(const Key('term-insight')), findsOneWidget);
       expect(find.byKey(const Key('quiz-continue-button')), findsOneWidget);
 
       await tapAndEnsureVisible(tester, const Key('quiz-continue-button'));
       await tester.pumpAndSettle();
       expect(
-        find.text("Which definition matches 'Stakeholder'?"),
+        find.textContaining('Your CFO says a sustainability issue'),
         findsOneWidget,
       );
     },
@@ -504,7 +521,7 @@ void main() {
       await openCurrentLesson(tester);
       await completeFlashcards(tester);
 
-      // Deliberately miss the first question (Non-financial reporting) so
+      // Deliberately miss the first question (Social license to operate) so
       // exactly one term ends up in the review schedule, then answer
       // everything else correctly so the lesson finishes cleanly.
       final wrongIndex = (_quizCorrectIndices[0] + 1) % 4;
@@ -549,12 +566,23 @@ void main() {
       expect(find.text('MISTAKES TO REVISIT'), findsOneWidget);
       // Answer the regenerated question correctly, by content rather than a
       // fixed index (the review shuffle is non-deterministic).
-      await tapOptionContaining(
-        tester,
-        'review-option-',
-        'alongside financial results',
-      );
+      final semantics = tester.ensureSemantics();
+      var rightText = '';
+      for (var i = 0; i < 4; i++) {
+        final text = optionTextOf(tester, 'review-option-', i);
+        if (text.contains('implicit approval')) rightText = text;
+      }
+      expect(rightText, isNotEmpty);
+      await tapOptionContaining(tester, 'review-option-', 'implicit approval');
       await tester.pump();
+      // A screen reader says that exactly this option is the right answer.
+      expect(
+        find.bySemanticsLabel(
+          RegExp(RegExp.escape('Correct answer. $rightText')),
+        ),
+        findsOneWidget,
+      );
+      semantics.dispose();
       await tapAndEnsureVisible(tester, const Key('review-continue-button'));
       await tester.pumpAndSettle();
 
@@ -571,6 +599,80 @@ void main() {
 
       // Back on Home again — the mistakes card is gone since nothing is due today.
       expect(find.byKey(const Key('mistakes-card')), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'A wrong answer in the review says which answer was yours and which was right',
+    (WidgetTester tester) async {
+      await pumpFreshApp(tester);
+      await openCurrentLesson(tester);
+      await completeFlashcards(tester);
+      final wrongIndex = (_quizCorrectIndices[0] + 1) % 4;
+      await tapAndEnsureVisible(tester, Key('quiz-option-$wrongIndex'));
+      await tester.pump();
+      await tapAndEnsureVisible(tester, const Key('quiz-continue-button'));
+      await tester.pumpAndSettle();
+      for (final correctIndex in _quizCorrectIndices.skip(1)) {
+        await tapAndEnsureVisible(tester, Key('quiz-option-$correctIndex'));
+        await tester.pump();
+        await tapAndEnsureVisible(tester, const Key('quiz-continue-button'));
+        await tester.pumpAndSettle();
+      }
+      await answerAllPairs(tester);
+      await tapAndEnsureVisible(
+        tester,
+        const Key('lesson-complete-continue-button'),
+      );
+      await tester.pumpAndSettle();
+      ProgressStore.instance.makeAllReviewsDueForTest();
+      await tester.pump();
+      await tester.scrollUntilVisible(
+        find.byKey(const Key('mistakes-card')),
+        200,
+        scrollable: find.descendant(
+          of: find.byKey(const Key('module-path-scroll')),
+          matching: find.byType(Scrollable),
+        ),
+      );
+      await tester.tap(find.byKey(const Key('mistakes-card')));
+      await tester.pumpAndSettle();
+
+      final semantics = tester.ensureSemantics();
+      final texts = [
+        for (var i = 0; i < 4; i++) optionTextOf(tester, 'review-option-', i),
+      ];
+      final rightIndex = texts.indexWhere(
+        (t) => t.contains('implicit approval'),
+      );
+      expect(rightIndex, isNonNegative);
+      final chosenIndex = (rightIndex + 1) % 4;
+      await tapAndEnsureVisible(tester, Key('review-option-$chosenIndex'));
+      await tester.pump();
+
+      Finder icon(int i, IconData data) => find.descendant(
+        of: find.byKey(Key('review-option-$i')),
+        matching: find.byWidgetPredicate(
+          (w) => w is Icon && w.icon == data && w.size == 16,
+        ),
+      );
+      expect(icon(rightIndex, Icons.check), findsOneWidget);
+      expect(icon(chosenIndex, Icons.close), findsOneWidget);
+      expect(
+        find.bySemanticsLabel(
+          RegExp(RegExp.escape('Correct answer. ${texts[rightIndex]}')),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.bySemanticsLabel(
+          RegExp(
+            RegExp.escape('Your answer, incorrect. ${texts[chosenIndex]}'),
+          ),
+        ),
+        findsOneWidget,
+      );
+      semantics.dispose();
     },
   );
 

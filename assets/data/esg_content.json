@@ -567,11 +567,11 @@
       },
       {
         "term": "Original CSRD phase-in (pre-Omnibus)",
-        "definition": "The original staggered rollout: large listed companies first, then large unlisted companies, then listed SMEs. Listed SMEs have since been removed from CSRD's mandatory scope.",
+        "definition": "The original staggered rollout: large public-interest companies already covered by earlier reporting rules first, then other large companies, then listed SMEs. Listed SMEs have since been removed from the mandatory scope of the EU sustainability reporting directive.",
         "id": "reporting_011",
-        "plainEnglish": "How CSRD's staggered rollout was originally supposed to work — large listed companies first, then large unlisted, then listed SMEs (small and medium-sized enterprises). That third wave no longer applies: listed SMEs were taken out of mandatory scope altogether by the 2026 Omnibus reform.",
+        "plainEnglish": "How CSRD's rollout was originally supposed to work: large public-interest companies already covered by the earlier reporting rules (such as listed companies, banks and insurers) first, then other large companies, then listed SMEs (small and medium-sized enterprises). That third wave no longer applies: listed SMEs were taken out of mandatory scope altogether by the 2026 Omnibus reform.",
         "whyItMatters": "It shows how CSRD's scope evolved, but it is no longer the current rollout. Today, mandatory CSRD reporting applies only to companies with more than 1,000 employees and more than €450 million in turnover, not to a numbered wave.",
-        "example": "A large listed company was already reporting in the original CSRD wave 1. A listed SME that once expected to join a later wave now has no mandatory CSRD obligation at all, since the Omnibus reform.",
+        "example": "A large listed company that already reported under the earlier rules was in the original first wave. A listed SME that once expected to join a later wave now has no mandatory CSRD obligation at all, since the Omnibus reform.",
         "theme": "regulation"
       },
       {
@@ -640,11 +640,11 @@
       },
       {
         "term": "Digital tagging (XBRL/ESEF)",
-        "definition": "The requirement to tag CSRD disclosures in machine-readable form (XBRL) within the EU's single electronic reporting format (ESEF).",
+        "definition": "Adding digital labels to sustainability disclosures so software can read and compare them. Companies covered by the reporting rules will have to add these labels once the EU adopts the specific tagging rules.",
         "id": "reporting_019",
-        "plainEnglish": "The requirement to tag CSRD disclosures in a machine-readable format called XBRL (eXtensible Business Reporting Language) and file them in the EU's single electronic format, ESEF (European Single Electronic Format). This lets data be extracted and compared automatically.",
-        "whyItMatters": "It's what turns thousands of CSRD reports from PDFs no one can compare into structured data investors and regulators can actually query at scale.",
-        "example": "A company's digitally tagged emissions figure can be automatically pulled into a database alongside the same figure from hundreds of other companies.",
+        "plainEnglish": "Companies covered by these rules must prepare their management reports in the European Single Electronic Format (ESEF). Digital tagging uses labels that software can read, for example in eXtensible Business Reporting Language (XBRL). Companies only have to tag the sustainability information once the EU adopts the specific tagging rules.",
+        "whyItMatters": "Digital tags help software extract and compare the same figures across many sustainability reports.",
+        "example": "Once the tagging rules apply, a company's digitally tagged emissions figure can be pulled into a database alongside the same figure from hundreds of other companies.",
         "theme": "regulation"
       },
       {
@@ -723,7 +723,7 @@
       },
       {
         "term": "Value chain (CSDDD)",
-        "definition": "CSDDD's 'chain of activities': everything upstream, plus downstream distribution, transport and storage by business partners. Product use and disposal are excluded.",
+        "definition": "The directive's 'chain of activities': everything upstream, plus downstream distribution, transport and storage by business partners. Product use and disposal are excluded.",
         "id": "supplychain_004",
         "plainEnglish": "Upstream is broad — sourcing, production, everything that goes into making the product. Downstream is deliberately narrow — just distribution, transport and storage done by a business partner acting for the company, not the full 'rest of the product's life.'",
         "whyItMatters": "It's a common misconception that CSDDD due diligence follows a product all the way to how a customer eventually uses or disposes of it — it doesn't. Getting this scope wrong leads companies to either over- or under-estimate what they actually need visibility into.",
@@ -742,7 +742,7 @@
       },
       {
         "term": "Climate transition plan (CSDDD)",
-        "definition": "Originally a CSDDD duty to adopt and carry out a Paris-aligned transition plan. The 2026 Omnibus reform deleted it. Companies must still report on any plan under ESRS E1.",
+        "definition": "Originally a duty to adopt and carry out a Paris-aligned transition plan. The 2026 Omnibus reform deleted it. Companies must still report on any plan under ESRS E1.",
         "id": "supplychain_006",
         "plainEnglish": "Originally, a duty for large companies to adopt and carry out a plan compatible with the Paris Agreement. The 2026 Omnibus reform deleted this requirement from CSDDD entirely.",
         "whyItMatters": "A clear example of how fast this area of law moves. A hard CSDDD obligation is now gone, even though the related CSRD/ESRS E1 reporting duty remains.",
@@ -929,9 +929,9 @@
       },
       {
         "term": "Taxonomy alignment percentage (SFDR)",
-        "definition": "The share of a portfolio meeting EU Taxonomy criteria, mandatory to disclose under SFDR.",
+        "definition": "The share of a portfolio meeting EU Taxonomy criteria, which certain financial products must disclose under the EU sustainable-finance disclosure rules.",
         "id": "finance_014",
-        "plainEnglish": "The share of a fund's portfolio that meets EU Taxonomy criteria — a mandatory figure SFDR requires funds to disclose.",
+        "plainEnglish": "The share of a fund's portfolio that meets EU Taxonomy criteria. The rules require this figure for certain funds, including Article 8 funds that promote environmental characteristics and Article 9 funds that invest in activities contributing to an environmental objective.",
         "whyItMatters": "It links SFDR directly to the EU Taxonomy. A fund can call itself green in its marketing, but this number is the concrete, checkable figure behind the claim.",
         "example": "An Article 9 fund might disclose a 65% taxonomy alignment percentage, meaning two-thirds of its portfolio meets the EU Taxonomy's strict criteria.",
         "theme": "finance"
@@ -965,10 +965,10 @@
       },
       {
         "term": "SFDR review (categorisation)",
-        "definition": "A November 2025 EU proposal (SFDR 2.0) to replace Article 8/9 with three categories: Sustainable, Transition and ESG Basics. Not expected to apply before 2028.",
+        "definition": "A November 2025 EU proposal (nicknamed '2.0') to replace Article 8/9 with three categories: Sustainable, Transition and ESG Basics. It is still going through the EU legislative process, so the date when it would start to apply has not been set.",
         "id": "finance_015",
         "plainEnglish": "An EU proposal — published by the Commission in November 2025 — to replace the current Article 8/9 split with three new categories: Sustainable, Transition, and ESG Basics.",
-        "whyItMatters": "It responds to years of criticism that the Article 8/9 split confuses investors. As of late 2026 it is still going through the EU legislative process, with application not expected before 2028. The current Article 6/8/9 framework remains fully in force.",
+        "whyItMatters": "It responds to years of criticism that the Article 8/9 split confuses investors. As of late 2026 it is still going through the EU legislative process, and the date when it would start to apply has not been set. The current Article 6/8/9 framework remains fully in force.",
         "example": "A fund manager today still classifies products under Article 6, 8, or 9 — the proposed Sustainable/Transition/ESG Basics categories aren't in force yet.",
         "theme": "finance"
       }
@@ -1051,11 +1051,11 @@
       },
       {
         "term": "CapEx/OpEx/turnover KPIs",
-        "definition": "The three financial metrics for reporting taxonomy alignment: turnover, CapEx and OpEx. A 10% materiality threshold, in force since January 2026, lets companies skip minor activities.",
+        "definition": "Non-financial companies report EU Taxonomy alignment using turnover, capital expenditure and operating expenditure. They may skip assessing activities that together account for less than 10% of the total for the measure they are reporting.",
         "id": "finance_025",
-        "plainEnglish": "The three financial metrics that companies use to report how much of their business is taxonomy-aligned: capital expenditure, operating expenditure and turnover. Since a 2026 simplification, small activities (below a 10% threshold) no longer need to be assessed individually.",
-        "whyItMatters": "It turns taxonomy alignment from a yes/no label into a percentage, reported from three financial angles. The 2026 reform cut the reporting burden substantially (roughly 64% fewer required datapoints for non-financial companies) by letting companies skip activities that don't meaningfully move the needle.",
-        "example": "A company might report that 20% of its turnover but 45% of its CapEx is taxonomy-aligned, reflecting new green investment ahead of current revenue. Under the simplified 2026 rules it can skip assessing a minor product line worth 3% of turnover, as it falls below the 10% threshold.",
+        "plainEnglish": "The three financial metrics that non-financial companies use to report how much of their business is taxonomy-aligned: capital expenditure, operating expenditure and turnover. Since a 2026 simplification, they may skip assessing activities that together account for less than 10% of the total for the measure they are reporting.",
+        "whyItMatters": "The three measures show how much of a company's revenue, investment and operating spending is aligned. The 2026 rules simplified the reporting tables and let companies skip assessing activities that make up a small share of the relevant measure.",
+        "example": "A company might report that 20% of its turnover but 45% of its CapEx is taxonomy-aligned, reflecting new green investment ahead of current revenue. Under the simplified 2026 rules it can skip assessing a product line worth 3% of turnover, if all the activities it skips for that measure together account for less than 10% of turnover.",
         "theme": "finance"
       },
       {
@@ -1126,7 +1126,7 @@
       },
       {
         "term": "Integrated report vs. GRI report",
-        "definition": "A GRI report can stand alone or form part of a broader integrated annual report.",
+        "definition": "A sustainability report prepared under the world's most widely used reporting standards can stand alone or form part of a broader integrated annual report.",
         "id": "reporting_027",
         "plainEnglish": "A GRI report can either stand alone as its own document, or be woven into a broader integrated annual report alongside financial results.",
         "whyItMatters": "It affects how a reader finds sustainability information — buried in one combined annual report, or published as its own separate document.",
@@ -1135,7 +1135,7 @@
       },
       {
         "term": "GRI Universal Standards",
-        "definition": "The three baseline standards (GRI 1, 2, 3) that apply to every reporting organisation.",
+        "definition": "The three baseline standards (numbered 1, 2 and 3) that apply to every reporting organisation.",
         "id": "reporting_028",
         "plainEnglish": "The three baseline standards — GRI 1, 2, and 3 — that every organisation reporting under GRI has to apply, regardless of sector.",
         "whyItMatters": "They're the mandatory floor beneath GRI reporting, similar in role to ESRS 1 and 2 under CSRD.",
@@ -1144,7 +1144,7 @@
       },
       {
         "term": "GRI 1: Foundation",
-        "definition": "Sets out the reporting principles and baseline requirements every GRI report must meet.",
+        "definition": "Sets out the reporting principles and baseline requirements every report under this framework must meet.",
         "id": "reporting_029",
         "plainEnglish": "The GRI standard setting out the basic reporting principles and requirements every GRI report has to meet.",
         "whyItMatters": "It's the starting point for understanding how to use GRI at all — much like ESRS 1 is for CSRD.",
@@ -1172,7 +1172,7 @@
       },
       {
         "term": "GRI Topic Standards",
-        "definition": "Topic-specific standards (e.g. GRI 305 Emissions, GRI 408 Child Labor) prescribing concrete indicators.",
+        "definition": "Topic-specific standards (e.g. one on emissions, one on child labour) prescribing concrete indicators.",
         "id": "reporting_032",
         "plainEnglish": "Topic-specific GRI standards — like GRI 305 on Emissions or GRI 408 on Child Labor — that prescribe concrete indicators once a topic is found material.",
         "whyItMatters": "These are where the actual, comparable numbers come from — the Universal Standards set the rules, but Topic Standards are what get reported.",
@@ -1181,7 +1181,7 @@
       },
       {
         "term": "Materiality assessment (GRI)",
-        "definition": "The GRI 3 process where impact on the economy, environment and people is central, not necessarily financial materiality.",
+        "definition": "The third baseline standard's process, where impact on the economy, environment and people is central, not necessarily financial materiality.",
         "id": "reporting_033",
         "plainEnglish": "The GRI 3 process for identifying material topics. It focuses on the organisation's impact on the economy, environment and people, not mainly on financial materiality.",
         "whyItMatters": "It's a meaningfully different lens than ESRS's double materiality: GRI's traditional focus is impact-first, closer to only one half of the ESRS approach.",
@@ -1218,7 +1218,7 @@
       },
       {
         "term": "GRI-ESRS interoperability",
-        "definition": "Cooperation between GRI and EFRAG to minimise overlap between GRI indicators and ESRS requirements.",
+        "definition": "Cooperation between the two standard-setters behind the global and the EU reporting standards, to minimise overlap between their indicators and requirements.",
         "id": "reporting_037",
         "plainEnglish": "Ongoing cooperation between GRI and EFRAG (European Financial Reporting Advisory Group) to reduce duplication between GRI indicators and ESRS requirements.",
         "whyItMatters": "Without it, a company already reporting under GRI would have to redo much of the same work for CSRD. This work lets some of it be reused.",
@@ -1238,9 +1238,9 @@
     "other-reporting-standards": [
       {
         "term": "CDP (originally 'Carbon Disclosure Project')",
-        "definition": "A non-profit platform where companies and cities voluntarily disclose environmental data and receive a letter score.",
+        "definition": "A UK-based non-profit platform where companies and cities voluntarily disclose environmental data and receive a letter score.",
         "id": "reporting_039",
-        "plainEnglish": "A non-profit platform where companies and cities voluntarily disclose environmental data — climate, water, forests — and receive a letter grade score.",
+        "plainEnglish": "A non-profit platform, based in London, where companies and cities voluntarily disclose environmental data — climate, water, forests — and receive a letter grade score.",
         "whyItMatters": "Large customers often require their suppliers to fill out CDP questionnaires, making it a de facto reporting requirement even without any law behind it.",
         "example": "A supplier might be required by a major retail customer to submit a CDP Climate Change questionnaire response every year, regardless of any regulatory obligation.",
         "theme": "regulation"
@@ -1268,9 +1268,9 @@
         "definition": "Sector-specific, investor-focused standards, now under the ISSB (International Sustainability Standards Board) since 2022.",
         "id": "reporting_042",
         "plainEnglish": "Sector-specific, investor-focused reporting standards — now absorbed into the ISSB (International Sustainability Standards Board) since 2022.",
-        "whyItMatters": "It represents the financial-materiality-only, investor-first approach to ESG reporting — a useful contrast to GRI and ESRS's broader, double-materiality view.",
+        "whyItMatters": "It represents the financial-materiality-only, investor-first approach to ESG reporting — a useful contrast to ESRS's double-materiality view and GRI's impact-first view.",
         "example": "An investor comparing two oil companies' financial exposure to climate risk might look at their SASB-aligned disclosures rather than a broader GRI report.",
-        "dontConfuseWith": "Double vs. single materiality (standards) — SASB applies primarily financial (single) materiality, unlike GRI/ESRS's double materiality.",
+        "dontConfuseWith": "Double vs. single materiality (standards) — SASB applies primarily financial (single) materiality, unlike ESRS's double materiality and GRI's focus on impact.",
         "theme": "finance"
       },
       {
@@ -1284,7 +1284,7 @@
       },
       {
         "term": "IFRS S1",
-        "definition": "General requirements for disclosure of sustainability-related financial information, issued by the ISSB under the IFRS (International Financial Reporting Standards) Foundation.",
+        "definition": "General requirements for disclosure of sustainability-related financial information, issued by the ISSB (International Sustainability Standards Board).",
         "id": "reporting_044",
         "plainEnglish": "The ISSB's general standard for disclosing sustainability-related financial information. It is issued under the IFRS Foundation and is the baseline companion to IFRS S2's climate focus.",
         "whyItMatters": "It's the ISSB's global-baseline answer to ESRS 1 and 2 — investor-focused, financial-materiality-only, and designed for comparability across markets worldwide.",
@@ -1385,9 +1385,9 @@
       },
       {
         "term": "Double vs. single materiality (standards)",
-        "definition": "ESRS/GRI apply double materiality; SASB/IFRS S1&S2 apply primarily financial (single) materiality.",
+        "definition": "ESRS applies double materiality; GRI centres on impact materiality; SASB and IFRS S1/S2 apply primarily financial (single) materiality.",
         "id": "reporting_055",
-        "plainEnglish": "A key dividing line between reporting standards. ESRS and GRI apply double materiality (impact and financial). SASB and IFRS S1/S2 apply mainly financial (single) materiality.",
+        "plainEnglish": "A key dividing line between reporting standards. ESRS looks at both impact and financial effects (double materiality). GRI looks mainly at impact. SASB and IFRS S1/S2 look mainly at financial effects (single materiality).",
         "whyItMatters": "It explains why the same company can end up with a materiality assessment for ESRS that looks quite different from one for SASB or IFRS S1/S2: they answer different questions.",
         "example": "A company's SASB report might exclude a topic as immaterial financially, even though the same topic would be flagged as material under ESRS's impact lens.",
         "theme": "regulation"
@@ -1986,7 +1986,7 @@
       },
       {
         "term": "Pay gap",
-        "definition": "The difference in pay between groups of employees (e.g. gender pay gap), a disclosure required under ESRS S1 (European Sustainability Reporting Standards) where workforce topics are assessed as material.",
+        "definition": "The difference in average pay between groups of employees, most commonly women and men, a disclosure required under ESRS S1 (European Sustainability Reporting Standards) where workforce topics are assessed as material.",
         "id": "people_010",
         "plainEnglish": "The difference in pay between groups of employees — most commonly reported between genders.",
         "whyItMatters": "It's a quantitative disclosure required under ESRS S1 once the workforce is assessed as a material topic. It turns what used to be an internal HR matter into a public, comparable metric.",
@@ -2259,7 +2259,7 @@
       },
       {
         "term": "Carbon-neutral claim (EmpCo ban)",
-        "definition": "A claim that a product has a neutral, reduced or positive greenhouse-gas impact because of offsetting. EmpCo bans it in all circumstances.",
+        "definition": "A claim that a product has a neutral, reduced or positive greenhouse-gas impact because of offsetting. EU consumer-protection rules ban it in all circumstances.",
         "id": "claims_013",
         "plainEnglish": "Claims like 'carbon neutral' or 'climate compensated' are banned outright under EmpCo whenever they rest on offsetting. No amount of extra explanation makes an offset-based claim allowed again.",
         "whyItMatters": "It targets one of the most common historical greenwashing patterns: buying cheap offsets and calling the result 'carbon neutral'. This is a flat ban, not a substantiation problem. A company can still make claims based on its product's actual lifecycle emissions reductions. It can also communicate separately, not as a product claim, about investing in carbon-credit projects, as long as that communication is not misleading.",
@@ -2333,9 +2333,9 @@
       },
       {
         "term": "MSCI (Morgan Stanley Capital International) ESG Research",
-        "definition": "One of the largest providers of ESG ratings (AAA-CCC) for investors.",
+        "definition": "One of the largest US providers of ESG ratings (AAA-CCC) for investors.",
         "id": "context_007",
-        "plainEnglish": "One of the largest providers of ESG ratings for investors, scoring companies on a scale from AAA down to CCC.",
+        "plainEnglish": "One of the largest providers of ESG ratings for investors, based in the United States, scoring companies on a scale from AAA down to CCC.",
         "whyItMatters": "It's one of the major ESG rating providers behind the rating divergence problem — the same company can score very differently under MSCI versus another agency.",
         "example": "An investor screening a portfolio might exclude any company rated below BB by MSCI ESG Research.",
         "theme": "finance"
@@ -2351,11 +2351,11 @@
       },
       {
         "term": "Sustainalytics",
-        "definition": "Measures companies' unmanaged ESG risk on a scale from 0 (negligible) to 40+ (severe).",
+        "definition": "A Dutch provider, owned by the US firm Morningstar, that measures companies' unmanaged ESG risk, meaning the risk left after a company's own efforts to manage it. Higher scores mean more risk, and 40 or more is the 'severe' category.",
         "id": "context_009",
-        "plainEnglish": "An ESG rating provider that measures a company's 'unmanaged' ESG risk, meaning the risk left over after what the company already does to manage it. Scores run from 0 (negligible) to 40+ (severe).",
+        "plainEnglish": "An ESG rating provider based in the Netherlands and owned by the US firm Morningstar. It measures a company's 'unmanaged' ESG risk, meaning the risk left over after what the company already does to manage it. Higher scores mean more risk, and scores of 40 or more fall in the 'severe' category.",
         "whyItMatters": "Its risk-based scale (lower is better) works the opposite way from a letter-grade system like MSCI's, which is a common source of confusion when comparing ratings.",
-        "example": "A company with a Sustainalytics score of 35 would be considered to carry severe unmanaged ESG risk.",
+        "example": "A company with a Sustainalytics score of 42 falls in the 'severe' unmanaged-risk category.",
         "dontConfuseWith": "MSCI ESG Research — MSCI scores from AAA (best) to CCC (worst); Sustainalytics scores from 0 (best, lowest risk) upward, an inverted scale.",
         "theme": "finance"
       },
@@ -2370,7 +2370,7 @@
       },
       {
         "term": "OECD (Organisation for Economic Co-operation and Development)",
-        "definition": "Publishes the OECD Guidelines for Multinational Enterprises, a reference framework for due diligence.",
+        "definition": "The international organisation behind the Guidelines for Multinational Enterprises, a reference framework for due diligence.",
         "id": "context_011",
         "plainEnglish": "An international organisation that publishes the OECD Guidelines for Multinational Enterprises, a key reference framework for corporate due diligence.",
         "whyItMatters": "Its Guidelines are one of the two foundational frameworks (alongside the UNGPs) that CSDDD's own due diligence structure was built on.",
@@ -2424,9 +2424,9 @@
       },
       {
         "term": "EcoVadis",
-        "definition": "A Paris-based platform rating companies' sustainability performance, particularly across supply chains, on a Bronze-to-Platinum medal scale.",
+        "definition": "A French (Paris-based) platform that scores companies' sustainability performance out of 100, particularly across supply chains. Companies that meet its criteria may also earn a medal from Bronze to Platinum.",
         "id": "context_017",
-        "plainEnglish": "A Paris-based platform that rates companies' sustainability performance, particularly across supply chains, on a Bronze-to-Platinum medal scale.",
+        "plainEnglish": "A French (Paris-based) platform that scores companies' sustainability performance out of 100, particularly across supply chains. Companies that meet its criteria may also earn a medal from Bronze to Platinum.",
         "whyItMatters": "It's become one of the standard tools large buyers use to screen and monitor suppliers' sustainability performance, rather than something aimed at public investors.",
         "example": "A large retailer might require its suppliers to hold at least a Silver EcoVadis medal to remain an approved vendor.",
         "theme": "social"
@@ -2471,7 +2471,7 @@
       },
       {
         "term": "2014 - NFRD adopted",
-        "definition": "NFRD (the Non-Financial Reporting Directive): the first EU requirement for non-financial reporting by large companies, and the CSRD's predecessor.",
+        "definition": "The first EU requirement for non-financial reporting by large companies, and the predecessor of today's sustainability reporting directive.",
         "id": "context_022",
         "plainEnglish": "The adoption of NFRD (the Non-Financial Reporting Directive) — the first EU requirement for non-financial reporting by large companies, and CSRD's direct predecessor.",
         "whyItMatters": "Its lighter, less standardised requirements are exactly what CSRD was later built to fix — you can't fully understand why CSRD is so detailed without knowing what NFRD lacked.",
@@ -2498,7 +2498,7 @@
       },
       {
         "term": "2017 - TCFD recommendations published",
-        "definition": "TCFD (the Task Force on Climate-related Financial Disclosures) laid the groundwork for climate risk reporting later echoed in IFRS S2 and ESRS E1.",
+        "definition": "The task force's framework laid the groundwork for climate risk reporting later echoed in IFRS S2 and ESRS E1.",
         "id": "context_025",
         "plainEnglish": "The publication of TCFD's (Task Force on Climate-related Financial Disclosures) four-pillar climate risk disclosure framework.",
         "whyItMatters": "Its governance/strategy/risk management/metrics structure was carried forward almost unchanged into both IFRS S2 and TNFD — one 2017 framework shaping disclosure standards years later.",
@@ -2525,7 +2525,7 @@
       },
       {
         "term": "2021 (Mar) - SFDR applies",
-        "definition": "SFDR (the Sustainable Finance Disclosure Regulation) requires financial market participants to disclose sustainability risks.",
+        "definition": "The EU regulation that requires financial market participants to disclose sustainability risks.",
         "id": "context_028",
         "plainEnglish": "The date SFDR's (Sustainable Finance Disclosure Regulation) disclosure requirements became applicable to financial market participants across the EU.",
         "whyItMatters": "It's the moment 'sustainable fund' claims in the EU stopped being purely marketing and started requiring actual regulatory disclosure behind them.",
@@ -2534,16 +2534,16 @@
       },
       {
         "term": "2021 - GRI Universal Standards revised",
-        "definition": "Explicitly introduces the double materiality principle into GRI.",
+        "definition": "Put the focus on an organisation's most significant impacts on the economy, the environment and people, including human rights.",
         "id": "context_029",
-        "plainEnglish": "A revision that explicitly introduced the double materiality principle into GRI's own framework.",
-        "whyItMatters": "It's a good example of standards converging over time — GRI moving toward the same double materiality logic ESRS was built around, rather than staying purely impact-focused.",
-        "example": "A company preparing a GRI report after this 2021 revision would follow a materiality process noticeably closer to ESRS's own double materiality assessment.",
+        "plainEnglish": "A revision of GRI's core standards. It centred reporting on an organisation's most significant impacts on the economy, the environment and people, including human rights.",
+        "whyItMatters": "It shows that GRI looks at impact first, while ESRS also asks how sustainability matters affect the company's finances. That is why a GRI report and an ESRS report can cover different topics.",
+        "example": "A company reporting under GRI after the 2021 revision chooses its material topics by how serious its impacts on people and the environment are, not by their effect on its profits.",
         "theme": "regulation"
       },
       {
         "term": "2021 (Nov) - ISSB creation announced",
-        "definition": "Announced at COP26 (the UN Climate Change Conference), the creation of the ISSB (International Sustainability Standards Board) laid the basis for consolidating SASB and CDSB under the IFRS Foundation.",
+        "definition": "Announced at COP26 (the UN Climate Change Conference), the creation of this new global board laid the basis for consolidating SASB and CDSB under the IFRS Foundation.",
         "id": "context_030",
         "plainEnglish": "The announcement at COP26 (the UN Climate Change Conference) that the ISSB (International Sustainability Standards Board) would be created. It laid the groundwork for consolidating SASB and CDSB under the IFRS Foundation.",
         "whyItMatters": "It's the starting point of the broader 'convergence of standards' trend — a previously fragmented landscape of separate bodies beginning to consolidate into one.",
@@ -2579,11 +2579,11 @@
       },
       {
         "term": "2024 (Jan) - First CSRD reports",
-        "definition": "The start of the first mandatory CSRD reporting year (FY2024) for large listed companies, not the publication date. Those first reports were filed in 2025.",
+        "definition": "The start of the first mandatory reporting year (FY2024) under the EU's sustainability reporting directive, for large public-interest companies already covered by the earlier reporting rules. It is not the publication date: those first reports were filed in 2025.",
         "id": "context_034",
-        "plainEnglish": "January 2024 is when the first mandatory CSRD reporting year (FY2024) began for large listed companies. The reports covering that year were filed and published in 2025, not in January 2024.",
+        "plainEnglish": "January 2024 is when the first mandatory CSRD reporting year (FY2024) began for large public-interest companies already covered by the earlier reporting rules. The reports covering that year were filed and published in 2025, not in January 2024.",
         "whyItMatters": "It's the moment CSRD went from a law on paper to something companies actually had to produce reports under.",
-        "example": "A large listed EU company's first-ever CSRD-compliant sustainability statement, covering FY2024, was published starting in early 2025 reporting cycles.",
+        "example": "A large listed EU company that already reported under the earlier rules published its first CSRD-compliant sustainability statement, covering FY2024, in early 2025.",
         "theme": "regulation"
       },
       {
@@ -2624,7 +2624,7 @@
       },
       {
         "term": "2027 (indicative) - Revised ESRS applies",
-        "definition": "The revised, simplified ESRS adopted in July 2026 applies to financial years starting on or after 1 January 2027. Early adoption is possible from FY2026.",
+        "definition": "The revised, simplified standards adopted in July 2026 apply to financial years starting on or after 1 January 2027. Early adoption is possible from FY2026.",
         "id": "context_038",
         "plainEnglish": "The date the Commission's revised ESRS of July 2026 becomes applicable. It has more than 60% fewer mandatory datapoints. It applies to financial years starting on or after 1 January 2027, with early adoption possible from FY2026.",
         "whyItMatters": "It's the practical deadline behind the simplification: companies get one more full reporting cycle under the heavier original ESRS before the lighter version kicks in as the default.",
@@ -2633,16 +2633,16 @@
       },
       {
         "term": "2028 (indicative) - 'Reasonable assurance' under CSRD",
-        "definition": "The planned move of CSRD audits from limited to reasonable assurance (October 2028). The 2026 Omnibus reform removed it, so limited assurance is now the permanent ceiling.",
+        "definition": "The original rules called for reasonable assurance standards by 1 October 2028, if a feasibility assessment supported them. The 2026 reform removed that provision. Limited assurance remains the EU requirement.",
         "id": "context_039",
-        "plainEnglish": "This was originally a planned tightening of CSRD audits from limited to reasonable assurance by 2028 — but the 2026 Omnibus reform scrapped that plan outright. Limited assurance is now the permanent standard, not a stepping stone to a stricter one.",
+        "plainEnglish": "The original CSRD asked for standards for the stricter 'reasonable assurance' by 1 October 2028, if a feasibility assessment supported them. The 2026 Omnibus reform removed that provision. Limited assurance remains the EU requirement, not a stepping stone to a stricter one.",
         "whyItMatters": "The planned tightening was not just delayed. The 2026 Omnibus reform removed it entirely, which is why the 2028 date was only ever 'indicative'.",
         "example": "Under the original plan, an auditor giving limited assurance on a CSRD report would eventually have needed to provide the more rigorous reasonable assurance. The Omnibus reform cancelled that step.",
         "theme": "regulation"
       },
       {
         "term": "2029 (Jul) - CSDDD applies to all in-scope companies",
-        "definition": "The single application date, set by the 2026 Omnibus reform, when CSDDD applies to all in-scope companies at once — replacing the originally planned staggered rollout by company size.",
+        "definition": "The single application date, set by the 2026 Omnibus reform, when the due diligence directive applies to all in-scope companies at once — replacing the originally planned staggered rollout by company size.",
         "id": "context_041",
         "plainEnglish": "The single application date, set by the 2026 Omnibus reform, when CSDDD applies to all in-scope companies at once — replacing the originally planned staggered rollout by company size.",
         "whyItMatters": "It replaced years of tracking which 'wave' a company fell into with one simpler, single deadline for everyone in scope.",
@@ -2653,178 +2653,183 @@
     "esg-ratings-data-providers": [
       {
         "term": "Investor ESG rating",
-        "definition": "An ESG score or grade built mainly for investors, to compare companies' ESG risk or performance.",
+        "definition": "A grade or score that lets people who buy shares or bonds compare companies on ESG risk or performance. The provider often gathers much of the information itself.",
         "id": "finance_052",
-        "plainEnglish": "A grade that helps investors compare companies on ESG. The provider mostly gathers public information itself, such as annual reports and company websites.",
+        "plainEnglish": "A grade that helps investors compare companies on ESG (environmental, social and governance) topics. The provider often gathers public information itself, such as annual reports and company websites.",
         "whyItMatters": "Each provider chooses its own method, so the same company can get very different grades. Always check what a rating measures before you compare it.",
         "example": "A fund manager uses an investor rating to screen out the lowest-scoring companies in a sector.",
-        "dontConfuseWith": "Supplier assessment platform — an investor rating serves people who buy shares or bonds; a supplier assessment serves companies that buy goods and services.",
-        "theme": "finance"
+        "theme": "finance",
+        "group": "concept"
       },
       {
         "term": "ESG data platform",
-        "definition": "A service that collects ESG data and scores from many sources and delivers them to financial professionals, often through a terminal or data feed.",
+        "definition": "A service that gathers company ESG figures and scores from many sources and delivers them to financial professionals through specialist software or an automated data connection.",
         "id": "finance_053",
         "plainEnglish": "Think of a library for ESG numbers. It gathers company disclosures, sometimes adds its own scores, and lets analysts search and compare in one place.",
         "whyItMatters": "A platform's coverage and update frequency shape what analysts see.",
-        "example": "An analyst opens a data terminal to compare the reported emissions of ten listed companies.",
-        "dontConfuseWith": "Investor ESG rating — a platform mainly delivers data, while a rating is a judgement built on data. Many providers do both.",
-        "theme": "finance"
+        "example": "An analyst opens a financial data service to compare the reported emissions of ten listed companies.",
+        "theme": "finance",
+        "group": "concept"
       },
       {
         "term": "Questionnaire-based assessment",
-        "definition": "An ESG assessment where the company answers a detailed set of questions and the provider scores the answers.",
+        "definition": "A way of scoring in which the company itself fills in a long form of detailed questions, often with documents as proof, and the provider turns the answers into a score.",
         "id": "finance_054",
-        "plainEnglish": "The company fills in a long form, often with documents as proof, and the provider turns the answers into a score. CDP, EcoVadis and the S&P Global Corporate Sustainability Assessment work this way.",
+        "plainEnglish": "The company answers a long questionnaire and the provider scores the answers. CDP (formerly the Carbon Disclosure Project), EcoVadis and the Corporate Sustainability Assessment (CSA) of S&P (Standard & Poor's) Global work this way.",
         "whyItMatters": "It can capture detail that public reports lack. But it takes effort from the company, and a company that does not respond is often scored from public information instead.",
         "example": "A supplier spends several days answering a customer's sustainability questionnaire and attaching its policies as evidence.",
-        "dontConfuseWith": "Public-data rating — there the provider collects the information itself instead of asking the company.",
-        "theme": "finance"
+        "theme": "finance",
+        "group": "concept"
       },
       {
         "term": "Controversy screening",
-        "definition": "Monitoring news, NGO reports and other public sources for incidents linked to a company, such as pollution, accidents or labour abuse.",
+        "definition": "Watching news, reports by campaign groups and other public sources for incidents linked to a company, such as pollution, accidents or labour abuse.",
         "id": "finance_055",
-        "plainEnglish": "Instead of asking what a company says it does, it looks at what outsiders report has happened. Providers such as RepRisk specialise in this.",
+        "plainEnglish": "It checks news and other independent sources for reports of incidents involving a company. RepRisk, a Swiss provider, specialises in this.",
         "whyItMatters": "It can reveal problems that a company's own reports leave out, and it can react faster than an annual rating.",
         "example": "A bank's compliance team receives an alert about a factory fire at a client's supplier before the client mentions it.",
-        "dontConfuseWith": "ESG rating — an incident feed records events, while a rating combines many factors into one score.",
-        "theme": "finance"
+        "theme": "finance",
+        "group": "concept"
       },
       {
         "term": "ESG index",
-        "definition": "A benchmark that uses ESG criteria to select or weight companies. Investment funds can track it.",
+        "definition": "A list of companies chosen or weighted by ESG rules, used as a benchmark or as the basis for investment funds.",
         "id": "finance_056",
         "plainEnglish": "An ESG index can screen companies with rules such as a minimum ESG score. It can also use ESG information to decide how much weight each company gets.",
         "whyItMatters": "Inclusion can matter for a company's reputation. When a company is dropped, funds that track the index may have to sell its shares.",
         "example": "A company's ESG score falls below an index's threshold, so the index removes it at the next review.",
-        "dontConfuseWith": "ESG rating — a rating scores one company, while an index selects a group of companies.",
-        "theme": "finance"
+        "theme": "finance",
+        "group": "concept"
       },
       {
         "term": "EU ESG Ratings Regulation",
-        "definition": "Regulation (EU) 2024/3005 sets transparency and integrity rules for ESG rating providers and places them under ESMA supervision.",
+        "definition": "A 2024 EU law, number 2024/3005, that sets transparency and integrity rules for firms that sell ESG scores and places them under supervision by the European Securities and Markets Authority.",
         "id": "finance_057",
-        "plainEnglish": "ESMA, the EU markets regulator, supervises the ESG rating providers covered by the regulation. EU providers generally need authorisation, with a temporary regime for small providers. Ratings from outside the EU can enter through recognition, endorsement or an equivalence arrangement. Providers must explain their methods and manage conflicts of interest. The rules apply from 2 July 2026.",
+        "plainEnglish": "ESMA (the European Securities and Markets Authority), the EU markets regulator, supervises the ESG rating providers covered by the regulation. EU providers generally need authorisation, with a temporary regime for small providers. Ratings from outside the EU can enter through recognition, endorsement or an equivalence arrangement. Providers must explain their methods and manage conflicts of interest. The rules apply from 2 July 2026.",
         "whyItMatters": "Rating methods used to be hard to see from outside. These rules aim to make them transparent, so users can understand why two ratings differ.",
         "example": "A rating provider publishes which data sources and methods lie behind its ratings, as the rules require.",
-        "dontConfuseWith": "SFDR — SFDR covers how financial firms disclose sustainability information, while this regulation covers the firms that produce ESG ratings.",
-        "theme": "finance"
+        "theme": "finance",
+        "group": "concept"
       },
       {
         "term": "S&P Global ESG Score",
-        "definition": "A 0–100 ESG score from S&P Global, largely built on its annual Corporate Sustainability Assessment (CSA) questionnaire.",
+        "definition": "A US group's score from 0 to 100, largely based on a yearly questionnaire that companies answer, with different questions for each industry.",
         "id": "finance_058",
-        "plainEnglish": "S&P Global uses an industry-specific assessment and scores companies from 0 to 100. It can assess companies that do not respond using public information. The ESG Score can also include modelled data.",
+        "plainEnglish": "S&P (Standard & Poor's) Global is a financial-information company from the United States. It uses an industry-specific assessment, the Corporate Sustainability Assessment (CSA), and scores companies from 0 to 100. It can assess companies that do not respond using public information. The ESG Score can also include modelled data.",
         "whyItMatters": "The scores are meant to be read within an industry, not across industries. A 70 in banking and a 70 in mining are not directly comparable.",
         "example": "A bank scores 68 and a rival scores 55 in the same assessment, so the bank looks stronger on the topics that matter for banks.",
-        "dontConfuseWith": "MSCI ESG rating — MSCI gives letters from AAA to CCC using largely public data, while S&P Global's score builds on a company questionnaire.",
-        "theme": "finance"
+        "theme": "finance",
+        "group": "provider"
       },
       {
         "term": "ISS ESG",
-        "definition": "The ESG ratings business of ISS STOXX, whose Corporate Rating uses letter grades from A+ (best) to D- (worst).",
+        "definition": "The ESG ratings business of a German-owned group for indices and governance services, with letter grades from A+ (best) to D- (worst).",
         "id": "finance_059",
-        "plainEnglish": "ISS ESG gives companies a letter grade and a decile rank from 1 (strongest) to 10 (weakest) against industry peers. Companies that meet an industry-specific threshold earn 'Prime' status.",
-        "whyItMatters": "ISS also advises investors on voting at shareholder meetings, so its ESG data often links to stewardship decisions.",
-        "example": "An investor sees that a company has a decile rank of 2, which puts it among the stronger companies in its industry.",
-        "dontConfuseWith": "Sustainalytics — Sustainalytics measures unmanaged risk, where lower is better, while an ISS ESG grade of A+ is the best.",
-        "theme": "finance"
+        "plainEnglish": "ISS (Institutional Shareholder Services) began in the United States and is now part of ISS STOXX, a group owned by Germany's Deutsche Börse. Its ESG ratings give companies a letter grade and a group number from 1 (strongest) to 10 (weakest) compared with industry peers. Companies that meet an industry-specific threshold earn 'Prime' status.",
+        "whyItMatters": "ISS also advises investors on how to vote at shareholder meetings, so its ESG data is often used when investors decide how to vote.",
+        "example": "An investor sees that the company is in group 2 of 10, among the stronger companies in its industry.",
+        "theme": "finance",
+        "group": "provider"
       },
       {
         "term": "Sustainable Fitch",
-        "definition": "The sustainable-finance arm of the Fitch Group, which issues ESG ratings for entities, debt instruments and sustainable-finance frameworks.",
+        "definition": "The sustainable-finance arm of a rating group with offices in London and New York, owned by a US media group. It rates companies, bonds and frameworks on a 1–5 scale.",
         "id": "finance_060",
-        "plainEnglish": "Its ESG ratings use a 1–5 scale where 1 is the strongest. It rates companies, banks and governments, and also individual bonds such as green bonds.",
+        "plainEnglish": "Sustainable Fitch is part of Fitch Group, which has offices in London and New York and is owned by the US media group Hearst. Its ESG ratings use a 1–5 scale where 1 is the strongest. It rates companies, banks and governments, and also individual bonds such as green bonds.",
         "whyItMatters": "Because it also rates bonds, it helps investors judge a labelled green or social bond, not only the company behind it.",
         "example": "An investor checks the instrument rating of a green bond as well as the issuer's entity rating before buying.",
-        "dontConfuseWith": "Fitch credit ratings — those measure the ability to repay debt, while Sustainable Fitch ESG ratings measure ESG performance.",
-        "theme": "finance"
+        "theme": "finance",
+        "group": "provider"
       },
       {
         "term": "EthiFinance",
-        "definition": "A European rating agency, founded in Paris in 2004, that provides ESG ratings and credit ratings with a strong focus on small and mid-sized companies.",
+        "definition": "A French rating agency, founded in Paris in 2004, that provides ESG and credit ratings with a strong focus on small and mid-sized companies.",
         "id": "finance_061",
-        "plainEnglish": "EthiFinance rates companies' ESG performance and credit quality. It is known for covering small and mid-sized European companies.",
-        "whyItMatters": "In July 2026 it announced plans to combine with ESG Book, with the combined business to use the EthiFinance brand. It shows how the ratings industry keeps consolidating.",
+        "plainEnglish": "EthiFinance is a rating agency from France that rates companies' ESG performance and credit quality. It is known for covering small and mid-sized European companies.",
+        "whyItMatters": "EthiFinance and ESG Book announced a deal in July 2026. The combined business would use the EthiFinance name. In October, EthiFinance described ESG Book GmbH as one of its German companies. It shows how the ratings industry keeps consolidating.",
         "example": "A small listed French company uses an EthiFinance ESG rating to show investors how its ESG practices are developing.",
-        "theme": "finance"
+        "theme": "finance",
+        "group": "provider"
       },
       {
         "term": "ESG Book",
-        "definition": "A sustainability data platform, formerly called Arabesque S-Ray, that provides ESG data and risk tools to financial institutions.",
+        "definition": "A sustainability data platform registered in Germany, formerly called Arabesque S-Ray, that gives financial institutions ESG data and risk tools.",
         "id": "finance_062",
-        "plainEnglish": "ESG Book collects company ESG data and turns it into scores and compliance tools. In July 2026 it announced plans to combine with EthiFinance.",
+        "plainEnglish": "ESG Book is based in Frankfurt, Germany, and collects company ESG data, turning it into scores and compliance tools. In July 2026 it signed an agreement to combine with EthiFinance. By October 2026 EthiFinance described ESG Book GmbH as one of its German companies.",
         "whyItMatters": "It shows that ESG data providers change names and owners, so it pays to check who stands behind a data source.",
         "example": "A fund uses a data platform to check which companies in its portfolio disclose emissions data.",
-        "theme": "finance"
+        "theme": "finance",
+        "group": "provider"
       },
       {
         "term": "Bloomberg ESG data",
-        "definition": "ESG data and scores on Bloomberg's financial data service, drawn mostly from what companies disclose publicly.",
+        "definition": "ESG figures and scores on the financial data service of a US news and finance company, mostly drawn from what companies disclose publicly.",
         "id": "finance_063",
-        "plainEnglish": "Bloomberg collects what companies report about their environmental, social and governance performance and shows it with scores to its customers. How much a company discloses affects its score.",
+        "plainEnglish": "Bloomberg is a US company based in New York. It collects what companies report about their environmental, social and governance performance and shows it with scores to its customers. Bloomberg also publishes a separate disclosure measure that shows how much relevant information a company reports. Disclosure can also affect the scores Bloomberg gives a company on individual sustainability topics.",
         "whyItMatters": "Because scores depend on disclosure, a company that reports little data may be limited in how high it can score.",
         "example": "A portfolio manager looks up a company's Bloomberg ESG scores next to its share price chart.",
-        "theme": "finance"
+        "theme": "finance",
+        "group": "provider"
       },
       {
         "term": "LSEG ESG data",
-        "definition": "ESG scores and data from the London Stock Exchange Group (LSEG), including the data business formerly known as Refinitiv.",
+        "definition": "ESG scores and figures from a British stock-exchange group, including the data business formerly known as Refinitiv.",
         "id": "finance_064",
-        "plainEnglish": "LSEG collects public company disclosures and publishes ESG scores. Controversy scores based on media reports are available separately.",
+        "plainEnglish": "LSEG (London Stock Exchange Group) is based in the United Kingdom. It collects public company disclosures and publishes ESG scores. A Plus version of its scores also adds factors such as controversies.",
         "whyItMatters": "LSEG redesigned its scoring framework in 2026. Check which version of a method was used before you compare scores over time.",
         "example": "A researcher downloads LSEG scores for a thousand companies to study how ESG performance links to returns.",
-        "theme": "finance"
+        "theme": "finance",
+        "group": "provider"
       },
       {
         "term": "FTSE4Good",
-        "definition": "A series of stock indices from FTSE Russell that include only companies meeting defined ESG criteria.",
+        "definition": "A series of stock indices from a British index company, open only to companies that meet defined ESG criteria.",
         "id": "finance_065",
-        "plainEnglish": "FTSE Russell scores companies on ESG using public information. Only those that pass its thresholds are included, and some activities are excluded.",
+        "plainEnglish": "FTSE Russell is an index company from the United Kingdom, owned by LSEG (London Stock Exchange Group). FTSE was originally short for Financial Times Stock Exchange. It scores companies on ESG using public information. Only those that pass its thresholds are included, and some activities are excluded.",
         "whyItMatters": "Funds can track FTSE4Good indices, so being included or removed can matter to companies and to the funds that follow them.",
         "example": "A company raises its ESG score above the entry threshold and is added to a FTSE4Good index at the next review.",
-        "dontConfuseWith": "ESG rating — FTSE4Good is an index of companies that pass, while a rating gives one company a score.",
-        "theme": "finance"
+        "theme": "finance",
+        "group": "provider"
       },
       {
         "term": "JUST Capital",
         "definition": "A US non-profit that ranks the largest US public companies on the issues the American public says matter most, such as worker pay and treatment.",
         "id": "finance_066",
-        "plainEnglish": "It first surveys Americans on what a 'just' company should do. Then it scores companies on those priorities using public data. Worker issues have ranked highest in its surveys.",
+        "plainEnglish": "JUST Capital is a non-profit from the United States. It first surveys Americans on what a 'just' company should do. Then it scores companies on those priorities using public data. Worker issues have ranked highest in its surveys.",
         "whyItMatters": "It ranks companies by public priorities rather than by investor risk, which makes it different from most ESG ratings.",
         "example": "A retailer moves up the ranking after raising its lowest wages.",
-        "theme": "finance"
+        "theme": "finance",
+        "group": "provider"
       },
       {
         "term": "GRESB",
-        "definition": "A benchmark that assesses the ESG performance of real estate and infrastructure funds and assets.",
+        "definition": "A Dutch benchmark that assesses the ESG performance of property and infrastructure funds and assets, with a score out of 100 and a star rating.",
         "id": "finance_067",
-        "plainEnglish": "Property and infrastructure investors submit data each year. GRESB scores it out of 100 and gives a star rating based on how the entity ranks against other participants.",
+        "plainEnglish": "GRESB (originally the Global Real Estate Sustainability Benchmark) is based in the Netherlands. Participating property and infrastructure funds and companies submit data each year. GRESB scores it out of 100 and gives a star rating based on how the entity ranks against other participants in the same benchmark.",
         "whyItMatters": "It gives investors in property and infrastructure a common yardstick for comparing funds.",
         "example": "A property fund uses its GRESB score to compare its results with those of other participants.",
-        "dontConfuseWith": "CDP — CDP scores companies' environmental disclosure with letters, while GRESB benchmarks real asset portfolios with a score out of 100 and stars.",
-        "theme": "finance"
+        "theme": "finance",
+        "group": "provider"
       },
       {
         "term": "RepRisk",
         "definition": "A Swiss data provider that screens public sources for ESG incidents linked to companies and measures their reputational risk.",
         "id": "finance_068",
-        "plainEnglish": "RepRisk uses technology and analysts to scan news, NGO reports and other public sources. It does not use company self-disclosure. Its RepRisk Index runs from 0 to 100, and a higher number means more risk.",
+        "plainEnglish": "RepRisk is based in Switzerland. It uses technology and analysts to scan news, reports from campaign groups and other public sources. It does not use company self-disclosure. Its RepRisk Index runs from 0 to 100, and a higher number means more risk.",
         "whyItMatters": "It looks at what outsiders report about a company, not what the company says, so it can reveal problems that company reports leave out.",
         "example": "A bank sees a RepRisk alert about a client's environmental incident and checks it before approving a loan.",
-        "dontConfuseWith": "ESG rating — RepRisk records incidents, while most ESG ratings also weigh policies and management.",
-        "theme": "finance"
+        "theme": "finance",
+        "group": "provider"
       },
       {
         "term": "Sedex",
-        "definition": "A non-profit membership organisation with an online platform where companies and their suppliers share ethical and social audit data.",
+        "definition": "A British company that runs an online platform where businesses and their suppliers share ethical and social audit data.",
         "id": "finance_069",
-        "plainEnglish": "A supplier uploads its information once and decides which customers can see it. A common audit method on the platform is SMETA, so one audit can serve many customers.",
+        "plainEnglish": "Sedex (Supplier Ethical Data Exchange) is based in the United Kingdom. A supplier uploads its information once and decides which customers can see it. A common audit method on the platform is SMETA (Sedex Members Ethical Trade Audit), so one audit can serve many customers.",
         "whyItMatters": "Sharing one audit with several buyers can save suppliers from repeating the same audit, if each buyer accepts the report.",
         "example": "A food supplier shares one SMETA audit with several retail customers instead of passing a separate audit for each.",
-        "dontConfuseWith": "EcoVadis — EcoVadis gives a sustainability score and may award a medal, while Sedex mainly lets companies share data and audit reports.",
-        "theme": "finance"
+        "theme": "finance",
+        "group": "provider"
       }
     ]
   },
@@ -3075,15 +3080,15 @@
       "optionB": "EcoVadis",
       "correctIndex": 1,
       "statement": "Large buyers use it to assess suppliers, and eligible companies can earn a Bronze, Silver, Gold or Platinum medal.",
-      "explanation": "EcoVadis gives companies a sustainability score, and eligible companies may earn a medal from Bronze to Platinum. CDP collects environmental disclosures and scores them with letters, from A to D-."
+      "explanation": "EcoVadis (France) gives companies a sustainability score, and eligible companies may earn a medal from Bronze to Platinum. CDP (a UK non-profit, formerly the Carbon Disclosure Project) collects environmental disclosures and scores them with letters, from A to D-."
     },
     {
       "moduleId": "esg-ratings-data-providers",
       "optionA": "S&P Global ESG Score",
       "optionB": "RepRisk",
       "correctIndex": 1,
-      "statement": "It leaves out company self-reporting and relies on news, NGO reports and other public sources instead.",
-      "explanation": "RepRisk screens public sources for incidents and does not use company questionnaires. The S&P Global ESG Score builds largely on a company questionnaire, supplemented by public information and models."
+      "statement": "It leaves out company self-reporting and relies on news, reports by campaign groups and other public sources instead.",
+      "explanation": "RepRisk (Switzerland) screens public sources for incidents and does not use company questionnaires. The S&P (Standard & Poor's) Global ESG Score, from the United States, builds largely on a company questionnaire, supplemented by public information and models."
     },
     {
       "moduleId": "esg-ratings-data-providers",
@@ -3091,7 +3096,7 @@
       "optionB": "FTSE4Good",
       "correctIndex": 0,
       "statement": "It benchmarks real estate and infrastructure funds by scoring the data they submit out of 100.",
-      "explanation": "GRESB benchmarks real asset funds and gives a score out of 100 plus a star rating. FTSE4Good is a series of stock indices for companies that meet ESG criteria."
+      "explanation": "GRESB (Netherlands) benchmarks real asset funds and gives a score out of 100 plus a star rating. FTSE4Good, from the United Kingdom, is a series of stock indices for companies that meet ESG criteria."
     }
   ],
   "expertChallenge": [
@@ -3121,15 +3126,15 @@
     },
     {
       "moduleLabel": "SFDR",
-      "question": "An Article 6 product under SFDR is best described as:",
+      "question": "In common SFDR market shorthand, what is an 'Article 6 product'?",
       "options": [
-        "A product that is legally barred from considering any ESG factors at all",
-        "A product that discloses how it integrates sustainability risk, or why not",
-        "A product that is exempt from all SFDR disclosure obligations",
-        "A product that is automatically classified as sustainable by default"
+        "A product that promotes environmental or social characteristics and discloses how they are met",
+        "A product subject to Article 6 sustainability-risk disclosures, with no additional disclosures under Article 8 or 9",
+        "A product with sustainable investment as its objective, measured against a designated benchmark",
+        "A product that must publish a yearly report on its alignment with the Paris Agreement"
       ],
       "correctIndex": 1,
-      "explanation": "Article 6 isn't an 'ESG-free' category — it's the baseline classification, and its products must still disclose their approach to sustainability risk integration, even without promoting E/S characteristics."
+      "explanation": "'Article 6 product' is market shorthand, not a separate legal class. Article 6 sets baseline disclosures on how sustainability risks are considered and how they may affect returns. If those risks are considered irrelevant, the manager must explain why. Products under Article 8 or 9 also have additional disclosure duties."
     },
     {
       "moduleLabel": "Climate & Carbon Accounting",
@@ -3159,10 +3164,10 @@
       "moduleLabel": "Climate & Carbon Accounting",
       "question": "Which sectors were covered by CBAM from the start of its transitional period in October 2023?",
       "options": [
-        "All imported goods, without any exceptions at all",
-        "Textiles, plastics, chemicals and paper products",
+        "Iron & steel, cement, aluminium and fertilisers only; electricity and hydrogen were added later",
+        "Cement, steel, plastics, chemicals and oil refining",
         "Iron & steel, cement, fertilisers, aluminium, electricity and hydrogen",
-        "Only electricity and gas imports"
+        "Steel, cement, aluminium and fertilisers, plus all energy-intensive manufactured goods"
       ],
       "correctIndex": 2,
       "explanation": "CBAM's initial scope is limited to six carbon-intensive sectors: iron & steel, cement, fertilisers, aluminium, electricity and hydrogen — not a blanket measure on all imports."
@@ -3197,7 +3202,7 @@
       "options": [
         "Institutional investors",
         "States",
-        "NGOs",
+        "Non-governmental organisations",
         "Multinational corporations"
       ],
       "correctIndex": 1,
@@ -3209,7 +3214,7 @@
       "options": [
         "Only financial materiality is triggered",
         "Both impact materiality and financial materiality are triggered simultaneously",
-        "Neither dimension needs to be triggered, since all ESRS topics are mandatory",
+        "Its impact materiality score exceeds a legally fixed threshold set in ESRS 1",
         "Either impact materiality or financial materiality is triggered"
       ],
       "correctIndex": 3,
@@ -3222,7 +3227,7 @@
         "Merged into the GRI Standards in 2021, which now publish its recommendations",
         "Disbanded in October 2023, with the ISSB taking over monitoring",
         "Absorbed into EFRAG, which now maintains its framework",
-        "Never disbanded, and still issues new recommendations every year"
+        "Turned into a permanent committee of the Financial Stability Board, which still issues recommendations"
       ],
       "correctIndex": 1,
       "explanation": "The FSB disbanded the TCFD task force in October 2023 once its recommendations were embedded in IFRS S2; the ISSB now monitors climate-related disclosure globally, though 'TCFD-aligned' reporting is still widely referenced."
@@ -3244,8 +3249,8 @@
       "question": "IFRS S1, unlike IFRS S2, covers:",
       "options": [
         "Sustainability-related financial disclosures on all material topics, not just climate",
-        "Nothing: S1 was withdrawn once S2 was published",
-        "Only governance-related disclosures and board oversight",
+        "Only climate-related risks and opportunities, with S2 covering all other topics",
+        "Only the metrics and targets pillar, with S2 covering governance and strategy",
         "Only greenhouse gas emissions and energy use"
       ],
       "correctIndex": 0,
@@ -3256,9 +3261,9 @@
       "question": "What did the 2026 Omnibus reform do to CSRD's originally-planned move from limited to reasonable assurance?",
       "options": [
         "Removed the obligation to move to reasonable assurance; limited assurance stays indefinitely",
-        "Made the ~2028 deadline for reasonable assurance a fixed, legally guaranteed date",
-        "Left the original timeline for reviewing reasonable assurance completely unchanged",
-        "Immediately imposed reasonable assurance on all companies in scope"
+        "Postponed the move to reasonable assurance to 2030 at the earliest",
+        "Limited the move to reasonable assurance to listed companies only",
+        "Replaced it with a requirement for limited assurance by two independent auditors"
       ],
       "correctIndex": 0,
       "explanation": "The original CSRD required the Commission to assess feasibility and potentially move to reasonable assurance by around 2028. The 2026 Omnibus reform deleted that obligation entirely, so CSRD assurance remains at the limited level indefinitely, with no scheduled step-up."
@@ -3267,9 +3272,9 @@
       "moduleLabel": "Sustainable & Ethical Investing",
       "question": "The Science Based Targets initiative (SBTi) offers near-term targets and Corporate Net-Zero Standard targets. They differ mainly in that:",
       "options": [
-        "They are identical requirements that simply have different names",
-        "Near-term targets are voluntary; net-zero targets are legally mandatory everywhere",
-        "Net-zero targets require no emissions reductions, only offsetting through carbon credits",
+        "Near-term targets cover only Scope 1 and 2, while net-zero targets also cover Scope 3",
+        "Near-term targets are set by the company itself, while net-zero targets are set by the EU",
+        "Net-zero targets allow offsetting to cover most of the required reduction",
         "Near-term targets cover 5-10 years; net-zero targets run long-term, typically to 2050"
       ],
       "correctIndex": 3,
@@ -3279,10 +3284,10 @@
       "moduleLabel": "Climate & Carbon Accounting",
       "question": "As CBAM phases in, the EU ETS's free allocation of allowances for the overlapping sectors (e.g. steel, cement) is:",
       "options": [
-        "Unrelated to CBAM, and staying at today's level",
+        "Kept at today's level, with CBAM covering only imports above that benchmark",
         "Being gradually phased out in parallel with CBAM's phase-in",
-        "Already fully eliminated for all sectors as of 2023",
-        "Being increased to compensate EU industry for CBAM"
+        "Abolished in one step in 2026, when CBAM certificates first became payable",
+        "Extended to importers, who receive free allowances for covered goods"
       ],
       "correctIndex": 1,
       "explanation": "Free EU ETS allowances for CBAM sectors are being phased out gradually as CBAM phases in from 2026, since the two mechanisms are designed to work together, not stack."
@@ -3294,7 +3299,7 @@
         "Leaves it to member states whether downstream due diligence covers lending and investment",
         "Requires them to apply due diligence to all downstream lending and investment activities, EU-wide",
         "Applies identical downstream obligations to those for manufacturing companies",
-        "Exempts the financial sector from CSDDD entirely"
+        "Covers them for their own operations only, with no duty regarding suppliers"
       ],
       "correctIndex": 0,
       "explanation": "After heavy negotiation, the compromise text left it optional for member states to extend downstream due diligence obligations to regulated financial undertakings' lending and investment activities, rather than mandating it EU-wide."
@@ -3306,7 +3311,7 @@
         "A transitional activity",
         "Taxonomy-aligned permanently, with no further conditions",
         "An enabling activity",
-        "Automatically excluded from the Taxonomy"
+        "A 'safe harbour' activity, aligned as long as its emissions stay below the sector average"
       ],
       "correctIndex": 0,
       "explanation": "This describes a transitional activity — temporarily counted as sustainable because no low-carbon alternative exists yet, provided it meets the sector's best-performing threshold; it's reassessed as technology evolves."
@@ -3328,9 +3333,9 @@
       "question": "As of November 2026, the 'Green Claims Directive' proposal is:",
       "options": [
         "Listed for withdrawal by the Commission in November 2026",
-        "Fully in force since 2024 alongside EmpCo",
+        "Agreed by the Council and Parliament in 2025 and awaiting publication",
         "Merged into the CSRD during the 2026 Omnibus reform",
-        "Still only a rumour, never formally proposed"
+        "Adopted in 2024 as part of the Empowering Consumers Directive"
       ],
       "correctIndex": 0,
       "explanation": "The Commission first announced its intention to withdraw the proposal in June 2025. In its 2027 work programme (4 November 2026) it listed the proposal among the pending files it plans to withdraw within six months. EmpCo, adopted separately in 2024, remains in force and unaffected."
@@ -3339,9 +3344,9 @@
       "moduleLabel": "Social Issues & Human Rights",
       "question": "The gender pay gap disclosure required under CSRD sits within which broader ESRS structure?",
       "options": [
-        "It isn't covered by ESRS at all",
+        "ESRS S2 (Workers in the value chain), disclosed only if material",
         "ESRS 2's general disclosures, mandatory regardless of materiality",
-        "A voluntary sector-specific standard for large employers",
+        "ESRS G1 (Business conduct), mandatory for every reporting company",
         "A mandatory topical standard (ESRS S1), disclosed only if material"
       ],
       "correctIndex": 3,
@@ -3351,25 +3356,25 @@
       "moduleLabel": "SFDR",
       "question": "Under SFDR, 'greenwashing risk' for an Article 8 or 9 product most precisely refers to:",
       "options": [
-        "A regulatory penalty automatically applied to all Article 6 products",
+        "A product whose Taxonomy-aligned share is lower than a competitor's, even though it meets its own published minimum",
         "A product marketed as more sustainable than its holdings justify",
-        "The fund manager going bankrupt because of poor performance",
-        "A product that invests exclusively in fossil fuels"
+        "A product that discloses its principal adverse impacts after the legal deadline",
+        "A product that regulators have reclassified from Article 8 to Article 6"
       ],
       "correctIndex": 1,
       "explanation": "Greenwashing risk under SFDR specifically means an Article 8/9 product's sustainability marketing overstates what its underlying holdings actually deliver — Article 6 products, which make no sustainability claim, aren't inherently at this specific risk."
     },
     {
       "moduleLabel": "CSRD & ESRS",
-      "question": "Which of the following is a specific phase-in relief available to companies in their first year of CSRD reporting?",
+      "question": "Under the revised ESRS, which relief is available to a company that first becomes subject to CSRD reporting for financial year 2027?",
       "options": [
-        "Omitting Scope 3 GHG emissions data",
-        "Full exemption from ESRS 2",
-        "No assurance requirement at all",
-        "A complete exemption from double materiality"
+        "Leaving out comparative figures for the previous financial year in its first reporting year",
+        "Using the GRI Standards instead of the ESRS in the first year",
+        "Skipping the limited assurance requirement in the first year",
+        "Leaving out the double materiality assessment until the second year"
       ],
       "correctIndex": 0,
-      "explanation": "First-year phase-in provisions allow companies (below certain thresholds) to omit Scope 3 emissions data — but ESRS 2 disclosures, double materiality, and limited assurance still apply from year one."
+      "explanation": "The revised ESRS let a company that reports for the first time leave out comparative information in its first reporting period. ESRS itself (not GRI), the double materiality assessment and limited assurance still apply from the first year."
     },
     {
       "moduleLabel": "Circular Economy & Biodiversity",
@@ -3388,9 +3393,9 @@
       "question": "Regarding TNFD's relationship to TCFD, which statement is most accurate?",
       "options": [
         "TNFD is a subset of the GRI Standards",
-        "TNFD and TCFD have nothing in common",
+        "TNFD uses a different structure with no link to TCFD's pillars",
         "TNFD deliberately mirrors TCFD's four-pillar structure, applied to nature-related risk",
-        "TNFD replaced TCFD entirely for climate reporting"
+        "TNFD is a mandatory EU standard that replaces TCFD for banks"
       ],
       "correctIndex": 2,
       "explanation": "TNFD was deliberately designed to mirror TCFD's four-pillar structure, extending the same disclosure architecture from climate risk to nature and biodiversity risk."
@@ -3435,9 +3440,9 @@
       "moduleLabel": "Key Players & Institutions",
       "question": "What primarily distinguishes EcoVadis from ESG rating agencies like MSCI ESG Research or Sustainalytics?",
       "options": [
-        "EcoVadis only rates government entities, not companies",
-        "EcoVadis ratings are a legally binding certification required under the CSRD",
-        "EcoVadis exclusively measures greenhouse gas emissions data",
+        "EcoVadis rates only large listed companies, using public data",
+        "EcoVadis scores climate risk for investors, like a credit rating",
+        "EcoVadis rates investment funds and portfolios rather than companies",
         "EcoVadis focuses on rating suppliers and business partners in supply chains"
       ],
       "correctIndex": 3,
@@ -3457,24 +3462,24 @@
     },
     {
       "moduleLabel": "ESG Ratings & Data Providers",
-      "question": "Since 2 July 2026, which EU body directly supervises ESG rating providers that offer services in the EU?",
+      "question": "Since 2 July 2026, which EU body directly supervises ESG rating providers covered by Regulation (EU) 2024/3005?",
       "options": [
-        "EFRAG, the EU reporting standards adviser",
-        "The European Central Bank in Frankfurt",
-        "ESMA, the EU securities and markets authority",
-        "National consumer protection authorities"
+        "EFRAG (European Financial Reporting Advisory Group), the EU reporting standards adviser",
+        "The European Banking Authority (EBA)",
+        "ESMA (European Securities and Markets Authority)",
+        "The national financial regulators of each member state, acting alone"
       ],
       "correctIndex": 2,
       "explanation": "Regulation (EU) 2024/3005 makes ESMA the direct supervisor of ESG rating providers in the EU. EU providers generally need authorisation; providers from outside the EU use recognition, endorsement or equivalence."
     },
     {
       "moduleLabel": "ESG Ratings & Data Providers",
-      "question": "S&P Global's CSA scores are mainly meant to be compared:",
+      "question": "S&P Global's Corporate Sustainability Assessment (CSA) scores are mainly meant to be compared:",
       "options": [
         "Across all industries on one scale",
         "Within the same industry",
-        "Only between countries",
-        "Only between listed and unlisted companies"
+        "Only within the same country",
+        "Only between companies of the same size"
       ],
       "correctIndex": 1,
       "explanation": "The CSA uses industry-specific questionnaires, so S&P Global says scores should be read within each industry rather than used to rank companies across industries."
@@ -3485,8 +3490,8 @@
       {
         "question": "Your CFO says a sustainability issue 'isn't financially material.' Does that automatically mean it's not material at all?",
         "options": [
-          "Yes, because financial materiality is the only kind regulators care about",
-          "Yes: if it isn't financially material, it isn't material at all",
+          "Yes, impact materiality only applies once a topic has caused financial harm",
+          "Yes: under CSRD a topic must be financially material before its impacts are considered",
           "No: it could still be impact material, which double materiality also covers",
           "No, but only environmental topics can ever be impact material"
         ],
@@ -3514,15 +3519,15 @@
     ],
     "climate-carbon-accounting": [
       {
-        "question": "Your company says: 'We will be net zero by 2030.' What should you ask first?",
+        "question": "Your company says: 'We will be net zero by 2030.' Which question shows best how it plans to get there?",
         "options": [
-          "How much was spent announcing the target",
-          "Whether it relies on offsets or on real emissions cuts",
-          "Whether competitors have made the same claim before",
+          "Whether the target has been published in the annual report",
+          "Whether it plans deep emissions cuts first and neutralises only what remains",
+          "Whether the target is stated as a percentage or as an absolute emissions figure",
           "Whether the target has been approved by the board"
         ],
         "correctIndex": 1,
-        "explanation": "Net zero requires deep emissions reductions before any remaining gap is closed with removals — a plan built mainly on offsets, with no real reduction pathway, is closer to a loose 'carbon neutral' claim than genuine net zero.",
+        "explanation": "A science-based net-zero plan calls for deep emissions cuts first. Only the emissions that remain after those cuts are neutralised, through permanent carbon removal and storage. A plan built mainly on offsets, with no real reduction pathway, is closer to a loose 'carbon neutral' claim than genuine net zero.",
         "roles": [
           "management",
           "sustainability"
@@ -3532,8 +3537,8 @@
         "question": "A colleague says the company's climate footprint is 'basically covered' once Scope 1 and 2 are measured. What's the risk in that view?",
         "options": [
           "Scope 3 is usually the largest part of total emissions, and it is left out",
-          "Scope 3 only applies to companies based outside the EU",
-          "Scope 3 is a voluntary marketing term with no real emissions behind it",
+          "Scope 3 only becomes relevant once a company has set a net-zero target",
+          "Scope 3 emissions are already included in the Scope 2 figures",
           "None: Scope 1 and 2 are the only categories companies must report"
         ],
         "correctIndex": 0,
@@ -3548,10 +3553,10 @@
       {
         "question": "A packaging supplier pitches a 'fully recyclable' plastic pouch. What should you check before repeating that claim in marketing?",
         "options": [
-          "Nothing: 'recyclable' is a protected term that is verified in advance",
+          "Whether the pouch carries a recycling symbol, which is enough proof by itself",
           "Whether recycling for that material actually exists where it is sold",
-          "Whether the pouch is lighter than the packaging it replaces",
-          "Whether competitors use similar packaging in the same market"
+          "Whether the supplier holds an environmental management certificate",
+          "Whether the pouch is made from recycled plastic"
         ],
         "correctIndex": 1,
         "explanation": "Technically recyclable material with no actual local collection or processing infrastructure isn't meaningfully recyclable in practice — this exact gap is what EmpCo's substantiation requirement targets.",
@@ -3564,9 +3569,9 @@
         "question": "Procurement wants to switch to a supplier using more natural capital (freshwater, timber) without any increase in cost. What ESG risk does this framing miss?",
         "options": [
           "It ignores nature dependency, the business's reliance on ecosystems",
-          "This is purely a governance question, not an environmental one",
-          "Natural capital only matters for companies in the finance sector",
-          "Nothing: cost is the only variable that matters in procurement"
+          "It overlooks that natural capital is a Scope 3 emissions category",
+          "It only matters if the supplier is based outside the EU",
+          "It overlooks that the cost of natural capital is already included in the supplier's price"
         ],
         "correctIndex": 0,
         "explanation": "Evaluating a switch purely on cost misses the point of natural capital and nature dependency: a cheaper option that draws down a stressed ecosystem faster is trading a hidden environmental risk for a short-term saving.",
@@ -3580,10 +3585,10 @@
       {
         "question": "A key supplier is accused of forced labour. Which ESG concept is most directly relevant to how your company should respond?",
         "options": [
-          "The EU Taxonomy's substantial contribution test for green activities",
-          "Carbon offsetting and carbon-credit verification",
+          "Scope 3 accounting for purchased goods and services",
+          "Supplier ESG ratings: dropping any supplier whose score is low",
           "Human rights due diligence: investigate, remediate and follow up",
-          "Say-on-pay, the shareholder vote on executive remuneration"
+          "Materiality assessment: deciding whether the allegation is big enough to report"
         ],
         "correctIndex": 2,
         "explanation": "Simply dropping the supplier doesn't fulfil due diligence obligations — the expectation (under CSDDD, the UNGPs, and the OECD Guidelines) is to investigate, use leverage to fix the problem, and remediate harm already done, not just walk away.",
@@ -3595,8 +3600,8 @@
       {
         "question": "An employee in a low-cost country is paid the legal minimum wage. Is that automatically sufficient under modern ESG expectations?",
         "options": [
-          "No — only unionised workers need to be paid above minimum wage",
-          "Yes — legal minimum wage always satisfies ESG requirements",
+          "No, because ESG expectations require paying the minimum wage of the company's home country",
+          "Yes, because ESG standards never go beyond what the law requires",
           "Yes, as long as the company discloses the wage in its ESRS S1 report",
           "Not necessarily — a living wage benchmark can sit well above the legal minimum"
         ],
@@ -3613,7 +3618,7 @@
         "question": "An employee wants to report suspected fraud but is worried about retaliation. What should your company already have in place?",
         "options": [
           "A social audit of the finance department",
-          "Nothing — fraud reporting is a matter for the police only",
+          "An anonymous suggestion box, which on its own satisfies the Whistleblower Directive",
           "A protected whistleblower reporting channel, as required under the Whistleblower Directive",
           "A grievance mechanism specifically for external communities only"
         ],
@@ -3628,8 +3633,8 @@
         "question": "A company donates generously to charity but has weak labour practices in its own supply chain. Which CSR framework best explains why this isn't enough?",
         "options": [
           "Carroll's CSR pyramid: economic and legal duties come before philanthropy",
-          "Say-on-climate, the shareholder vote on climate plans",
-          "Shared value theory, which requires all donations to be tax-deductible",
+          "Triple bottom line, which lets strong philanthropy offset weak labour practices",
+          "Shared value theory, which says charitable giving is the main way to create social value",
           "The EU Taxonomy's minimum safeguards for aligned activities"
         ],
         "correctIndex": 0,
@@ -3643,7 +3648,7 @@
       {
         "question": "A board is entirely made up of executives with no independent oversight. What governance concern does this raise?",
         "options": [
-          "None, as long as the company is consistently profitable",
+          "A concern only for listed companies, since unlisted companies are exempt from board-independence expectations",
           "It automatically breaches the EU Taxonomy's governance rules",
           "It only matters under two-tier board structures",
           "Weak tone at the top and no independent check"
@@ -3674,9 +3679,9 @@
       {
         "question": "A company already reports under GRI. Does that mean it's automatically compliant with CSRD?",
         "options": [
-          "Yes, because GRI and CSRD are essentially the same framework",
+          "Yes, as long as it applies the GRI Universal Standards in full",
           "No: ESRS has its own mandatory requirements that GRI doesn't fully cover",
-          "No, GRI and CSRD cover completely unrelated topics",
+          "No, because CSRD only accepts reports prepared by the company's statutory auditor",
           "Yes, because the EU legally recognises GRI as equivalent"
         ],
         "correctIndex": 1,
@@ -3691,7 +3696,7 @@
           "Meeting every requirement of the GRI Universal Standards",
           "Having the report audited under CSRD's limited assurance",
           "Referring to GRI in the report's methodology section",
-          "Nothing formal: it's just a marketing phrase"
+          "Publishing a content index and reporting only its three highest-ranked topics, even if other topics are also material"
         ],
         "correctIndex": 0,
         "explanation": "'In accordance with GRI' is a specific, checkable claim — it requires meeting every Universal Standards requirement, not just loosely referencing GRI somewhere in the document.",
@@ -3707,7 +3712,7 @@
           "Yes, because IFRS S2 has replaced TCFD entirely",
           "No, because TCFD was fully discontinued and can't be used any more",
           "Not necessarily: TCFD's structure and scenario analysis differ from GRI's format",
-          "Yes, because all major reporting standards are interchangeable"
+          "Yes, because the emissions standard in GRI already contains every scenario analysis requirement of TCFD"
         ],
         "correctIndex": 2,
         "explanation": "TCFD (and IFRS S2, built on it) asks for a specific structure — including scenario analysis — that a GRI report doesn't automatically provide. The investor's ask likely isn't met by the GRI report alone.",
@@ -3719,9 +3724,9 @@
       {
         "question": "A company is deciding whether to adopt IFRS S1/S2 or ESRS as its primary sustainability reporting standard. What's the key difference to weigh?",
         "options": [
-          "ESRS only covers governance topics, while IFRS covers the rest",
-          "There is no real difference: both use the same materiality approach",
-          "IFRS S1/S2 is mandatory in every country, while ESRS is entirely voluntary",
+          "IFRS S1/S2 covers only climate, while ESRS also covers social and governance topics",
+          "ESRS applies financial materiality, while IFRS S1/S2 applies double materiality",
+          "ESRS is voluntary for EU companies, while IFRS S1/S2 is mandatory in the EU",
           "IFRS S1/S2 applies financial (single) materiality; ESRS applies double materiality"
         ],
         "correctIndex": 3,
@@ -3739,7 +3744,7 @@
           "Yes: CSDDD only covers your direct, tier-1 suppliers",
           "No: it extends across the value chain, including tier-2 suppliers",
           "No, but only for CSRD reporting purposes, not under CSDDD",
-          "Yes, unless the supplier is itself based in the EU"
+          "Yes, unless the violation is also a criminal offence in the supplier's country"
         ],
         "correctIndex": 1,
         "explanation": "CSDDD's due diligence obligation covers the value chain broadly, not just direct contracts — risk prioritisation is how a company decides where to focus first, not an excuse to ignore tier-2+ risk entirely.",
@@ -3753,7 +3758,7 @@
           "Nothing further: termination is always sufficient",
           "Filing a report with the OECD national contact point",
           "Remediation: addressing the harm already caused",
-          "A public apology and a statement of regret"
+          "Paying a fixed fine to the supervisory authority before any other step"
         ],
         "correctIndex": 2,
         "explanation": "Due diligence isn't satisfied by walking away — where the company caused or contributed to the harm, CSDDD's cycle requires remediation, actually addressing the harm done, not just cutting ties. (Where a supplier caused the harm entirely alone, the company must instead use its leverage to push for remediation.)",
@@ -3767,8 +3772,8 @@
       {
         "question": "A fund manager wants to market a new fund as Article 9 to attract sustainability-focused investors, even though its holdings include companies with no clear sustainability objective. What's the risk?",
         "options": [
-          "None: SFDR classification is just a marketing choice for managers",
-          "This is only a concern for green bonds, not funds",
+          "Investors could claim compensation automatically, because Article 9 is a legally protected label",
+          "None, as long as the fund also publishes its principal adverse impacts",
           "The fund would automatically be reclassified as Article 6",
           "Greenwashing risk: its holdings may not meet Article 9's definition"
         ],
@@ -3782,9 +3787,9 @@
         "question": "An investor asks why a fund's PAI (Principal Adverse Impacts) disclosure shows a high carbon footprint, even though the fund is marketed as sustainable. What should the investor understand?",
         "options": [
           "A high PAI figure proves the fund is not genuinely sustainable",
-          "PAI figures are unreliable and can safely be ignored",
+          "A high PAI figure means the fund has breached its commitments as an Article 8 product",
           "PAI exists to show a fund's downsides, not just its positives",
-          "PAI only applies to Article 6 products, not Article 8 or 9"
+          "PAI disclosure is only required for Article 9 funds, so this fund must be Article 9"
         ],
         "correctIndex": 2,
         "explanation": "PAI disclosure exists precisely so a fund's negative impacts can't be hidden behind its positive marketing — a sustainability-labelled fund can still carry real adverse impacts worth scrutinising.",
@@ -3799,7 +3804,7 @@
         "options": [
           "No: DNSH means it must not seriously harm other objectives, including biodiversity",
           "Yes, since climate mitigation is the most important objective",
-          "This only matters for banks reporting their Green Asset Ratio",
+          "Yes, if the harm is offset by a larger contribution to another environmental objective",
           "Yes, as long as the activity is taxonomy-eligible"
         ],
         "correctIndex": 0,
@@ -3812,8 +3817,8 @@
       {
         "question": "A company reports that 60% of its turnover is 'taxonomy-eligible.' A journalist asks if that means 60% is genuinely sustainable. What's the accurate answer?",
         "options": [
-          "No, eligibility is actually a stricter test than alignment",
-          "Eligibility only applies to CapEx figures, not to turnover",
+          "Yes, because once a company publishes a transition plan its eligible share counts as aligned",
+          "No, because eligibility is measured on capital and operating expenditure only, never on turnover",
           "No: eligible only means covered; aligned means meeting every criterion",
           "Yes, 'eligible' and 'aligned' mean the same thing here"
         ],
@@ -3829,7 +3834,7 @@
         "question": "A company issues a bond marketed as a 'green bond,' but the proceeds go into the company's general operating budget rather than any specific environmental project. Is this consistent with the Green Bond Principles?",
         "options": [
           "No — green bonds are specifically defined by proceeds being earmarked for environmental projects",
-          "Yes — 'green bond' is just a branding choice",
+          "Yes, as long as the company publishes a sustainability report in the same year",
           "This only matters for the EU Green Bond Standard, not ICMA's principles",
           "Yes, as long as the company is in a green sector"
         ],
@@ -3842,10 +3847,10 @@
       {
         "question": "An analyst notices that a company's MSCI ESG rating and its Sustainalytics score seem to send opposite signals. What's the most likely explanation?",
         "options": [
-          "MSCI and Sustainalytics are the same company using the same model",
-          "One of the two agencies made a data-entry error",
+          "MSCI rates ESG risk, while Sustainalytics rates a company's financial performance",
+          "Both ratings use the same method, so one of them must contain an error",
           "Rating divergence: agencies use different methodologies and score differently",
-          "ESG ratings are legally required to match across agencies"
+          "MSCI compares a company with its own past, Sustainalytics with its industry peers"
         ],
         "correctIndex": 2,
         "explanation": "Rating divergence is a well-documented, structural feature of the ESG ratings industry — different agencies weigh different factors differently, so genuinely different scores for the same company aren't unusual.",
@@ -3858,10 +3863,10 @@
       {
         "question": "Marketing wants to advertise a product as 'environmentally friendly.' What is the main ESG risk in using that phrase as-is?",
         "options": [
-          "A generic environmental claim, banned under EmpCo without recognised proof",
-          "It's fine as long as the packaging uses green colours",
-          "It only applies to products sold outside the EU",
-          "None: it's a common phrase that regulators accept"
+          "A generic environmental claim: the company must be able to show recognised excellent environmental performance that supports the claim",
+          "The claim is only a risk if the product also carries an environmental label",
+          "An internal lifecycle study is enough on its own, even without recognised excellent environmental performance",
+          "The claim is only a risk when it is used to compare the product with a competitor's"
         ],
         "correctIndex": 0,
         "explanation": "'Environmentally friendly' with no evidence behind it is a textbook generic environmental claim — EmpCo specifically bans this kind of vague language unless the company can demonstrate recognised excellent environmental performance, in practice usually via the EU Ecolabel or an equivalent recognised ecolabelling scheme, not just general supporting data.",
@@ -3891,9 +3896,9 @@
         "question": "A colleague conflates MSCI's ESG rating with a regulatory requirement, saying 'we need a good MSCI score to comply with CSRD.' What's the error?",
         "options": [
           "MSCI is a private rating agency, not a regulator",
-          "CSRD sets a minimum MSCI score that companies must reach",
-          "There is no error: MSCI helps set CSRD's requirements",
-          "MSCI only rates governments and countries, not companies"
+          "ESMA accepts an MSCI score as proof of CSRD compliance",
+          "MSCI is a standard-setter whose standards are voluntary under CSRD",
+          "CSRD only recognises ratings from agencies registered with EFRAG"
         ],
         "correctIndex": 0,
         "explanation": "MSCI ESG Research is a private ratings provider used by investors — it has no formal role in determining CSRD compliance, which is a separate, EU regulatory requirement entirely distinct from any commercial rating.",
@@ -3905,8 +3910,8 @@
       {
         "question": "A supplier proudly shows an EcoVadis Bronze medal as proof of full ESG compliance. What should you keep in mind before accepting that at face value?",
         "options": [
-          "Bronze is actually EcoVadis's highest medal tier",
-          "EcoVadis medals are legally binding certifications under the CSRD",
+          "Bronze means the supplier has passed an independent on-site audit",
+          "EcoVadis medals are only awarded to suppliers of listed companies",
           "EcoVadis only assesses environmental performance, not social topics",
           "Bronze is the lowest medal: baseline performance, not full compliance"
         ],
@@ -3922,9 +3927,9 @@
         "question": "A colleague claims CSRD's reporting requirements have stayed exactly the same since it was adopted in 2022. What should you correct them on?",
         "options": [
           "The 2026 Omnibus reform narrowed CSRD's scope and simplified ESRS",
-          "CSRD was repealed entirely by the 2026 Omnibus reform",
-          "CSRD was actually adopted in 2015, not in 2022",
-          "Nothing: they're right, nothing has changed since 2022"
+          "The 2026 Omnibus reform only postponed start dates and left scope and standards unchanged",
+          "CSRD was adopted in 2022, but the ESRS were replaced by the GRI Standards",
+          "CSRD was extended in 2026 to cover all listed SMEs"
         ],
         "correctIndex": 0,
         "explanation": "The 2026 Omnibus reform is a real, substantial change — the revised ESRS adopted in July 2026 cut mandatory datapoints by more than 60% and narrowed CSRD's scope. Treating the 2022 text as still fully current is a common but outdated assumption.",
@@ -3937,9 +3942,9 @@
         "question": "A colleague asks why CSDDD's timeline changed from a staggered rollout to one single date. What happened?",
         "options": [
           "The 2026 Omnibus reform replaced the waves with a single date",
-          "CSDDD never had a staggered rollout to begin with",
-          "The change only affects companies based outside the EU",
-          "The original CSDDD was withdrawn and replaced by a new text"
+          "The single date was chosen by each member state for its own companies",
+          "The staggered rollout was cancelled by the EU Court of Justice",
+          "The change only moved the deadline for the largest companies and kept the later waves"
         ],
         "correctIndex": 0,
         "explanation": "This is a direct, concrete effect of the 2026 Omnibus reform — instead of tracking which 'wave' a company fell into, everyone in scope now works toward the same single 2029 deadline.",
@@ -3955,7 +3960,7 @@
         "options": [
           "No: if a topic isn't financially material, ESRS doesn't require disclosure",
           "Yes: a topic is reportable if it is material financially or for its impact",
-          "Only if a competitor in the same sector already discloses it",
+          "Only if residents of the town have filed a formal complaint against the company",
           "No: ESRS only assesses financial materiality; impact materiality was dropped in the Omnibus reform"
         ],
         "correctIndex": 1,
@@ -3966,12 +3971,12 @@
         ]
       },
       {
-        "question": "A company has 600 employees and €300 million in annual turnover. Under the post-Omnibus CSRD thresholds, is it in mandatory scope?",
+        "question": "A standalone EU company has an average of 600 employees and annual net turnover of €300 million. Does it meet the general post-Omnibus CSRD size thresholds?",
         "options": [
           "Yes, any company with over 250 employees was always in scope",
-          "No: scope now needs over 1,000 employees and over €450 million in turnover",
+          "No: scope now needs over 1,000 employees and over €450 million in net turnover",
           "Yes, because it counts as a large unlisted company",
-          "No, only listed companies were ever in CSRD scope"
+          "Yes: scope needs over 500 employees and over €250 million in net turnover"
         ],
         "correctIndex": 1,
         "explanation": "The 2026 Omnibus reform narrowed mandatory CSRD scope to companies exceeding both 1,000 employees and €450 million in turnover. A company below both thresholds has no mandatory CSRD obligation, even though it would have been in scope under the original, much broader 2022 text.",
@@ -3983,15 +3988,15 @@
     ],
     "esg-ratings-data-providers": [
       {
-        "question": "A retailer wants its suppliers to share one social audit report with every customer that accepts it, instead of repeating audits for each buyer. Which tool fits best?",
+        "question": "A retailer wants its suppliers to upload one social audit report and choose which customers can see it, instead of repeating audits for each buyer. Which service is built for this?",
         "options": [
-          "An index such as FTSE4Good, which lists companies that pass ESG tests",
-          "A platform such as Sedex, where suppliers share audit data",
-          "A news screening service such as RepRisk, which tracks reported incidents",
-          "A property benchmark such as GRESB, which scores real asset funds"
+          "EcoVadis",
+          "Sedex",
+          "CDP (formerly the Carbon Disclosure Project)",
+          "RepRisk"
         ],
         "correctIndex": 1,
-        "explanation": "Sedex lets suppliers upload audit data once and choose which customers can see it. The other tools serve different purposes: stock indices, incident screening and real asset benchmarks.",
+        "explanation": "Sedex lets suppliers upload audit reports once and choose which customers can see them. EcoVadis scores suppliers, CDP scores environmental disclosures and RepRisk tracks incidents. None of those is built for sharing audit reports.",
         "roles": [
           "finance"
         ]

@@ -12,14 +12,32 @@ class TermInsight extends StatelessWidget {
 
   final String? termKey;
 
+  static List<(String, String)> _sectionsFor(Term? term) {
+    // Empty or blank text counts as missing, so the card never shows an
+    // empty section while the explanation box is hidden.
+    final why = term?.whyItMatters?.trim() ?? '';
+    final example = term?.example?.trim() ?? '';
+    return [
+      if (why.isNotEmpty) ('WHY IT MATTERS', why),
+      if (example.isNotEmpty) ('EXAMPLE', example),
+    ];
+  }
+
+  /// How many sections [term] would show; for tests.
+  @visibleForTesting
+  static int sectionCountForTest(Term term) => _sectionsFor(term).length;
+
+  /// Whether [termKey] has anything to show. When it does, the quiz skips the
+  /// grey box that would only repeat the correct answer and goes straight to
+  /// this card.
+  static bool hasContent(String? termKey) =>
+      _sectionsFor(MockData.termByKey(termKey)).isNotEmpty;
+
   @override
   Widget build(BuildContext context) {
     final term = MockData.termByKey(termKey);
     if (term == null) return const SizedBox.shrink();
-    final sections = <(String, String)>[
-      if (term.whyItMatters != null) ('WHY IT MATTERS', term.whyItMatters!),
-      if (term.example != null) ('EXAMPLE', term.example!),
-    ];
+    final sections = _sectionsFor(term);
     if (sections.isEmpty) return const SizedBox.shrink();
     return Container(
       key: const Key('term-insight'),

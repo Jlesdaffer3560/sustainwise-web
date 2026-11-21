@@ -140,6 +140,7 @@ class Term {
     this.example,
     this.dontConfuseWith,
     this.theme,
+    this.group,
   });
 
   final String moduleLabel;
@@ -166,6 +167,11 @@ class Term {
   final String? dontConfuseWith;
 
   final ContentTheme? theme;
+
+  // Optional sub-kind inside a module (module 17 uses 'concept' and
+  // 'provider'). A quiz offers wrong answers of the same kind (as long as at
+  // least three exist), because the kind alone would give the answer away.
+  final String? group;
 
   bool get hasRichFormat => plainEnglish != null;
 }
@@ -390,6 +396,7 @@ class MockData {
             theme: t['theme'] == null
                 ? null
                 : ContentTheme.values.byName(t['theme'] as String),
+            group: t['group'] as String?,
           ),
       ];
     });
@@ -600,7 +607,7 @@ class MockData {
     // needs to be, so the same module always quizzes the same way.
     final random = Random(_stableHash(moduleId));
     final mechanical = [
-      for (final term in sampled) _questionFor(term, terms, random),
+      for (final term in sampled) ?_questionFor(term, terms, random),
     ];
 
     final scenarios = _scenariosByModule[moduleId] ?? const [];
@@ -636,31 +643,174 @@ class MockData {
     r"|^([A-Z][a-zA-Z.]*\s){1,3}[A-Z][a-zA-Z]+'s\s(view|theory|idea|concept)\b",
   );
 
-  static QuizQuestion _questionFor(Term term, List<Term> pool, Random random) {
+  static const _stopWords = {
+    'that',
+    'this',
+    'with',
+    'from',
+    'which',
+    'their',
+    'them',
+    'they',
+    'have',
+    'been',
+    'into',
+    'than',
+    'then',
+    'such',
+    'also',
+    'more',
+    'most',
+    'other',
+    'when',
+    'what',
+    'where',
+    'while',
+    'about',
+    'between',
+    'through',
+    'over',
+    'under',
+    'often',
+    'used',
+    'uses',
+    'using',
+    'each',
+    'many',
+    'some',
+    'only',
+    'both',
+    'its',
+    'are',
+    'for',
+    'and',
+    'the',
+    'who',
+    'how',
+    'any',
+    'can',
+    'not',
+    'but',
+    'has',
+    'was',
+    'were',
+    'will',
+    'may',
+    'must',
+    'should',
+  };
+
+  static Set<String> _contentWords(String text) => {
+    for (final w in text.toLowerCase().split(RegExp(r'[^a-z0-9]+')))
+      if (w.length > 3 && !_stopWords.contains(w)) w,
+  };
+
+  static String _openingWord(String text) {
+    final words = text.toLowerCase().split(RegExp(r'[^a-z0-9]+'));
+    for (final w in words) {
+      if (w.isEmpty || w == 'a' || w == 'an' || w == 'the') continue;
+      return w;
+    }
+    return '';
+  }
+
+  /// How convincing [other]'s definition is as a wrong answer for [term]:
+  /// higher means harder to rule out at a glance.
+  static double _similarity(Term term, Set<String> target, Term other) {
+    final words = _contentWords(other.definition);
+    final union = target.union(words).length;
+    final shared = union == 0 ? 0 : target.intersection(words).length / union;
+    final a = term.definition.length;
+    final b = other.definition.length;
+    final longest = a > b ? a : b;
+    final lengthFit = longest == 0 ? 0.0 : 1 - (a - b).abs() / longest;
+    var score = shared * 3 + lengthFit;
+    if (_openingWord(term.definition) == _openingWord(other.definition)) {
+      score += 0.4;
+    }
+    if (term.theme != null && term.theme == other.theme) score += 0.3;
+    if (term.group != null && other.group != null) {
+      score += term.group == other.group ? 1.5 : -3;
+    }
+    return score;
+  }
+
+  /// The question generator on a pool of the caller's choosing; for tests.
+  @visibleForTesting
+  static QuizQuestion? questionForTest(
+    Term term,
+    List<Term> pool,
+    Random random,
+  ) => _questionFor(term, pool, random);
+
+  static QuizQuestion? _questionFor(Term term, List<Term> pool, Random random) {
     // Distractors are drawn from definitions of similar length/shape to the
     // correct one, not purely at random — a one-line "X's view that..."
     // attribution next to a technical definition is trivially guessable by
     // shape alone, without knowing any actual content. Person-attributed
     // definitions are excluded from the candidate pool entirely (unless the
     // correct answer is itself person-attributed) for the same reason.
-    final targetLength = term.definition.length;
+    if (term.definition.trim().isEmpty) return null;
     final targetIsPersonLike = _personLikeDefinition.hasMatch(term.definition);
-    final candidates =
-        pool
-            .where((t) => t.term != term.term)
-            .where(
-              (t) =>
-                  targetIsPersonLike ||
-                  !_personLikeDefinition.hasMatch(t.definition),
-            )
-            .toList()
-          ..shuffle(random);
-    candidates.sort(
-      (a, b) => (a.definition.length - targetLength).abs().compareTo(
-        (b.definition.length - targetLength).abs(),
-      ),
-    );
-    final distractors = candidates.take(3).toList()..shuffle(random);
+    final eligible = pool
+        .where((t) => t.term != term.term)
+        .where(
+          (t) =>
+              targetIsPersonLike ||
+              !_personLikeDefinition.hasMatch(t.definition),
+        )
+        .where((t) => t.definition.trim().isNotEmpty)
+        .toList();
+    // Two options must never read the same. When two candidates have the same
+    // wording, one is kept, and a candidate of the same kind as the term is
+    // kept in preference to one of another kind. The surviving candidates keep
+    // their original order before scoring.
+    final ordered = term.group == null
+        ? eligible
+        : [
+            ...eligible.where((t) => t.group == term.group),
+            ...eligible.where((t) => t.group != term.group),
+          ];
+    final seen = {term.definition.trim().toLowerCase()};
+    final kept = <Term>{
+      for (final t in ordered)
+        if (seen.add(t.definition.trim().toLowerCase())) t,
+    };
+    var candidates = eligible.where(kept.contains).toList();
+    // A grouped module (module 17) only offers wrong answers of the same
+    // kind. Only if that leaves fewer than three, other kinds fill the gap,
+    // after every candidate of the same kind.
+    final sameKind = term.group == null
+        ? const <Term>[]
+        : candidates.where((t) => t.group == term.group).toList();
+    final strictKind = sameKind.length >= 3;
+    if (strictKind) candidates = sameKind;
+    // Fewer than three different wrong answers: no question, and no random
+    // numbers used, so the following questions of the module do not shift.
+    if (candidates.length < 3) return null;
+    // The wrong answers are the definitions that look most like the right
+    // one: they share words and subject, have a similar length and open the
+    // same way. A small random jitter keeps the choice from always being the
+    // same three. Scoring is deterministic for a given seed.
+    final target = _contentWords(term.definition);
+    final scored =
+        <(Term, double)>[
+          for (final t in candidates)
+            (t, _similarity(term, target, t) + random.nextDouble() * 0.25),
+        ]..sort((a, b) {
+          final byScore = b.$2.compareTo(a.$2);
+          if (byScore != 0) return byScore;
+          return keyOf(a.$1).compareTo(keyOf(b.$1));
+        });
+    final ranked = [for (final e in scored) e.$1];
+    final preferred = term.group == null || strictKind
+        ? ranked
+        : [
+            ...ranked.where((t) => t.group == term.group),
+            ...ranked.where((t) => t.group != term.group),
+          ];
+    final distractors = preferred.take(3).toList();
+    distractors.shuffle(random);
     final options = [term.definition, ...distractors.map((t) => t.definition)]
       ..shuffle(random);
     return QuizQuestion(
@@ -692,7 +842,8 @@ class MockData {
       if (term == null) continue;
       final pool = _termsByModule[term.moduleId] ?? const [];
       if (pool.length < 4) continue;
-      questions.add(_questionFor(term, pool, random));
+      final question = _questionFor(term, pool, random);
+      if (question != null) questions.add(question);
     }
     questions.shuffle(random);
     return questions;

@@ -271,7 +271,7 @@ void main() {
 
       expect(find.byKey(const Key('term-insight')), findsNothing);
       var insights = 0;
-      for (final correctIndex in const [2, 2, 2, 2, 1, 1, 3, 2, 0]) {
+      for (final correctIndex in const [0, 2, 1, 0, 0, 1, 2, 0, 2]) {
         await tapVisible(tester, Key('quiz-option-$correctIndex'));
         await tester.pump();
         if (find.byKey(const Key('term-insight')).evaluate().isNotEmpty) {
@@ -285,6 +285,124 @@ void main() {
       expect(insights, 7);
     },
   );
+
+  testWidgets('an answered quiz question marks the options with a tick or a '
+      'cross, not by colour alone', (tester) async {
+    await pumpFreshApp(tester);
+    await openFirstLesson(tester);
+    for (var i = 0; i < 14; i++) {
+      await tester.tap(find.byKey(const Key('flashcard')));
+      await tester.pump();
+      await tester.tap(find.byKey(const Key('flashcard-rating-got-it')));
+      await pumpBounded(tester);
+    }
+    // The marks are the 16 dp icons inside the option badges (the screen's
+    // own close button is a different size).
+    Finder mark(IconData icon) => find.byWidgetPredicate(
+      (w) => w is Icon && w.icon == icon && w.size == 16,
+    );
+    expect(mark(Icons.check), findsNothing);
+    final semantics = tester.ensureSemantics();
+    // The visible texts, noted before the tap, so the labels can be compared
+    // with the options they belong to (swapped texts must fail).
+    String textOf(int i) {
+      final texts =
+          tester
+              .widgetList<Text>(
+                find.descendant(
+                  of: find.byKey(Key('quiz-option-$i')),
+                  matching: find.byType(Text),
+                ),
+              )
+              .map((t) => t.data ?? '')
+              .toList()
+            ..sort((a, b) => b.length.compareTo(a.length));
+      return texts.first;
+    }
+
+    final correctText = textOf(0);
+    final chosenText = textOf(1);
+    expect(find.bySemanticsLabel(RegExp(r'Correct answer\.')), findsNothing);
+    // Q0 is a term question whose right answer is option 0; pick option 1.
+    await tapVisible(tester, const Key('quiz-option-1'));
+    await tester.pump();
+    // The marks sit inside the answered option tiles themselves: the tick in
+    // the right answer (option 0), the cross in the chosen one (option 1).
+    Finder inTile(int i, IconData icon) => find.descendant(
+      of: find.byKey(Key('quiz-option-$i')),
+      matching: mark(icon),
+    );
+    expect(inTile(0, Icons.check), findsOneWidget);
+    expect(inTile(1, Icons.close), findsOneWidget);
+    expect(mark(Icons.check), findsOneWidget);
+    expect(mark(Icons.close), findsOneWidget);
+    // What the semantics tree says (the Flutter side of what a screen reader
+    // reads out; the device is not tested): the right answer and the wrong one, each
+    // followed by that option's own text.
+    expect(
+      find.bySemanticsLabel(
+        RegExp(RegExp.escape('Correct answer. $correctText')),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.bySemanticsLabel(
+        RegExp(RegExp.escape('Your answer, incorrect. $chosenText')),
+      ),
+      findsOneWidget,
+    );
+    semantics.dispose();
+  });
+
+  for (final scale in [1.0, 1.3, 2.0]) {
+    testWidgets(
+      'with text at $scale x on a phone screen an answered question shows its '
+      'marks and can still be continued',
+      (tester) async {
+        // A phone-sized screen (1080x2340 px at 2.625 px per dp) and the
+        // system text size turned up, as in Android's large-text setting.
+        tester.view.physicalSize = const Size(1080, 2340);
+        tester.view.devicePixelRatio = 2.625;
+        tester.platformDispatcher.textScaleFactorTestValue = scale;
+        addTearDown(() {
+          tester.view.resetPhysicalSize();
+          tester.view.resetDevicePixelRatio();
+          tester.platformDispatcher.clearTextScaleFactorTestValue();
+        });
+        await pumpFreshApp(tester);
+        await openFirstLesson(tester);
+        for (var i = 0; i < 14; i++) {
+          await tester.tap(find.byKey(const Key('flashcard')));
+          await tester.pump();
+          await tapVisible(tester, const Key('flashcard-rating-got-it'));
+          await pumpBounded(tester);
+        }
+        // Overflows on Home and in the flashcards are not what is checked
+        // here (the test font is also wider than the real one): drain them,
+        // so that only the quiz screen is judged below.
+        while (tester.takeException() != null) {}
+        // Q0: the right answer is option 0; pick option 1.
+        await tapVisible(tester, const Key('quiz-option-1'));
+        await tester.pump();
+        Finder markIn(int i, IconData icon) => find.descendant(
+          of: find.byKey(Key('quiz-option-$i')),
+          matching: find.byWidgetPredicate(
+            (w) => w is Icon && w.icon == icon && w.size == 16,
+          ),
+        );
+        expect(markIn(0, Icons.check), findsOneWidget);
+        expect(markIn(1, Icons.close), findsOneWidget);
+        // The "why it matters" card is there, and the continue button can be
+        // reached by scrolling, and works.
+        expect(find.byKey(const Key('term-insight')), findsOneWidget);
+        await tapVisible(tester, const Key('quiz-continue-button'));
+        await tester.pumpAndSettle();
+        expect(find.byKey(const Key('quiz-continue-button')), findsNothing);
+        // No layout overflow was reported at any point.
+        expect(tester.takeException(), isNull);
+      },
+    );
+  }
 
   group('personal path on Home', () {
     testWidgets('asks who you are once, then suggests modules', (tester) async {

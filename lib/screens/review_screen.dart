@@ -184,22 +184,23 @@ class _ReviewScreenState extends State<ReviewScreen> {
                     ),
                     const SizedBox(height: 10),
                   ],
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: AppColors.accentSoft,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      _current.explanation,
-                      style: const TextStyle(
-                        fontSize: 13.5,
-                        color: AppColors.ink,
-                        height: 1.45,
+                  if (!TermInsight.hasContent(_current.termId))
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(14),
+                      decoration: BoxDecoration(
+                        color: AppColors.accentSoft,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        _current.explanation,
+                        style: const TextStyle(
+                          fontSize: 13.5,
+                          color: AppColors.ink,
+                          height: 1.45,
+                        ),
                       ),
                     ),
-                  ),
                   TermInsight(termKey: _current.termId),
                   const SizedBox(height: 18),
                   SizedBox(
@@ -396,22 +397,35 @@ class _ReviewOptionTile extends StatelessWidget {
                       : badgeColor,
                   border: Border.all(color: badgeColor, width: 1.5),
                 ),
-                child: Text(
-                  letter,
-                  style: TextStyle(
-                    fontFamily: 'monospace',
-                    fontWeight: FontWeight.w700,
-                    fontSize: 12.5,
-                    color: state == _ReviewOptionState.neutral
-                        ? AppColors.inkSoft
-                        : Colors.white,
-                  ),
-                ),
+                // Not colour alone: a tick or a cross marks the answer, so the
+                // result is clear without relying on green and red.
+                child: state == _ReviewOptionState.neutral
+                    ? Text(
+                        letter,
+                        style: const TextStyle(
+                          fontFamily: 'monospace',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12.5,
+                          color: AppColors.inkSoft,
+                        ),
+                      )
+                    : Icon(
+                        state == _ReviewOptionState.correct
+                            ? Icons.check
+                            : Icons.close,
+                        size: 16,
+                        color: Colors.white,
+                      ),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   text,
+                  semanticsLabel: switch (state) {
+                    _ReviewOptionState.correct => 'Correct answer. $text',
+                    _ReviewOptionState.wrong => 'Your answer, incorrect. $text',
+                    _ReviewOptionState.neutral => text,
+                  },
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
